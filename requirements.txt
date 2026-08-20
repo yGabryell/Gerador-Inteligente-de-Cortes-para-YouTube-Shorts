@@ -1,0 +1,6 @@
+streamlit>=1.41.0
+yt-dlp>=2025.1.15
+youtube-transcript-api>=0.6.3
+google-genai>=2.19.0
+python-dotenv>=1.0.1
+imageio-ffmpeg>=0.5.1
