@@ -250,37 +250,48 @@ st.markdown("""
         margin-top: 25px;
     }
     
-    /* Subtitle Live Preview Box */
-    .sub-preview-card {
-        background: radial-gradient(circle at center, #181A32 0%, #0C0E1E 100%);
-        border: 1px solid #2D3156;
-        border-radius: 14px;
-        padding: 20px 14px;
+    /* Subtitle Live Preview Box (Proporção Real de Smartphone) */
+    .sub-phone-container {
+        display: flex;
+        justify-content: center;
         margin-top: 14px;
+    }
+    .sub-phone-mockup {
+        width: 220px;
+        height: 180px;
+        background: linear-gradient(180deg, #1E1B4B 0%, #0F1123 100%);
+        border: 2px solid #3B4268;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 12px 10px;
         text-align: center;
         position: relative;
-        overflow: hidden;
-        box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.5);
     }
     .sub-preview-tag {
-        font-size: 0.75rem;
+        font-size: 0.68rem;
         font-weight: 800;
         text-transform: uppercase;
         color: #94A3B8;
-        margin-bottom: 12px;
         letter-spacing: 0.5px;
+    }
+    .sub-preview-content {
+        margin-top: auto;
+        margin-bottom: 22px;
     }
     .sub-preview-text {
         font-family: 'Impact', 'Arial Black', sans-serif !important;
         text-transform: uppercase;
         letter-spacing: 1px;
-        line-height: 1.25;
+        line-height: 1.2;
         font-weight: 900;
         display: inline-block;
     }
     
     @keyframes popBounceEffect {
-        0%, 100% { transform: scale(1.15); }
+        0%, 100% { transform: scale(1.14); }
         50% { transform: scale(0.96); }
     }
     @keyframes fadeSoftEffect {
@@ -457,9 +468,9 @@ with col_cfg2:
                     ],
                     format_func=lambda x: x[1]
                 )[0]
-            sub_fontsize = st.slider("Tamanho da Fonte", min_value=32, max_value=60, value=44)
+            sub_fontsize = st.slider("Tamanho da Legenda no Vídeo (px)", min_value=50, max_value=120, value=78, step=2, help="Padrão recomendado para Shorts: 75 a 85px")
             
-            # Prévia visual dinâmica da legenda
+            # Prévia visual dinâmica com proporção realista
             if sub_style == "yellow_black":
                 color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
             elif sub_style == "white_yellow":
@@ -468,20 +479,26 @@ with col_cfg2:
                 color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
 
             anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
-            preview_font_size = int(sub_fontsize * 0.58)
+            
+            # Proporção exata da tela de 220px vs 1080px (fator de escala ~0.20 a 0.22)
+            preview_font_size = max(13, int(sub_fontsize * 0.22))
 
             st.markdown(f"""
-            <div class="sub-preview-card">
-                <div class="sub-preview-tag">👁️ Exemplo em Tempo Real no Short (9:16)</div>
-                <div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">
-                    OLHA ESSA JOGADA VIRAL! 🔥
+            <div class="sub-phone-container">
+                <div class="sub-phone-mockup">
+                    <div class="sub-preview-tag">📱 Simulação Real no Celular (9:16)</div>
+                    <div class="sub-preview-content">
+                        <div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">
+                            OLHA ESSA JOGADA! 🔥
+                        </div>
+                    </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
         else:
             sub_style = "yellow_black"
             sub_anim = "pop"
-            sub_fontsize = 44
+            sub_fontsize = 78
 
     with st.container():
         st.markdown("""
