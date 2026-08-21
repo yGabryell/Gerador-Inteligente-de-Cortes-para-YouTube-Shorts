@@ -338,16 +338,91 @@ st.markdown("""
         animation: fadeSoftEffect 1.1s infinite ease-in-out;
     }
     
-    /* Remove completamente elementos residuais/fantasmas da página anterior */
-    [data-stale="true"] {
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-        height: 0 !important;
-        max-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
+    /* Prévia Widescreen (16:9) */
+    .sub-wide-container {
+        display: flex;
+        justify-content: center;
+        margin: 16px 0;
+    }
+    .sub-wide-mockup {
+        width: 100%;
+        max-width: 320px;
+        height: 180px; /* Exato 16:9 (320 * 9 / 16 = 180px) */
+        background: #090B14;
+        border: 3px solid #2F3554;
+        border-radius: 14px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.15);
+    }
+    .wide-screen {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 8px 12px;
+        background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 50%, #070914 100%);
+    }
+    .wide-badge-tag {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #94A3B8;
+        letter-spacing: 0.5px;
+        text-align: left;
+        z-index: 5;
+    }
+    .wide-preview-content {
+        position: absolute;
+        bottom: 22px;
+        left: 10px;
+        right: 10px;
+        text-align: center;
+        z-index: 5;
+    }
+
+    /* Forçar tema escuro de alto contraste em todos os componentes nativos */
+    [data-testid="stSelectbox"] div[data-baseweb="select"] {
+        background-color: #0A0C16 !important;
+        border: 1px solid #232742 !important;
+        border-radius: 12px !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSelectbox"] div[data-baseweb="select"] * {
+        color: #FFFFFF !important;
+    }
+    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {
+        background-color: #131526 !important;
+        border: 1px solid #272C49 !important;
+        border-radius: 10px !important;
+    }
+    li[data-baseweb="menu-item"] {
+        color: #FFFFFF !important;
+        background-color: #131526 !important;
+    }
+    li[data-baseweb="menu-item"]:hover {
+        background-color: #201D3D !important;
+        color: #A78BFA !important;
+    }
+    label, [data-testid="stWidgetLabel"] p {
+        color: #CBD5E1 !important;
+        font-weight: 600 !important;
+    }
+    textarea {
+        background-color: #0A0C16 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #232742 !important;
+        border-radius: 10px !important;
+    }
+    div[data-testid="stExpander"] {
+        background-color: #0F111E !important;
+        border: 1px solid #20243B !important;
+        border-radius: 12px !important;
+    }
+    div[data-testid="stExpander"] details summary {
+        color: #E2E8F0 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -568,12 +643,16 @@ if st.session_state.current_step == 1:
             st.caption("Sugestões: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
 
     with col_cfg2:
-        # Coluna Exclusiva para o Smartphone Preview 9:16
+        # Coluna Dinâmica de Prévia (Smartphone 9:16 ou Widescreen 16:9)
+        is_widescreen = "16:9" in video_style
+        preview_title = "Prévia em Tempo Real (16:9)" if is_widescreen else "Prévia em Tempo Real (9:16)"
+        preview_icon = "🖥️" if is_widescreen else "📱"
+        
         with st.container():
-            st.markdown("""
+            st.markdown(f"""
             <div class="saas-card" style="text-align:center; padding:18px 12px;">
                 <div class="saas-card-header" style="justify-content:center;">
-                    <span>📱</span> Prévia em Tempo Real (9:16)
+                    <span>{preview_icon}</span> {preview_title}
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -589,34 +668,57 @@ if st.session_state.current_step == 1:
                 anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
                 preview_font_size = max(11, int(sub_fontsize * 0.165))
 
-                phone_html = (
-                    f'<div class="sub-phone-container">'
-                    f'<div class="sub-phone-mockup">'
-                    f'<div class="phone-screen">'
-                    f'<div>'
-                    f'<div class="phone-notch"></div>'
-                    f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
-                    f'</div>'
-                    f'<div class="phone-side-icons">'
-                    f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
-                    f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
-                    f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
-                    f'</div>'
-                    f'<div class="sub-preview-content">'
-                    f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
-                    f'OLHA ESSA JOGADA! 🔥'
-                    f'</div>'
-                    f'</div>'
-                    f'</div>'
-                    f'</div>'
-                    f'</div>'
-                )
-                st.markdown(phone_html, unsafe_allow_html=True)
-                st.caption("<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Acompanhe ao vivo as cores, animação e tamanho exato para os seus Shorts.</div>", unsafe_allow_html=True)
+                if is_widescreen:
+                    mockup_html = (
+                        f'<div class="sub-wide-container">'
+                        f'<div class="sub-wide-mockup">'
+                        f'<div class="wide-screen">'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center;">'
+                        f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen Preview</div>'
+                        f'<div style="font-size:0.6rem; color:#94A3B8;">🔴 1080p</div>'
+                        f'</div>'
+                        f'<div class="wide-preview-content">'
+                        f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
+                        f'OLHA ESSA JOGADA! 🔥'
+                        f'</div>'
+                        f'</div>'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
+                        f'<span>▶️ 01:24 / 08:30</span>'
+                        f'<span>⚙️ 1080p60 🔲</span>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                    )
+                else:
+                    mockup_html = (
+                        f'<div class="sub-phone-container">'
+                        f'<div class="sub-phone-mockup">'
+                        f'<div class="phone-screen">'
+                        f'<div>'
+                        f'<div class="phone-notch"></div>'
+                        f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
+                        f'</div>'
+                        f'<div class="phone-side-icons">'
+                        f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
+                        f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
+                        f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                        f'</div>'
+                        f'<div class="sub-preview-content">'
+                        f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
+                        f'OLHA ESSA JOGADA! 🔥'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                    )
+                st.markdown(mockup_html, unsafe_allow_html=True)
+                st.caption(f"<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Acompanhe ao vivo as cores, animação e tamanho exato para os seus cortes {('16:9' if is_widescreen else '9:16')}.</div>", unsafe_allow_html=True)
             else:
                 st.markdown("""
                 <div style="background:#131526; border:1px dashed #2A2F4C; border-radius:16px; padding:40px 20px; text-align:center; color:#94A3B8; margin-top:16px;">
-                    💬 Ative as <strong>Legendas Automáticas</strong> ao lado para visualizar a prévia ao vivo no celular.
+                    💬 Ative as <strong>Legendas Automáticas</strong> ao lado para visualizar a prévia ao vivo.
                 </div>
                 """, unsafe_allow_html=True)
 
