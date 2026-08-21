@@ -395,20 +395,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Stepper (1. Configurar -> 2. Processar)
-st.markdown("""
-<div class="stepper-container">
-    <div class="step-item step-active">
-        <span>⚙️</span> 1. Configurar Projeto
-    </div>
-    <div style="color:#334155;">──────</div>
-    <div class="step-item step-inactive">
-        <span>✨</span> 2. Processar e Exportar
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
 # Inicializa estados de sessão
+if "current_step" not in st.session_state:
+    st.session_state.current_step = 1
 if "cuts" not in st.session_state:
     st.session_state.cuts = []
 if "video_info" not in st.session_state:
@@ -417,313 +406,380 @@ if "raw_transcript" not in st.session_state:
     st.session_state.raw_transcript = []
 if "downloaded_video_path" not in st.session_state:
     st.session_state.downloaded_video_path = None
+if "cfg_url" not in st.session_state:
+    st.session_state.cfg_url = ""
+if "cfg_video_style" not in st.session_state:
+    st.session_state.cfg_video_style = "blur_bg"
+if "cfg_enable_subtitles" not in st.session_state:
+    st.session_state.cfg_enable_subtitles = True
+if "cfg_sub_style" not in st.session_state:
+    st.session_state.cfg_sub_style = "yellow_black"
+if "cfg_sub_anim" not in st.session_state:
+    st.session_state.cfg_sub_anim = "pop"
+if "cfg_sub_fontsize" not in st.session_state:
+    st.session_state.cfg_sub_fontsize = 78
 
-# Card 1: Input da URL do Vídeo
-st.markdown("""
-<div class="saas-card">
-    <div class="saas-card-header">
-        <span>🔗</span> Cole o link do YouTube (Vídeo, Live ou Podcast)
+# Stepper Dinâmico (1. Configurar -> 2. Processar)
+if st.session_state.current_step == 1:
+    st.markdown("""
+    <div class="stepper-container">
+        <div class="step-item step-active">
+            <span>⚙️</span> 1. Configurar Projeto
+        </div>
+        <div style="color:#334155;">──────</div>
+        <div class="step-item step-inactive">
+            <span>✨</span> 2. Processar e Exportar
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
-
-url_input = st.text_input(
-    "URL do YouTube",
-    placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...",
-    label_visibility="collapsed"
-)
-st.caption("📁 A IA do GravitiCuts fará um raio-x da transcrição para encontrar os momentos com maior força de atração e retenção.")
-
-# Card 2: Opções de Configuração em Grid
-st.markdown("<br>", unsafe_allow_html=True)
-col_cfg1, col_cfg2 = st.columns(2)
-
-with col_cfg1:
-    with st.container():
-        st.markdown("""
-        <div class="saas-card">
-            <div class="saas-card-header">📱 Proporção & Formato</div>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <div class="stepper-container">
+        <div class="step-item step-inactive" style="color:#10B981; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.1);">
+            <span>✅</span> 1. Configuração Concluída
         </div>
-        """, unsafe_allow_html=True)
-        video_style = st.selectbox(
-            "Proporção do Vídeo",
-            options=[
-                ("blur_bg", "📱 Vertical (9:16) - TikTok, Reels, Shorts (Fundo Desfocado)"),
-                ("center_crop", "📱 Vertical (9:16) - Corte Centralizado"),
-                ("original", "🖥️ Horizontal (16:9) - Formato Original")
-            ],
-            format_func=lambda x: x[1],
-            label_visibility="collapsed"
-        )[0]
-        
-    with st.container():
-        st.markdown("""
-        <div class="saas-card">
-            <div class="saas-card-header">⏱️ Duração dos Cortes (IA Automática)</div>
-        </div>
-        """, unsafe_allow_html=True)
-        col_d1, col_d2, col_d3 = st.columns(3)
-        with col_d1:
-            num_cuts = st.number_input("Cortes", min_value=1, max_value=12, value=6)
-        with col_d2:
-            min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=30)
-        with col_d3:
-            max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=60)
-
-with col_cfg2:
-    with st.container():
-        st.markdown("""
-        <div class="saas-card">
-            <div class="saas-card-header">💬 Legendas Automáticas Animadas</div>
-        </div>
-        """, unsafe_allow_html=True)
-        enable_subtitles = st.checkbox("Queimar legendas automaticamente nos cortes", value=True)
-        
-        if enable_subtitles:
-            col_s1, col_s2 = st.columns(2)
-            with col_s1:
-                sub_style = st.selectbox(
-                    "Estilo da Legenda",
-                    options=[
-                        ("yellow_black", "🟡 Amarelo Gamer com Borda Preta (Mais Viral)"),
-                        ("white_yellow", "⚪ Branco com Borda Preta (Hormozi)"),
-                        ("neon_green", "🟢 Ciano / Neon")
-                    ],
-                    format_func=lambda x: x[1]
-                )[0]
-            with col_s2:
-                sub_anim = st.selectbox(
-                    "Animação",
-                    options=[
-                        ("pop", "💥 Pop / Bounce (Zoom Dinâmico)"),
-                        ("fade", "✨ Fade Suave"),
-                        ("none", "Estática")
-                    ],
-                    format_func=lambda x: x[1]
-                )[0]
-            sub_fontsize = st.slider("Tamanho da Legenda no Vídeo (px)", min_value=50, max_value=120, value=78, step=2, help="Padrão recomendado para Shorts: 75 a 85px")
-            
-            # Prévia visual dinâmica com proporção realista
-            if sub_style == "yellow_black":
-                color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
-            elif sub_style == "white_yellow":
-                color_css = "color: #FFFFFF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
-            else: # neon_green
-                color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
-
-            anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
-            
-            # Proporção exata da tela 180px vs 1080px (fator de escala ~0.165)
-            preview_font_size = max(11, int(sub_fontsize * 0.165))
-
-            phone_html = (
-                f'<div class="sub-phone-container">'
-                f'<div class="sub-phone-mockup">'
-                f'<div class="phone-screen">'
-                f'<div>'
-                f'<div class="phone-notch"></div>'
-                f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
-                f'</div>'
-                f'<div class="phone-side-icons">'
-                f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
-                f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
-                f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
-                f'</div>'
-                f'<div class="sub-preview-content">'
-                f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
-                f'OLHA ESSA JOGADA! 🔥'
-                f'</div>'
-                f'</div>'
-                f'</div>'
-                f'</div>'
-                f'</div>'
-            )
-            st.markdown(phone_html, unsafe_allow_html=True)
-        else:
-            sub_style = "yellow_black"
-            sub_anim = "pop"
-            sub_fontsize = 78
-
-    with st.container():
-        st.markdown("""
-        <div class="saas-card">
-            <div class="saas-card-header">🎯 Instrução Personalizada para a IA (Opcional)</div>
-        </div>
-        """, unsafe_allow_html=True)
-        custom_prompt = st.text_input(
-            "Prompt Personalizado",
-            placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
-            label_visibility="collapsed"
-        )
-        st.caption("Sugestões rápidas: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Botão Principal de Ação
-col_act1, col_act2, col_act3 = st.columns([1, 2, 1])
-with col_act2:
-    analyze_btn = st.button("⚡ Gerar Cortes com GravitiCuts IA", type="primary", use_container_width=True)
-
-# Processamento da Análise
-if analyze_btn:
-    if not url_input.strip():
-        st.warning("⚠️ Por favor, insira o link do vídeo do YouTube.")
-    else:
-        video_id = extract_video_id(url_input)
-        if not video_id:
-            st.error("❌ Não foi possível identificar o vídeo. Verifique a URL.")
-        else:
-            with st.spinner("📥 1/3 - Coletando metadados do vídeo..."):
-                try:
-                    video_info = get_video_info(url_input)
-                    st.session_state.video_info = video_info
-                except Exception as e:
-                    st.error(f"Erro ao obter metadados: {e}")
-                    video_info = {"title": "Vídeo do YouTube", "duration": 0, "thumbnail": "", "channel": ""}
-                    st.session_state.video_info = video_info
-
-            with st.spinner("📝 2/3 - Extraindo transcrição inteligente com timestamps..."):
-                try:
-                    raw_transcript, formatted_transcript = get_transcript(video_id)
-                    st.session_state.raw_transcript = raw_transcript
-                    st.session_state.formatted_transcript = formatted_transcript
-                except Exception as e:
-                    st.error(f"❌ {str(e)}")
-                    st.stop()
-
-            with st.spinner("🧠 3/3 - GravitiCuts IA calculando HotPeaks de retenção e ganchos..."):
-                try:
-                    title_context = f"{video_info.get('title', '')}. Foco: {custom_prompt}" if custom_prompt else video_info.get("title", "")
-                    cuts = find_best_shorts(
-                        formatted_transcript=st.session_state.formatted_transcript,
-                        video_title=title_context,
-                        min_duration=min_sec,
-                        max_duration=max_sec,
-                        num_cuts=num_cuts,
-                        api_key=api_key_input
-                    )
-                    st.session_state.cuts = cuts
-                    st.success(f"🔥 {len(cuts)} cortes virais identificados com sucesso pelo GravitiCuts!")
-                except Exception as e:
-                    st.error(f"❌ Erro na análise com IA: {str(e)}")
-                    st.stop()
-
-# Card de Resumo do Vídeo se Carregado
-if st.session_state.video_info:
-    v_info = st.session_state.video_info
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"""
-    <div class="saas-card" style="display:flex; gap:20px; align-items:center;">
-        <img src="{v_info.get('thumbnail', '')}" style="width:160px; border-radius:10px; object-fit:cover;">
-        <div>
-            <div style="font-weight:800; font-size:1.15rem; color:#FFFFFF; margin-bottom:4px;">{v_info.get('title', '')}</div>
-            <div style="color:#94A3B8; font-size:0.88rem;">👤 Canal: <strong style="color:#CBD5E1;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#CBD5E1;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
+        <div style="color:#8B5CF6;">──────</div>
+        <div class="step-item step-active">
+            <span>✨</span> 2. Processar e Exportar
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-# Grid de Cortes Sugeridos (Estilo Feed de Cortes)
-if st.session_state.cuts:
-    st.markdown("---")
-    st.markdown(f"### 📱 Cortes Gerados ({len(st.session_state.cuts)}) - Escolha e Baixe")
-    
-    current_video_id = extract_video_id(url_input)
-    grid_columns = 3 # 3 colunas padrão
-    
-    for row_idx in range(0, len(st.session_state.cuts), grid_columns):
-        cols = st.columns(grid_columns)
+# ==============================================================================
+# ETAPA 1: CONFIGURAÇÃO DO PROJETO
+# ==============================================================================
+if st.session_state.current_step == 1:
+    # Card 1: Input da URL do Vídeo
+    st.markdown("""
+    <div class="saas-card">
+        <div class="saas-card-header">
+            <span>🔗</span> Cole o link do YouTube (Vídeo, Live ou Podcast)
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    url_input = st.text_input(
+        "URL do YouTube",
+        value=st.session_state.cfg_url,
+        placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...",
+        label_visibility="collapsed"
+    )
+    st.caption("📁 A IA do GravitiCuts fará um raio-x da transcrição para encontrar os momentos com maior força de atração e retenção.")
+
+    # Card 2: Opções de Configuração em Grid
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_cfg1, col_cfg2 = st.columns(2)
+
+    with col_cfg1:
+        with st.container():
+            st.markdown("""
+            <div class="saas-card">
+                <div class="saas-card-header">📱 Proporção & Formato</div>
+            </div>
+            """, unsafe_allow_html=True)
+            video_style = st.selectbox(
+                "Proporção do Vídeo",
+                options=[
+                    ("blur_bg", "📱 Vertical (9:16) - TikTok, Reels, Shorts (Fundo Desfocado)"),
+                    ("center_crop", "📱 Vertical (9:16) - Corte Centralizado"),
+                    ("original", "🖥️ Horizontal (16:9) - Formato Original")
+                ],
+                format_func=lambda x: x[1],
+                label_visibility="collapsed"
+            )[0]
+            
+        with st.container():
+            st.markdown("""
+            <div class="saas-card">
+                <div class="saas-card-header">⏱️ Duração dos Cortes (IA Automática)</div>
+            </div>
+            """, unsafe_allow_html=True)
+            col_d1, col_d2, col_d3 = st.columns(3)
+            with col_d1:
+                num_cuts = st.number_input("Cortes", min_value=1, max_value=12, value=6)
+            with col_d2:
+                min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=30)
+            with col_d3:
+                max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=60)
+
+    with col_cfg2:
+        with st.container():
+            st.markdown("""
+            <div class="saas-card">
+                <div class="saas-card-header">💬 Legendas Automáticas Animadas</div>
+            </div>
+            """, unsafe_allow_html=True)
+            enable_subtitles = st.checkbox("Queimar legendas automaticamente nos cortes", value=True)
+            
+            if enable_subtitles:
+                col_s1, col_s2 = st.columns(2)
+                with col_s1:
+                    sub_style = st.selectbox(
+                        "Estilo da Legenda",
+                        options=[
+                            ("yellow_black", "🟡 Amarelo Gamer com Borda Preta (Mais Viral)"),
+                            ("white_yellow", "⚪ Branco com Borda Preta (Hormozi)"),
+                            ("neon_green", "🟢 Ciano / Neon")
+                        ],
+                        format_func=lambda x: x[1]
+                    )[0]
+                with col_s2:
+                    sub_anim = st.selectbox(
+                        "Animação",
+                        options=[
+                            ("pop", "💥 Pop / Bounce (Zoom Dinâmico)"),
+                            ("fade", "✨ Fade Suave"),
+                            ("none", "Estática")
+                        ],
+                        format_func=lambda x: x[1]
+                    )[0]
+                sub_fontsize = st.slider("Tamanho da Legenda no Vídeo (px)", min_value=50, max_value=120, value=78, step=2, help="Padrão recomendado para Shorts: 75 a 85px")
+                
+                # Prévia visual dinâmica com proporção realista
+                if sub_style == "yellow_black":
+                    color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
+                elif sub_style == "white_yellow":
+                    color_css = "color: #FFFFFF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
+                else: # neon_green
+                    color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
+
+                anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
+                
+                # Proporção exata da tela 180px vs 1080px (fator de escala ~0.165)
+                preview_font_size = max(11, int(sub_fontsize * 0.165))
+
+                phone_html = (
+                    f'<div class="sub-phone-container">'
+                    f'<div class="sub-phone-mockup">'
+                    f'<div class="phone-screen">'
+                    f'<div>'
+                    f'<div class="phone-notch"></div>'
+                    f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
+                    f'</div>'
+                    f'<div class="phone-side-icons">'
+                    f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
+                    f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
+                    f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                    f'</div>'
+                    f'<div class="sub-preview-content">'
+                    f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
+                    f'OLHA ESSA JOGADA! 🔥'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                )
+                st.markdown(phone_html, unsafe_allow_html=True)
+            else:
+                sub_style = "yellow_black"
+                sub_anim = "pop"
+                sub_fontsize = 78
+
+        with st.container():
+            st.markdown("""
+            <div class="saas-card">
+                <div class="saas-card-header">🎯 Instrução Personalizada para a IA (Opcional)</div>
+            </div>
+            """, unsafe_allow_html=True)
+            custom_prompt = st.text_input(
+                "Prompt Personalizado",
+                placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
+                label_visibility="collapsed"
+            )
+            st.caption("Sugestões rápidas: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Botão Principal de Ação
+    col_act1, col_act2, col_act3 = st.columns([1, 2, 1])
+    with col_act2:
+        analyze_btn = st.button("⚡ Gerar Cortes com GravitiCuts IA", type="primary", use_container_width=True)
+
+    # Processamento da Análise (Etapa 1 -> Etapa 2)
+    if analyze_btn:
+        if not url_input.strip():
+            st.warning("⚠️ Por favor, insira o link do vídeo do YouTube.")
+        else:
+            video_id = extract_video_id(url_input)
+            if not video_id:
+                st.error("❌ Não foi possível identificar o vídeo. Verifique a URL.")
+            else:
+                # Salva configurações no session_state
+                st.session_state.cfg_url = url_input
+                st.session_state.cfg_video_style = video_style
+                st.session_state.cfg_enable_subtitles = enable_subtitles
+                st.session_state.cfg_sub_style = sub_style
+                st.session_state.cfg_sub_anim = sub_anim
+                st.session_state.cfg_sub_fontsize = sub_fontsize
+
+                with st.spinner("📥 1/3 - Coletando metadados do vídeo..."):
+                    try:
+                        video_info = get_video_info(url_input)
+                        st.session_state.video_info = video_info
+                    except Exception as e:
+                        st.error(f"Erro ao obter metadados: {e}")
+                        video_info = {"title": "Vídeo do YouTube", "duration": 0, "thumbnail": "", "channel": ""}
+                        st.session_state.video_info = video_info
+
+                with st.spinner("📝 2/3 - Extraindo transcrição inteligente com timestamps..."):
+                    try:
+                        raw_transcript, formatted_transcript = get_transcript(video_id)
+                        st.session_state.raw_transcript = raw_transcript
+                        st.session_state.formatted_transcript = formatted_transcript
+                    except Exception as e:
+                        st.error(f"❌ {str(e)}")
+                        st.stop()
+
+                with st.spinner("🧠 3/3 - GravitiCuts IA calculando HotPeaks de retenção e ganchos..."):
+                    try:
+                        title_context = f"{video_info.get('title', '')}. Foco: {custom_prompt}" if custom_prompt else video_info.get("title", "")
+                        cuts = find_best_shorts(
+                            formatted_transcript=st.session_state.formatted_transcript,
+                            video_title=title_context,
+                            min_duration=min_sec,
+                            max_duration=max_sec,
+                            num_cuts=num_cuts,
+                            api_key=api_key_input
+                        )
+                        st.session_state.cuts = cuts
+                        st.session_state.current_step = 2
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Erro na análise com IA: {str(e)}")
+                        st.stop()
+
+# ==============================================================================
+# ETAPA 2: PROCESSAR E EXPORTAR (PÁGINA 2)
+# ==============================================================================
+elif st.session_state.current_step == 2:
+    # Barra de Ações Superior
+    col_nav1, col_nav2 = st.columns([1, 4])
+    with col_nav1:
+        if st.button("⬅️ Configurar Outro Vídeo", use_container_width=True):
+            st.session_state.current_step = 1
+            st.rerun()
+    with col_nav2:
+        st.markdown(f"""
+        <div style="background:#131628; border:1px solid #252A47; padding:8px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:#A78BFA; font-size:0.95rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Prontos para Edição</span>
+            <span style="font-size:0.8rem; color:#94A3B8;">Formato: <strong>{st.session_state.cfg_video_style}</strong> | Legendas: <strong>{'Ativadas' if st.session_state.cfg_enable_subtitles else 'Desativadas'}</strong></span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Card de Resumo do Vídeo Original
+    if st.session_state.video_info:
+        v_info = st.session_state.video_info
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="saas-card" style="display:flex; gap:20px; align-items:center;">
+            <img src="{v_info.get('thumbnail', '')}" style="width:150px; border-radius:10px; object-fit:cover;">
+            <div>
+                <div style="font-weight:800; font-size:1.15rem; color:#FFFFFF; margin-bottom:4px;">{v_info.get('title', '')}</div>
+                <div style="color:#94A3B8; font-size:0.88rem;">👤 Canal: <strong style="color:#CBD5E1;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#CBD5E1;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Grid de Cortes Sugeridos (Estilo Feed de Cortes)
+    if st.session_state.cuts:
+        current_video_id = extract_video_id(st.session_state.cfg_url)
+        grid_columns = 3 # 3 colunas padrão
         
-        for col_idx in range(grid_columns):
-            cut_idx = row_idx + col_idx
-            if cut_idx < len(st.session_state.cuts):
-                cut = st.session_state.cuts[cut_idx]
-                with cols[col_idx]:
-                    # Card Individual do Corte
-                    st.markdown(f"""
-                    <div class="hotpeak-item">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <span class="score-chip">🔥 HOTPEAK {cut['score']}%</span>
-                            <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
-                        </div>
-                        <div style="font-weight:800; font-size:1.05rem; color:#FFFFFF; line-height:1.35; margin-bottom:8px;">
-                            #{cut_idx+1} {cut['title']}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Player do Vídeo Original no Segundo Exato
-                    if current_video_id:
-                        yt_start = int(cut['start_time'])
-                        st.video(f"https://www.youtube.com/watch?v={current_video_id}", start_time=yt_start)
-                    
-                    # Gancho de Retenção
-                    if cut.get('hook'):
+        for row_idx in range(0, len(st.session_state.cuts), grid_columns):
+            cols = st.columns(grid_columns)
+            
+            for col_idx in range(grid_columns):
+                cut_idx = row_idx + col_idx
+                if cut_idx < len(st.session_state.cuts):
+                    cut = st.session_state.cuts[cut_idx]
+                    with cols[col_idx]:
+                        # Card Individual do Corte
                         st.markdown(f"""
-                        <div class="hook-badge-box">
-                            <strong>🎯 Gancho (Hook):</strong> "{cut['hook']}"
+                        <div class="hotpeak-item">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <span class="score-chip">🔥 HOTPEAK {cut['score']}%</span>
+                                <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
+                            </div>
+                            <div style="font-weight:800; font-size:1.02rem; color:#FFFFFF; line-height:1.35; margin-bottom:8px;">
+                                #{cut_idx+1} {cut['title']}
+                            </div>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                    if cut.get('reason'):
-                        st.caption(f"💡 {cut['reason']}")
+                        # Player do Vídeo Original no Segundo Exato
+                        if current_video_id:
+                            yt_start = int(cut['start_time'])
+                            st.video(f"https://www.youtube.com/watch?v={current_video_id}", start_time=yt_start)
                         
-                    # Botão para Renderizar o Short 9:16
-                    btn_key = f"generate_{cut_idx}"
-                    if st.button(f"✂️ Gerar Short #{cut_idx+1} (9:16 + Legenda)", key=btn_key, type="primary", use_container_width=True):
-                        with st.spinner(f"Renderizando Short #{cut_idx+1} com Legendas..."):
-                            try:
-                                # 1. Download
-                                if not st.session_state.downloaded_video_path or not os.path.exists(st.session_state.downloaded_video_path):
-                                    st.info("📥 Baixando vídeo original em alta qualidade...")
-                                    downloaded_file = download_video(url_input, video_id=current_video_id)
-                                    st.session_state.downloaded_video_path = downloaded_file
-                                
-                                # 2. Legendas
-                                sub_path = None
-                                safe_title = sanitize_filename(cut['title'])[:30]
-                                if enable_subtitles and st.session_state.raw_transcript:
-                                    ass_filename = f"output/sub_{cut_idx+1}_{safe_title}.ass"
-                                    sub_path = generate_ass_subtitles(
-                                        transcript_items=st.session_state.raw_transcript,
+                        # Gancho de Retenção
+                        if cut.get('hook'):
+                            st.markdown(f"""
+                            <div class="hook-badge-box">
+                                <strong>🎯 Gancho (Hook):</strong> "{cut['hook']}"
+                            </div>
+                            """, unsafe_allow_html=True)
+                            
+                        if cut.get('reason'):
+                            st.caption(f"💡 {cut['reason']}")
+                            
+                        # Botão para Renderizar o Short 9:16
+                        btn_key = f"generate_{cut_idx}"
+                        if st.button(f"✂️ Gerar Short #{cut_idx+1} (9:16 + Legenda)", key=btn_key, type="primary", use_container_width=True):
+                            with st.spinner(f"Renderizando Short #{cut_idx+1} com Legendas..."):
+                                try:
+                                    # 1. Download
+                                    if not st.session_state.downloaded_video_path or not os.path.exists(st.session_state.downloaded_video_path):
+                                        st.info("📥 Baixando vídeo original em alta qualidade...")
+                                        downloaded_file = download_video(st.session_state.cfg_url, video_id=current_video_id)
+                                        st.session_state.downloaded_video_path = downloaded_file
+                                    
+                                    # 2. Legendas
+                                    sub_path = None
+                                    safe_title = sanitize_filename(cut['title'])[:30]
+                                    if st.session_state.cfg_enable_subtitles and st.session_state.raw_transcript:
+                                        ass_filename = f"output/sub_{cut_idx+1}_{safe_title}.ass"
+                                        sub_path = generate_ass_subtitles(
+                                            transcript_items=st.session_state.raw_transcript,
+                                            start_time=cut['start_time'],
+                                            end_time=cut['end_time'],
+                                            ass_path=ass_filename,
+                                            font_size=st.session_state.cfg_sub_fontsize,
+                                            style=st.session_state.cfg_sub_style,
+                                            animation=st.session_state.cfg_sub_anim
+                                        )
+
+                                    # 3. Corte e Formatação 9:16
+                                    output_filename = f"output/short_{cut_idx+1}_{safe_title}.mp4"
+                                    
+                                    short_path = create_short_clip(
+                                        input_path=st.session_state.downloaded_video_path,
                                         start_time=cut['start_time'],
                                         end_time=cut['end_time'],
-                                        ass_path=ass_filename,
-                                        font_size=sub_fontsize,
-                                        style=sub_style,
-                                        animation=sub_anim
+                                        output_path=output_filename,
+                                        mode=st.session_state.cfg_video_style,
+                                        subtitle_ass_path=sub_path
                                     )
+                                    
+                                    st.session_state[f"ready_video_{cut_idx}"] = short_path
+                                    st.success("✅ Short 9:16 pronto para download!")
+                                except Exception as e:
+                                    st.error(f"Erro ao gerar vídeo: {str(e)}")
 
-                                # 3. Corte e Formatação 9:16
-                                output_filename = f"output/short_{cut_idx+1}_{safe_title}.mp4"
-                                
-                                short_path = create_short_clip(
-                                    input_path=st.session_state.downloaded_video_path,
-                                    start_time=cut['start_time'],
-                                    end_time=cut['end_time'],
-                                    output_path=output_filename,
-                                    mode=video_style,
-                                    subtitle_ass_path=sub_path
-                                )
-                                
-                                st.session_state[f"ready_video_{cut_idx}"] = short_path
-                                st.success("✅ Short 9:16 pronto para download!")
-                            except Exception as e:
-                                st.error(f"Erro ao gerar vídeo: {str(e)}")
-
-                    # Exibição do vídeo vertical pronto e download
-                    if f"ready_video_{cut_idx}" in st.session_state:
-                        video_file_path = st.session_state[f"ready_video_{cut_idx}"]
-                        if os.path.exists(video_file_path):
-                            st.markdown("##### 📱 Short 9:16 Finalizado:")
-                            st.video(video_file_path)
-                            with open(video_file_path, "rb") as file_data:
-                                st.download_button(
-                                    label=f"⬇️ Baixar Short #{cut_idx+1} (.mp4)",
-                                    data=file_data,
-                                    file_name=os.path.basename(video_file_path),
-                                    mime="video/mp4",
-                                    key=f"dl_{cut_idx}",
-                                    use_container_width=True
-                                )
+                        # Exibição do vídeo vertical pronto e download
+                        if f"ready_video_{cut_idx}" in st.session_state:
+                            video_file_path = st.session_state[f"ready_video_{cut_idx}"]
+                            if os.path.exists(video_file_path):
+                                st.markdown("##### 📱 Short 9:16 Finalizado:")
+                                st.video(video_file_path)
+                                with open(video_file_path, "rb") as file_data:
+                                    st.download_button(
+                                        label=f"⬇️ Baixar Short #{cut_idx+1} (.mp4)",
+                                        data=file_data,
+                                        file_name=os.path.basename(video_file_path),
+                                        mime="video/mp4",
+                                        key=f"dl_{cut_idx}",
+                                        use_container_width=True
+                                    )
                     
                     st.markdown("<br>", unsafe_allow_html=True)
