@@ -249,6 +249,50 @@ st.markdown("""
         padding: 14px;
         margin-top: 25px;
     }
+    
+    /* Subtitle Live Preview Box */
+    .sub-preview-card {
+        background: radial-gradient(circle at center, #181A32 0%, #0C0E1E 100%);
+        border: 1px solid #2D3156;
+        border-radius: 14px;
+        padding: 20px 14px;
+        margin-top: 14px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    .sub-preview-tag {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #94A3B8;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+    }
+    .sub-preview-text {
+        font-family: 'Impact', 'Arial Black', sans-serif !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        line-height: 1.25;
+        font-weight: 900;
+        display: inline-block;
+    }
+    
+    @keyframes popBounceEffect {
+        0%, 100% { transform: scale(1.15); }
+        50% { transform: scale(0.96); }
+    }
+    @keyframes fadeSoftEffect {
+        0%, 100% { opacity: 0.3; transform: translateY(2px); }
+        50% { opacity: 1; transform: translateY(0); }
+    }
+    .anim-pop {
+        animation: popBounceEffect 0.75s infinite ease-in-out;
+    }
+    .anim-fade {
+        animation: fadeSoftEffect 1.1s infinite ease-in-out;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -414,6 +458,26 @@ with col_cfg2:
                     format_func=lambda x: x[1]
                 )[0]
             sub_fontsize = st.slider("Tamanho da Fonte", min_value=32, max_value=60, value=44)
+            
+            # Prévia visual dinâmica da legenda
+            if sub_style == "yellow_black":
+                color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
+            elif sub_style == "white_yellow":
+                color_css = "color: #FFFFFF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
+            else: # neon_green
+                color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
+
+            anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
+            preview_font_size = int(sub_fontsize * 0.58)
+
+            st.markdown(f"""
+            <div class="sub-preview-card">
+                <div class="sub-preview-tag">👁️ Exemplo em Tempo Real no Short (9:16)</div>
+                <div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">
+                    OLHA ESSA JOGADA VIRAL! 🔥
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
         else:
             sub_style = "yellow_black"
             sub_anim = "pop"
