@@ -647,182 +647,212 @@ if st.session_state.current_step == 1:
 # ETAPA 2: PROCESSAR E EXPORTAR (PÁGINA 2)
 # ==============================================================================
 elif st.session_state.current_step == 2:
-    # Executa o processamento dentro da Página 2
+    # SE ESTIVER PROCESSANDO: EXIBE EXCLUSIVAMENTE A TELA DE CARREGAMENTO
     if st.session_state.get("is_processing", False):
-        st.markdown("""
-        <div class="saas-card" style="text-align:center; padding:35px 20px; border:1px solid #7C3AED; box-shadow:0 0 30px rgba(124,58,237,0.25);">
-            <div style="font-size:2.8rem; margin-bottom:12px;">🧠⚡</div>
-            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:6px;">GravitiCuts AI Analisando seu Vídeo</div>
-            <div style="color:#A78BFA; font-size:0.95rem;">Minerando a transcrição e calculando a taxa de retenção dos melhores momentos...</div>
+        col_c1, col_c2 = st.columns([1, 4])
+        with col_c1:
+            if st.button("⬅️ Cancelar", use_container_width=True):
+                st.session_state.is_processing = False
+                st.session_state.current_step = 1
+                st.rerun()
+                
+        status_slot = st.empty()
+        progress_bar = st.progress(20)
+        
+        # Etapa 1
+        status_slot.markdown("""
+        <div class="saas-card" style="text-align:center; padding:45px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
+            <div style="font-size:3rem; margin-bottom:14px;">📥⚡</div>
+            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:8px;">Etapa 1/3: Coletando Metadados do Vídeo</div>
+            <div style="color:#A78BFA; font-size:0.95rem;">Buscando título, canal, miniatura e duração original...</div>
         </div>
         """, unsafe_allow_html=True)
         
-        with st.spinner("📥 1/3 - Coletando metadados do vídeo..."):
-            try:
-                video_info = get_video_info(st.session_state.cfg_url)
-                st.session_state.video_info = video_info
-            except Exception as e:
-                st.error(f"Erro ao obter metadados: {e}")
-                video_info = {"title": "Vídeo do YouTube", "duration": 0, "thumbnail": "", "channel": ""}
-                st.session_state.video_info = video_info
+        try:
+            video_info = get_video_info(st.session_state.cfg_url)
+            st.session_state.video_info = video_info
+        except Exception as e:
+            video_info = {"title": "Vídeo do YouTube", "duration": 0, "thumbnail": "", "channel": ""}
+            st.session_state.video_info = video_info
 
-        with st.spinner("📝 2/3 - Extraindo transcrição inteligente com timestamps..."):
-            try:
-                raw_transcript, formatted_transcript = get_transcript(st.session_state.cfg_video_id)
-                st.session_state.raw_transcript = raw_transcript
-                st.session_state.formatted_transcript = formatted_transcript
-            except Exception as e:
-                st.error(f"❌ {str(e)}")
-                st.session_state.is_processing = False
-                st.stop()
+        # Etapa 2
+        progress_bar.progress(55)
+        status_slot.markdown("""
+        <div class="saas-card" style="text-align:center; padding:45px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
+            <div style="font-size:3rem; margin-bottom:14px;">📝⚡</div>
+            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:8px;">Etapa 2/3: Extraindo Transcrição e Timestamps</div>
+            <div style="color:#A78BFA; font-size:0.95rem;">Lendo e sincronizando as legendas para análise precisa...</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        try:
+            raw_transcript, formatted_transcript = get_transcript(st.session_state.cfg_video_id)
+            st.session_state.raw_transcript = raw_transcript
+            st.session_state.formatted_transcript = formatted_transcript
+        except Exception as e:
+            st.error(f"❌ {str(e)}")
+            st.session_state.is_processing = False
+            st.stop()
 
-        with st.spinner("🧠 3/3 - GravitiCuts IA calculando Picos Virais de retenção e ganchos..."):
-            try:
-                title_context = f"{video_info.get('title', '')}. Foco: {st.session_state.cfg_custom_prompt}" if st.session_state.cfg_custom_prompt else video_info.get("title", "")
-                cuts = find_best_shorts(
-                    formatted_transcript=st.session_state.formatted_transcript,
-                    video_title=title_context,
-                    min_duration=st.session_state.cfg_min_sec,
-                    max_duration=st.session_state.cfg_max_sec,
-                    num_cuts=st.session_state.cfg_num_cuts,
-                    api_key=api_key_input
-                )
-                st.session_state.cuts = cuts
-                st.session_state.is_processing = False
-                st.rerun()
-            except Exception as e:
-                st.error(f"❌ Erro na análise com IA: {str(e)}")
-                st.session_state.is_processing = False
-                st.stop()
-
-    # Barra de Ações Superior
-    col_nav1, col_nav2 = st.columns([1, 4])
-    with col_nav1:
-        if st.button("⬅️ Configurar Outro Vídeo", use_container_width=True):
-            st.session_state.current_step = 1
+        # Etapa 3
+        progress_bar.progress(85)
+        status_slot.markdown("""
+        <div class="saas-card" style="text-align:center; padding:45px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
+            <div style="font-size:3rem; margin-bottom:14px;">🧠⚡</div>
+            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:8px;">Etapa 3/3: GravitiCuts IA Minerando Picos Virais</div>
+            <div style="color:#A78BFA; font-size:0.95rem;">Calculando HotPeaks de retenção, ganchos magnéticos e histórias completas...</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        try:
+            title_context = f"{video_info.get('title', '')}. Foco: {st.session_state.cfg_custom_prompt}" if st.session_state.cfg_custom_prompt else video_info.get("title", "")
+            cuts = find_best_shorts(
+                formatted_transcript=st.session_state.formatted_transcript,
+                video_title=title_context,
+                min_duration=st.session_state.cfg_min_sec,
+                max_duration=st.session_state.cfg_max_sec,
+                num_cuts=st.session_state.cfg_num_cuts,
+                api_key=api_key_input
+            )
+            progress_bar.progress(100)
+            st.session_state.cuts = cuts
             st.session_state.is_processing = False
             st.rerun()
-    with col_nav2:
-        st.markdown(f"""
-        <div style="background:#131628; border:1px solid #252A47; padding:8px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:800; color:#A78BFA; font-size:0.95rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Prontos para Edição</span>
-            <span style="font-size:0.8rem; color:#94A3B8;">Formato: <strong>{st.session_state.cfg_video_style}</strong> | Legendas: <strong>{'Ativadas' if st.session_state.cfg_enable_subtitles else 'Desativadas'}</strong></span>
-        </div>
-        """, unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"❌ Erro na análise com IA: {str(e)}")
+            st.session_state.is_processing = False
+            st.stop()
 
-    # Card de Resumo do Vídeo Original
-    if st.session_state.video_info:
-        v_info = st.session_state.video_info
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="saas-card" style="display:flex; gap:20px; align-items:center;">
-            <img src="{v_info.get('thumbnail', '')}" style="width:150px; border-radius:10px; object-fit:cover;">
-            <div>
-                <div style="font-weight:800; font-size:1.15rem; color:#FFFFFF; margin-bottom:4px;">{v_info.get('title', '')}</div>
-                <div style="color:#94A3B8; font-size:0.88rem;">👤 Canal: <strong style="color:#CBD5E1;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#CBD5E1;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
+    # SE O PROCESSAMENTO ESTIVER CONCLUÍDO: MOSTRA O FEED DE CORTES DA PÁGINA 2
+    else:
+        # Barra de Ações Superior
+        col_nav1, col_nav2 = st.columns([1, 4])
+        with col_nav1:
+            if st.button("⬅️ Configurar Outro Vídeo", use_container_width=True):
+                st.session_state.current_step = 1
+                st.session_state.is_processing = False
+                st.rerun()
+        with col_nav2:
+            st.markdown(f"""
+            <div style="background:#131628; border:1px solid #252A47; padding:8px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:800; color:#A78BFA; font-size:0.95rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Prontos para Edição</span>
+                <span style="font-size:0.8rem; color:#94A3B8;">Formato: <strong>{st.session_state.cfg_video_style}</strong> | Legendas: <strong>{'Ativadas' if st.session_state.cfg_enable_subtitles else 'Desativadas'}</strong></span>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-    # Grid de Cortes Sugeridos (Estilo Feed de Cortes)
-    if st.session_state.cuts:
-        current_video_id = extract_video_id(st.session_state.cfg_url)
-        grid_columns = 3 # 3 colunas padrão
-        
-        for row_idx in range(0, len(st.session_state.cuts), grid_columns):
-            cols = st.columns(grid_columns)
+        # Card de Resumo do Vídeo Original
+        if st.session_state.video_info:
+            v_info = st.session_state.video_info
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="saas-card" style="display:flex; gap:20px; align-items:center;">
+                <img src="{v_info.get('thumbnail', '')}" style="width:150px; border-radius:10px; object-fit:cover;">
+                <div>
+                    <div style="font-weight:800; font-size:1.15rem; color:#FFFFFF; margin-bottom:4px;">{v_info.get('title', '')}</div>
+                    <div style="color:#94A3B8; font-size:0.88rem;">👤 Canal: <strong style="color:#CBD5E1;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#CBD5E1;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Grid de Cortes Sugeridos (Estilo Feed de Cortes)
+        if st.session_state.cuts:
+            current_video_id = extract_video_id(st.session_state.cfg_url)
+            grid_columns = 3 # 3 colunas padrão
             
-            for col_idx in range(grid_columns):
-                cut_idx = row_idx + col_idx
-                if cut_idx < len(st.session_state.cuts):
-                    cut = st.session_state.cuts[cut_idx]
-                    with cols[col_idx]:
-                        # Card Individual do Corte
-                        st.markdown(f"""
-                        <div class="hotpeak-item">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <span class="score-chip">🔥 PICO VIRAL {cut['score']}%</span>
-                                <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
-                            </div>
-                            <div style="font-weight:800; font-size:1.02rem; color:#FFFFFF; line-height:1.35; margin-bottom:8px;">
-                                #{cut_idx+1} {cut['title']}
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
-                        # Player do Vídeo Original no Segundo Exato
-                        if current_video_id:
-                            yt_start = int(cut['start_time'])
-                            st.video(f"https://www.youtube.com/watch?v={current_video_id}", start_time=yt_start)
-                        
-                        # Gancho de Retenção
-                        if cut.get('hook'):
+            for row_idx in range(0, len(st.session_state.cuts), grid_columns):
+                cols = st.columns(grid_columns)
+                
+                for col_idx in range(grid_columns):
+                    cut_idx = row_idx + col_idx
+                    if cut_idx < len(st.session_state.cuts):
+                        cut = st.session_state.cuts[cut_idx]
+                        with cols[col_idx]:
+                            # Card Individual do Corte
                             st.markdown(f"""
-                            <div class="hook-badge-box">
-                                <strong>🎯 Gancho (Hook):</strong> "{cut['hook']}"
+                            <div class="hotpeak-item">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                    <span class="score-chip">🔥 PICO VIRAL {cut['score']}%</span>
+                                    <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
+                                </div>
+                                <div style="font-weight:800; font-size:1.02rem; color:#FFFFFF; line-height:1.35; margin-bottom:8px;">
+                                    #{cut_idx+1} {cut['title']}
+                                </div>
                             </div>
                             """, unsafe_allow_html=True)
                             
-                        if cut.get('reason'):
-                            st.caption(f"💡 {cut['reason']}")
+                            # Player do Vídeo Original no Segundo Exato
+                            if current_video_id:
+                                yt_start = int(cut['start_time'])
+                                st.video(f"https://www.youtube.com/watch?v={current_video_id}", start_time=yt_start)
                             
-                        # Botão para Renderizar o Short 9:16
-                        btn_key = f"generate_{cut_idx}"
-                        if st.button(f"✂️ Gerar Short #{cut_idx+1} (9:16 + Legenda)", key=btn_key, type="primary", use_container_width=True):
-                            with st.spinner(f"Renderizando Short #{cut_idx+1} com Legendas..."):
-                                try:
-                                    # 1. Download
-                                    if not st.session_state.downloaded_video_path or not os.path.exists(st.session_state.downloaded_video_path):
-                                        st.info("📥 Baixando vídeo original em alta qualidade...")
-                                        downloaded_file = download_video(st.session_state.cfg_url, video_id=current_video_id)
-                                        st.session_state.downloaded_video_path = downloaded_file
-                                    
-                                    # 2. Legendas
-                                    sub_path = None
-                                    safe_title = sanitize_filename(cut['title'])[:30]
-                                    if st.session_state.cfg_enable_subtitles and st.session_state.raw_transcript:
-                                        ass_filename = f"output/sub_{cut_idx+1}_{safe_title}.ass"
-                                        sub_path = generate_ass_subtitles(
-                                            transcript_items=st.session_state.raw_transcript,
+                            # Gancho de Retenção
+                            if cut.get('hook'):
+                                st.markdown(f"""
+                                <div class="hook-badge-box">
+                                    <strong>🎯 Gancho (Hook):</strong> "{cut['hook']}"
+                                </div>
+                                """, unsafe_allow_html=True)
+                                
+                            if cut.get('reason'):
+                                st.caption(f"💡 {cut['reason']}")
+                                
+                            # Botão para Renderizar o Short 9:16
+                            btn_key = f"generate_{cut_idx}"
+                            if st.button(f"✂️ Gerar Short #{cut_idx+1} (9:16 + Legenda)", key=btn_key, type="primary", use_container_width=True):
+                                with st.spinner(f"Renderizando Short #{cut_idx+1} com Legendas..."):
+                                    try:
+                                        # 1. Download
+                                        if not st.session_state.downloaded_video_path or not os.path.exists(st.session_state.downloaded_video_path):
+                                            st.info("📥 Baixando vídeo original em alta qualidade...")
+                                            downloaded_file = download_video(st.session_state.cfg_url, video_id=current_video_id)
+                                            st.session_state.downloaded_video_path = downloaded_file
+                                        
+                                        # 2. Legendas
+                                        sub_path = None
+                                        safe_title = sanitize_filename(cut['title'])[:30]
+                                        if st.session_state.cfg_enable_subtitles and st.session_state.raw_transcript:
+                                            ass_filename = f"output/sub_{cut_idx+1}_{safe_title}.ass"
+                                            sub_path = generate_ass_subtitles(
+                                                transcript_items=st.session_state.raw_transcript,
+                                                start_time=cut['start_time'],
+                                                end_time=cut['end_time'],
+                                                ass_path=ass_filename,
+                                                font_size=st.session_state.cfg_sub_fontsize,
+                                                style=st.session_state.cfg_sub_style,
+                                                animation=st.session_state.cfg_sub_anim
+                                            )
+
+                                        # 3. Corte e Formatação 9:16
+                                        output_filename = f"output/short_{cut_idx+1}_{safe_title}.mp4"
+                                        
+                                        short_path = create_short_clip(
+                                            input_path=st.session_state.downloaded_video_path,
                                             start_time=cut['start_time'],
                                             end_time=cut['end_time'],
-                                            ass_path=ass_filename,
-                                            font_size=st.session_state.cfg_sub_fontsize,
-                                            style=st.session_state.cfg_sub_style,
-                                            animation=st.session_state.cfg_sub_anim
+                                            output_path=output_filename,
+                                            mode=st.session_state.cfg_video_style,
+                                            subtitle_ass_path=sub_path
                                         )
+                                        
+                                        st.session_state[f"ready_video_{cut_idx}"] = short_path
+                                        st.success("✅ Short 9:16 pronto para download!")
+                                    except Exception as e:
+                                        st.error(f"Erro ao gerar vídeo: {str(e)}")
 
-                                    # 3. Corte e Formatação 9:16
-                                    output_filename = f"output/short_{cut_idx+1}_{safe_title}.mp4"
-                                    
-                                    short_path = create_short_clip(
-                                        input_path=st.session_state.downloaded_video_path,
-                                        start_time=cut['start_time'],
-                                        end_time=cut['end_time'],
-                                        output_path=output_filename,
-                                        mode=st.session_state.cfg_video_style,
-                                        subtitle_ass_path=sub_path
-                                    )
-                                    
-                                    st.session_state[f"ready_video_{cut_idx}"] = short_path
-                                    st.success("✅ Short 9:16 pronto para download!")
-                                except Exception as e:
-                                    st.error(f"Erro ao gerar vídeo: {str(e)}")
-
-                        # Exibição do vídeo vertical pronto e download
-                        if f"ready_video_{cut_idx}" in st.session_state:
-                            video_file_path = st.session_state[f"ready_video_{cut_idx}"]
-                            if os.path.exists(video_file_path):
-                                st.markdown("##### 📱 Short 9:16 Finalizado:")
-                                st.video(video_file_path)
-                                with open(video_file_path, "rb") as file_data:
-                                    st.download_button(
-                                        label=f"⬇️ Baixar Short #{cut_idx+1} (.mp4)",
-                                        data=file_data,
-                                        file_name=os.path.basename(video_file_path),
-                                        mime="video/mp4",
-                                        key=f"dl_{cut_idx}",
-                                        use_container_width=True
-                                    )
-                    
-                    st.markdown("<br>", unsafe_allow_html=True)
+                            # Exibição do vídeo vertical pronto e download
+                            if f"ready_video_{cut_idx}" in st.session_state:
+                                video_file_path = st.session_state[f"ready_video_{cut_idx}"]
+                                if os.path.exists(video_file_path):
+                                    st.markdown("##### 📱 Short 9:16 Finalizado:")
+                                    st.video(video_file_path)
+                                    with open(video_file_path, "rb") as file_data:
+                                        st.download_button(
+                                            label=f"⬇️ Baixar Short #{cut_idx+1} (.mp4)",
+                                            data=file_data,
+                                            file_name=os.path.basename(video_file_path),
+                                            mime="video/mp4",
+                                            key=f"dl_{cut_idx}",
+                                            use_container_width=True
+                                        )
+                            
+                            st.markdown("<br>", unsafe_allow_html=True)
