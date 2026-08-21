@@ -337,6 +337,18 @@ st.markdown("""
     .anim-fade {
         animation: fadeSoftEffect 1.1s infinite ease-in-out;
     }
+    
+    /* Remove completamente elementos residuais/fantasmas da página anterior */
+    [data-stale="true"] {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
