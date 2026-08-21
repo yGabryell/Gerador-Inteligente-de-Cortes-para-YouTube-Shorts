@@ -250,42 +250,75 @@ st.markdown("""
         margin-top: 25px;
     }
     
-    /* Subtitle Live Preview Box (Proporção Real de Smartphone) */
+    /* Subtitle Live Preview Box (Proporção Exata 9:16 de Smartphone) */
     .sub-phone-container {
         display: flex;
         justify-content: center;
-        margin-top: 14px;
+        margin: 16px 0;
     }
     .sub-phone-mockup {
-        width: 220px;
-        height: 180px;
-        background: linear-gradient(180deg, #1E1B4B 0%, #0F1123 100%);
-        border: 2px solid #3B4268;
-        border-radius: 16px;
+        width: 180px;
+        height: 320px; /* Exato 9:16 (180 * 16 / 9 = 320px) */
+        background: #090B14;
+        border: 3px solid #2F3554;
+        border-radius: 26px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.15);
+    }
+    .phone-screen {
+        width: 100%;
+        height: 100%;
+        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 12px 10px;
-        text-align: center;
-        position: relative;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.5);
+        padding: 8px 6px;
+        background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 50%, #070914 100%);
     }
-    .sub-preview-tag {
-        font-size: 0.68rem;
+    .phone-notch {
+        width: 42px;
+        height: 4px;
+        background: #334155;
+        border-radius: 4px;
+        margin: 0 auto;
+        z-index: 5;
+    }
+    .phone-badge-tag {
+        font-size: 0.62rem;
         font-weight: 800;
         text-transform: uppercase;
         color: #94A3B8;
         letter-spacing: 0.5px;
+        text-align: center;
+        margin-top: 4px;
+        z-index: 5;
+    }
+    .phone-side-icons {
+        position: absolute;
+        right: 6px;
+        bottom: 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 4;
+        font-size: 0.62rem;
+        color: rgba(255, 255, 255, 0.65);
+        text-align: center;
     }
     .sub-preview-content {
-        margin-top: auto;
-        margin-bottom: 22px;
+        position: absolute;
+        bottom: 68px; /* ~22-25% do fundo, exatamente MarginV do ASS */
+        left: 8px;
+        right: 28px;
+        text-align: center;
+        z-index: 5;
     }
     .sub-preview-text {
         font-family: 'Impact', 'Arial Black', sans-serif !important;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        line-height: 1.2;
+        letter-spacing: 0.8px;
+        line-height: 1.15;
         font-weight: 900;
         display: inline-block;
     }
@@ -480,16 +513,28 @@ with col_cfg2:
 
             anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
             
-            # Proporção exata da tela de 220px vs 1080px (fator de escala ~0.20 a 0.22)
-            preview_font_size = max(13, int(sub_fontsize * 0.22))
+            # Proporção exata da tela 180px vs 1080px (fator de escala ~0.165)
+            preview_font_size = max(11, int(sub_fontsize * 0.165))
 
             st.markdown(f"""
             <div class="sub-phone-container">
                 <div class="sub-phone-mockup">
-                    <div class="sub-preview-tag">📱 Simulação Real no Celular (9:16)</div>
-                    <div class="sub-preview-content">
-                        <div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">
-                            OLHA ESSA JOGADA! 🔥
+                    <div class="phone-screen">
+                        <div>
+                            <div class="phone-notch"></div>
+                            <div class="phone-badge-tag">📱 9:16 Shorts Preview</div>
+                        </div>
+                        
+                        <div class="phone-side-icons">
+                            <div>❤️<br><span style="font-size:0.5rem;">42K</span></div>
+                            <div>💬<br><span style="font-size:0.5rem;">1.2K</span></div>
+                            <div>↗️<br><span style="font-size:0.5rem;">Share</span></div>
+                        </div>
+                        
+                        <div class="sub-preview-content">
+                            <div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">
+                                OLHA ESSA JOGADA! 🔥
+                            </div>
                         </div>
                     </div>
                 </div>
