@@ -466,11 +466,12 @@ if st.session_state.current_step == 1:
     )
     st.caption("📁 A IA do GravitiCuts fará um raio-x da transcrição para encontrar os momentos com maior força de atração e retenção.")
 
-    # Card 2: Opções de Configuração em Grid
+    # Card 2: Opções de Configuração na Esquerda e Celular Dedicado na Direita
     st.markdown("<br>", unsafe_allow_html=True)
-    col_cfg1, col_cfg2 = st.columns(2)
+    col_cfg1, col_cfg2 = st.columns([1.15, 0.85], gap="large")
 
     with col_cfg1:
+        # 1. Proporção & Formato
         with st.container():
             st.markdown("""
             <div class="saas-card">
@@ -487,22 +488,8 @@ if st.session_state.current_step == 1:
                 format_func=lambda x: x[1],
                 label_visibility="collapsed"
             )[0]
-            
-        with st.container():
-            st.markdown("""
-            <div class="saas-card">
-                <div class="saas-card-header">⏱️ Duração dos Cortes (IA Automática)</div>
-            </div>
-            """, unsafe_allow_html=True)
-            col_d1, col_d2, col_d3 = st.columns(3)
-            with col_d1:
-                num_cuts = st.number_input("Cortes", min_value=1, max_value=12, value=6)
-            with col_d2:
-                min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=30)
-            with col_d3:
-                max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=60)
 
-    with col_cfg2:
+        # 2. Legendas Automáticas (Configurações)
         with st.container():
             st.markdown("""
             <div class="saas-card">
@@ -517,8 +504,8 @@ if st.session_state.current_step == 1:
                     sub_style = st.selectbox(
                         "Estilo da Legenda",
                         options=[
-                            ("yellow_black", "🟡 Amarelo Gamer com Borda Preta (Mais Viral)"),
-                            ("white_yellow", "⚪ Branco com Borda Preta (Hormozi)"),
+                            ("yellow_black", "🟡 Amarelo Gamer (Borda Preta)"),
+                            ("white_yellow", "⚪ Branco Hormozi (Borda Preta)"),
                             ("neon_green", "🟢 Ciano / Neon")
                         ],
                         format_func=lambda x: x[1]
@@ -527,15 +514,59 @@ if st.session_state.current_step == 1:
                     sub_anim = st.selectbox(
                         "Animação",
                         options=[
-                            ("pop", "💥 Pop / Bounce (Zoom Dinâmico)"),
+                            ("pop", "💥 Pop / Bounce (Dinâmico)"),
                             ("fade", "✨ Fade Suave"),
                             ("none", "Estática")
                         ],
                         format_func=lambda x: x[1]
                     )[0]
                 sub_fontsize = st.slider("Tamanho da Legenda no Vídeo (px)", min_value=50, max_value=120, value=78, step=2, help="Padrão recomendado para Shorts: 75 a 85px")
-                
-                # Prévia visual dinâmica com proporção realista
+            else:
+                sub_style = "yellow_black"
+                sub_anim = "pop"
+                sub_fontsize = 78
+            
+        # 3. Duração dos Cortes
+        with st.container():
+            st.markdown("""
+            <div class="saas-card">
+                <div class="saas-card-header">⏱️ Duração dos Cortes (IA Automática)</div>
+            </div>
+            """, unsafe_allow_html=True)
+            col_d1, col_d2, col_d3 = st.columns(3)
+            with col_d1:
+                num_cuts = st.number_input("Cortes", min_value=1, max_value=12, value=6)
+            with col_d2:
+                min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=30)
+            with col_d3:
+                max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=60)
+
+        # 4. Instrução Personalizada
+        with st.container():
+            st.markdown("""
+            <div class="saas-card">
+                <div class="saas-card-header">🎯 Instrução Personalizada para a IA (Opcional)</div>
+            </div>
+            """, unsafe_allow_html=True)
+            custom_prompt = st.text_input(
+                "Prompt Personalizado",
+                placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
+                label_visibility="collapsed"
+            )
+            st.caption("Sugestões: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
+
+    with col_cfg2:
+        # Coluna Exclusiva para o Smartphone Preview 9:16
+        with st.container():
+            st.markdown("""
+            <div class="saas-card" style="text-align:center; padding:18px 12px;">
+                <div class="saas-card-header" style="justify-content:center;">
+                    <span>📱</span> Prévia em Tempo Real (9:16)
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if enable_subtitles:
                 if sub_style == "yellow_black":
                     color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
                 elif sub_style == "white_yellow":
@@ -544,8 +575,6 @@ if st.session_state.current_step == 1:
                     color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
 
                 anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
-                
-                # Proporção exata da tela 180px vs 1080px (fator de escala ~0.165)
                 preview_font_size = max(11, int(sub_fontsize * 0.165))
 
                 phone_html = (
@@ -571,23 +600,13 @@ if st.session_state.current_step == 1:
                     f'</div>'
                 )
                 st.markdown(phone_html, unsafe_allow_html=True)
+                st.caption("<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Acompanhe ao vivo as cores, animação e tamanho exato para os seus Shorts.</div>", unsafe_allow_html=True)
             else:
-                sub_style = "yellow_black"
-                sub_anim = "pop"
-                sub_fontsize = 78
-
-        with st.container():
-            st.markdown("""
-            <div class="saas-card">
-                <div class="saas-card-header">🎯 Instrução Personalizada para a IA (Opcional)</div>
-            </div>
-            """, unsafe_allow_html=True)
-            custom_prompt = st.text_input(
-                "Prompt Personalizado",
-                placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
-                label_visibility="collapsed"
-            )
-            st.caption("Sugestões rápidas: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
+                st.markdown("""
+                <div style="background:#131526; border:1px dashed #2A2F4C; border-radius:16px; padding:40px 20px; text-align:center; color:#94A3B8; margin-top:16px;">
+                    💬 Ative as <strong>Legendas Automáticas</strong> ao lado para visualizar a prévia ao vivo no celular.
+                </div>
+                """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
