@@ -11,18 +11,41 @@ def format_ass_time(seconds: float) -> str:
         centisecs = 99
     return f"{hrs}:{mins:02d}:{secs:02d}.{centisecs:02d}"
 
+def get_cut_transcript_items(transcript_items: List[Dict[str, Any]], start_time: float, end_time: float) -> List[Dict[str, Any]]:
+    """Extrai e limpa os itens de transcrição dentro do intervalo do corte."""
+    items = []
+    for it in transcript_items:
+        s = float(it.get('start', 0.0))
+        d = float(it.get('duration', 0.0))
+        e = s + d
+        if e <= start_time or s >= end_time:
+            continue
+        text = str(it.get('text', '')).strip().replace('\n', ' ')
+        if text:
+            items.append({
+                'start': max(start_time, s),
+                'end': min(end_time, e),
+                'text': text
+            })
+    items.sort(key=lambda x: x['start'])
+    return items
+
 def generate_ass_subtitles(
     transcript_items: List[Dict[str, Any]], 
     start_time: float, 
     end_time: float, 
     ass_path: str,
+    custom_text: Optional[str] = None,
     font_name: str = "Arial Black",
-    font_size: int = 44,
+    font_size: int = 78,
     style: str = "yellow_black", # 'yellow_black', 'white_yellow', 'neon_green'
-    animation: str = "pop" # 'pop', 'fade', 'none'
+    animation: str = "pop", # 'pop', 'fade', 'none'
+    chunk_size: int = 3
 ) -> str:
     """
     Gera arquivo de legendas .ass estilizado para YouTube Shorts e TikTok.
+    - Exibe rigorosamente UMA frase/bloco por vez na tela (sem sobreposição/empilhamento).
+    - Permite texto customizado/corrigido pelo usuário.
     - Letras em Amarelo (#FFFF00) com borda preta grossa e sombra.
     - Transição Pop-in dinâmica a cada 2 a 4 palavras.
     - Posicionamento otimizado para não cobrir a interface do YouTube Shorts.
@@ -30,9 +53,6 @@ def generate_ass_subtitles(
     os.makedirs(os.path.dirname(os.path.abspath(ass_path)), exist_ok=True)
     
     # Cores no formato ASS (AABBGGRR):
-    # Amarelo: &H0000FFFF (BGR: 00 FF FF)
-    # Branco: &H00FFFFFF
-    # Verde Neon: &H0000FF00
     if style == "yellow_black":
         primary_color = "&H0000FFFF" # Amarelo vibrante
         outline_color = "&H00000000" # Preto
@@ -44,7 +64,7 @@ def generate_ass_subtitles(
         outline_color = "&H00000000"
 
     header = f"""[Script Info]
-Title: Shorts Dynamic Subtitles
+Title: GravitiCuts Dynamic Subtitles
 ScriptType: v4.00+
 WrapStyle: 0
 ScaledBorderAndShadow: yes
@@ -60,56 +80,89 @@ Style: ShortsStyle,{font_name},{font_size},{primary_color},&H00FFFFFF,{outline_c
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
     
-    dialogues = []
+    # 1. Filtra itens do intervalo ou processa texto customizado editado pelo usuário
+    valid_items = get_cut_transcript_items(transcript_items, start_time, end_time)
     
-    for item in transcript_items:
-        item_start = float(item.get('start', 0.0))
-        item_duration = float(item.get('duration', 0.0))
-        item_end = item_start + item_duration
-        
-        # Ignora blocos fora do intervalo do corte
-        if item_end <= start_time or item_start >= end_time:
-            continue
-            
-        rel_start = max(0.0, item_start - start_time)
-        rel_end = max(rel_start + 0.2, min(end_time - start_time, item_end - start_time))
-        
-        raw_text = str(item.get('text', '')).strip().upper()
-        if not raw_text:
-            continue
-            
-        # Divide frases em blocos dinâmicos de 2 a 4 palavras (estilo viral de leitura rápida)
-        words = raw_text.split()
-        if len(words) <= 4:
-            chunks = [raw_text]
-            chunk_duration = rel_end - rel_start
-            time_per_chunk = chunk_duration
-        else:
-            chunk_size = 3
-            chunks = [' '.join(words[i:i+chunk_size]) for i in range(0, len(words), chunk_size)]
-            time_per_chunk = (rel_end - rel_start) / len(chunks)
-            
-        cur_start = rel_start
-        for chunk in chunks:
-            cur_end = min(end_time - start_time, cur_start + time_per_chunk)
-            if cur_end <= cur_start:
-                cur_end = cur_start + 0.3
-                
-            start_str = format_ass_time(cur_start)
-            end_str = format_ass_time(cur_end)
-            
-            # Animações de transição
-            if animation == "pop":
-                # Efeito Pop / Bounce: Zoom rápido 115% -> 100%
-                anim_tag = r"{\t(0,80,\fscx118\fscy118)\t(80,160,\fscx100\fscy100)}"
-            elif animation == "fade":
-                anim_tag = r"{\fad(80,80)}"
+    if custom_text and custom_text.strip():
+        lines = [line.strip() for line in custom_text.splitlines() if line.strip()]
+        if lines:
+            if len(lines) == len(valid_items):
+                for idx, line in enumerate(lines):
+                    valid_items[idx]['text'] = line
             else:
-                anim_tag = ""
-                
-            dialogues.append(f"Dialogue: 0,{start_str},{end_str},ShortsStyle,,0,0,0,,{anim_tag}{chunk}")
-            cur_start = cur_end
+                total_duration = max(1.0, end_time - start_time)
+                line_duration = total_duration / len(lines)
+                valid_items = []
+                for idx, line in enumerate(lines):
+                    l_start = start_time + idx * line_duration
+                    l_end = min(end_time, l_start + line_duration)
+                    valid_items.append({
+                        'start': l_start,
+                        'end': l_end,
+                        'text': line
+                    })
+
+    if not valid_items:
+        with open(ass_path, "w", encoding="utf-8") as f:
+            f.write(header)
+        return ass_path
+
+    # 2. Divide em blocos dinâmicos e ajusta timings estritamente sequenciais
+    raw_subtitles = []
+    for i, item in enumerate(valid_items):
+        item_start = item['start']
+        # Limita o fim da frase atual para não invadir o início da próxima
+        if i + 1 < len(valid_items):
+            next_start = valid_items[i+1]['start']
+            item_end = min(item['end'], max(item_start + 0.3, next_start))
+        else:
+            item_end = item['end']
+
+        words = item['text'].split()
+        if not words:
+            continue
             
+        if len(words) <= 4:
+            chunks = [item['text']]
+        else:
+            chunks = [' '.join(words[j:j+chunk_size]) for j in range(0, len(words), chunk_size)]
+            
+        total_duration = max(0.4, item_end - item_start)
+        chunk_duration = total_duration / len(chunks)
+        
+        c_start = item_start
+        for c_text in chunks:
+            c_end = min(end_time, c_start + chunk_duration)
+            raw_subtitles.append({
+                'rel_start': max(0.0, c_start - start_time),
+                'rel_end': max(0.0, min(end_time - start_time, c_end - start_time)),
+                'text': c_text.upper()
+            })
+            c_start = c_end
+
+    # 3. Garante 100% que nenhuma legenda sobreponha a seguinte (evita empilhamento)
+    for k in range(len(raw_subtitles) - 1):
+        if raw_subtitles[k]['rel_end'] > raw_subtitles[k+1]['rel_start']:
+            raw_subtitles[k]['rel_end'] = raw_subtitles[k+1]['rel_start']
+
+    dialogues = []
+    for sub in raw_subtitles:
+        if sub['rel_end'] <= sub['rel_start']:
+            continue
+            
+        start_str = format_ass_time(sub['rel_start'])
+        end_str = format_ass_time(sub['rel_end'])
+        
+        # Animações de transição
+        if animation == "pop":
+            anim_tag = r"{\t(0,80,\fscx118\fscy118)\t(80,160,\fscx100\fscy100)}"
+        elif animation == "fade":
+            anim_tag = r"{\fad(80,80)}"
+        else:
+            anim_tag = ""
+            
+        dialogues.append(f"Dialogue: 0,{start_str},{end_str},ShortsStyle,,0,0,0,,{anim_tag}{sub['text']}")
+        
     with open(ass_path, "w", encoding="utf-8") as f:
         f.write(header + "\n".join(dialogues) + "\n")
         

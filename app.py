@@ -6,7 +6,7 @@ from transcriber import extract_video_id, get_transcript, format_timestamp
 from ai_analyzer import find_best_shorts
 from video_downloader import get_video_info, download_video, sanitize_filename
 from video_editor import create_short_clip
-from subtitle_generator import generate_ass_subtitles
+from subtitle_generator import generate_ass_subtitles, get_cut_transcript_items
 
 # Carrega variáveis de ambiente
 load_dotenv()
@@ -808,10 +808,36 @@ elif st.session_state.current_step == 2:
                             if cut.get('reason'):
                                 st.caption(f"💡 {cut['reason']}")
                                 
-                            # Botão para Renderizar o Short 9:16
-                            btn_key = f"generate_{cut_idx}"
-                            if st.button(f"✂️ Gerar Short #{cut_idx+1} (9:16 + Legenda)", key=btn_key, type="primary", use_container_width=True):
-                                with st.spinner(f"Renderizando Short #{cut_idx+1} com Legendas..."):
+                            # 📝 Editor de Legendas do Corte
+                            cut_items = get_cut_transcript_items(st.session_state.raw_transcript, cut['start_time'], cut['end_time'])
+                            default_lines = "\n".join([it['text'] for it in cut_items])
+                            
+                            edited_key = f"edited_sub_{cut_idx}"
+                            if edited_key not in st.session_state or not st.session_state[edited_key]:
+                                st.session_state[edited_key] = default_lines
+                                
+                            with st.expander("📝 Revisar / Editar Texto da Legenda", expanded=False):
+                                st.caption("Corrija palavras erradas ou gírias antes de exportar:")
+                                user_text = st.text_area(
+                                    f"Legenda #{cut_idx+1}",
+                                    value=st.session_state[edited_key],
+                                    height=90,
+                                    key=f"ta_sub_{cut_idx}",
+                                    label_visibility="collapsed"
+                                )
+                                st.session_state[edited_key] = user_text
+
+                            # Botões para Renderizar o Short 9:16 (Com Legenda ou Sem Legenda)
+                            col_b1, col_b2 = st.columns(2)
+                            with col_b1:
+                                btn_with_sub = st.button("✂️ Com Legenda", key=f"btn_sub_{cut_idx}", type="primary", use_container_width=True)
+                            with col_b2:
+                                btn_no_sub = st.button("🎬 Sem Legenda", key=f"btn_nosub_{cut_idx}", use_container_width=True)
+                                
+                            if btn_with_sub or btn_no_sub:
+                                is_subbed = bool(btn_with_sub)
+                                label_status = "com Legendas" if is_subbed else "sem Legendas"
+                                with st.spinner(f"Renderizando Short #{cut_idx+1} {label_status}..."):
                                     try:
                                         # 1. Download
                                         if not st.session_state.downloaded_video_path or not os.path.exists(st.session_state.downloaded_video_path):
@@ -819,23 +845,25 @@ elif st.session_state.current_step == 2:
                                             downloaded_file = download_video(st.session_state.cfg_url, video_id=current_video_id)
                                             st.session_state.downloaded_video_path = downloaded_file
                                         
-                                        # 2. Legendas
+                                        # 2. Legendas (se solicitado)
                                         sub_path = None
                                         safe_title = sanitize_filename(cut['title'])[:30]
-                                        if st.session_state.cfg_enable_subtitles and st.session_state.raw_transcript:
+                                        if is_subbed:
                                             ass_filename = f"output/sub_{cut_idx+1}_{safe_title}.ass"
                                             sub_path = generate_ass_subtitles(
                                                 transcript_items=st.session_state.raw_transcript,
                                                 start_time=cut['start_time'],
                                                 end_time=cut['end_time'],
                                                 ass_path=ass_filename,
+                                                custom_text=st.session_state.get(edited_key),
                                                 font_size=st.session_state.cfg_sub_fontsize,
                                                 style=st.session_state.cfg_sub_style,
                                                 animation=st.session_state.cfg_sub_anim
                                             )
 
                                         # 3. Corte e Formatação 9:16
-                                        output_filename = f"output/short_{cut_idx+1}_{safe_title}.mp4"
+                                        output_suffix = "sub" if is_subbed else "clean"
+                                        output_filename = f"output/short_{cut_idx+1}_{output_suffix}_{safe_title}.mp4"
                                         
                                         short_path = create_short_clip(
                                             input_path=st.session_state.downloaded_video_path,
@@ -847,7 +875,7 @@ elif st.session_state.current_step == 2:
                                         )
                                         
                                         st.session_state[f"ready_video_{cut_idx}"] = short_path
-                                        st.success("✅ Short 9:16 pronto para download!")
+                                        st.success(f"✅ Short 9:16 {label_status} pronto para download!")
                                     except Exception as e:
                                         st.error(f"Erro ao gerar vídeo: {str(e)}")
 
