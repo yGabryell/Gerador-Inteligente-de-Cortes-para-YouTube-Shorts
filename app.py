@@ -516,30 +516,29 @@ with col_cfg2:
             # Proporção exata da tela 180px vs 1080px (fator de escala ~0.165)
             preview_font_size = max(11, int(sub_fontsize * 0.165))
 
-            st.markdown(f"""
-            <div class="sub-phone-container">
-                <div class="sub-phone-mockup">
-                    <div class="phone-screen">
-                        <div>
-                            <div class="phone-notch"></div>
-                            <div class="phone-badge-tag">📱 9:16 Shorts Preview</div>
-                        </div>
-                        
-                        <div class="phone-side-icons">
-                            <div>❤️<br><span style="font-size:0.5rem;">42K</span></div>
-                            <div>💬<br><span style="font-size:0.5rem;">1.2K</span></div>
-                            <div>↗️<br><span style="font-size:0.5rem;">Share</span></div>
-                        </div>
-                        
-                        <div class="sub-preview-content">
-                            <div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">
-                                OLHA ESSA JOGADA! 🔥
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            phone_html = (
+                f'<div class="sub-phone-container">'
+                f'<div class="sub-phone-mockup">'
+                f'<div class="phone-screen">'
+                f'<div>'
+                f'<div class="phone-notch"></div>'
+                f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
+                f'</div>'
+                f'<div class="phone-side-icons">'
+                f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
+                f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
+                f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                f'</div>'
+                f'<div class="sub-preview-content">'
+                f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
+                f'OLHA ESSA JOGADA! 🔥'
+                f'</div>'
+                f'</div>'
+                f'</div>'
+                f'</div>'
+                f'</div>'
+            )
+            st.markdown(phone_html, unsafe_allow_html=True)
         else:
             sub_style = "yellow_black"
             sub_anim = "pop"
