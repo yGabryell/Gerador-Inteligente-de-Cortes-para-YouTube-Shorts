@@ -34,9 +34,15 @@ st.markdown("""
         color: #F1F5F9;
     }
     
-    /* Remove padding excessivo do Streamlit */
+    /* Header do Streamlit */
+    header[data-testid="stHeader"] {
+        background: rgba(9, 10, 16, 0.8) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    /* Espaçamento do topo para deixar o título 100% visível e destacado */
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 5.5rem !important;
         padding-bottom: 3rem !important;
         max-width: 1400px;
     }
