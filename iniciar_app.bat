@@ -1,4 +1,6 @@
 @echo off
-echo Iniciando ClipperAI - Gerador de Shorts com IA...
+echo ========================================================
+echo Iniciando GravitiCuts AI - Studio de Cortes Inteligentes
+echo ========================================================
 python -m streamlit run app.py
 pause

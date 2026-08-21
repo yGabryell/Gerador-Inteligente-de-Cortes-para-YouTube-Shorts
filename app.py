@@ -13,13 +13,13 @@ load_dotenv()
 
 # Configuração da página Streamlit
 st.set_page_config(
-    page_title="ViralShorts AI | Painel de Cortes",
+    page_title="GravitiCuts AI | Studio de Cortes Inteligentes",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS Idêntica às Imagens do ViralShorts AI / Real Oficial
+# Estilização CSS Idêntica às Imagens do Dashboard SaaS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
@@ -216,17 +216,6 @@ st.markdown("""
         transform: translateY(-1px) !important;
     }
     
-    /* Preset de legendas */
-    .sub-preset {
-        background: #171A2B;
-        border: 1px solid #282C48;
-        border-radius: 10px;
-        padding: 10px;
-        text-align: center;
-        font-weight: 700;
-        font-size: 0.82rem;
-    }
-    
     /* Sidebar Navigation Links */
     .nav-item {
         display: flex;
@@ -257,12 +246,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Barra Lateral de Navegação (Estilo SaaS Imagens 2, 3, 4)
+# Barra Lateral de Navegação
 with st.sidebar:
     st.markdown("""
     <div style="display:flex; align-items:center; gap:10px; margin-bottom:25px;">
         <div class="brand-icon">⚡</div>
-        <div style="font-size:1.2rem; font-weight:900; color:#FFFFFF;">ViralShorts AI</div>
+        <div style="font-size:1.2rem; font-weight:900; color:#FFFFFF;">GravitiCuts AI</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -287,12 +276,12 @@ with st.sidebar:
     st.markdown("""
     <div class="plan-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-weight:800; font-size:0.85rem; color:#FFFFFF;">🎁 Plano Grátis</span>
-            <span style="color:#10B981; font-weight:700; font-size:0.75rem;">● Ilimitado</span>
+            <span style="font-weight:800; font-size:0.85rem; color:#FFFFFF;">🎁 Plano Ilimitado</span>
+            <span style="color:#10B981; font-weight:700; font-size:0.75rem;">● Ativo</span>
         </div>
         <div style="color:#94A3B8; font-size:0.78rem; margin-bottom:10px;">Motor: Gemini 3.6 Flash IA</div>
         <div style="background:#10B981; color:#042F2E; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.72rem; text-align:center;">
-            ⚡ IA PRONTA PARA CORTAR
+            ⚡ GRAVITICUTS PRONTO
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -300,13 +289,13 @@ with st.sidebar:
 # Top Bar (Header)
 st.markdown("""
 <div class="top-nav">
-    <div style="font-size:1.4rem; font-weight:900; color:#FFFFFF;">Criar Novo Projeto</div>
+    <div style="font-size:1.4rem; font-weight:900; color:#FFFFFF;">GravitiCuts AI | Criar Novo Projeto</div>
     <div class="user-pill">
         <span class="credit-badge">💎 Créditos Ilimitados</span>
         <span class="free-badge">Grátis</span>
         <div style="display:flex; align-items:center; gap:8px; background:#141729; padding:4px 12px; border-radius:20px; border:1px solid #232742;">
             <span style="font-size:0.85rem;">🇧🇷 PT-BR</span>
-            <span style="font-weight:700; font-size:0.85rem; color:#E2E8F0;">👤 Criador</span>
+            <span style="font-weight:700; font-size:0.85rem; color:#E2E8F0;">👤 Gabriel Alves</span>
         </div>
     </div>
 </div>
@@ -335,11 +324,11 @@ if "raw_transcript" not in st.session_state:
 if "downloaded_video_path" not in st.session_state:
     st.session_state.downloaded_video_path = None
 
-# Card 1: Input da URL do Vídeo (Estilo Imagem 3)
+# Card 1: Input da URL do Vídeo
 st.markdown("""
 <div class="saas-card">
     <div class="saas-card-header">
-        <span>🔗</span> Cole o link do YouTube
+        <span>🔗</span> Cole o link do YouTube (Vídeo, Live ou Podcast)
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -349,9 +338,9 @@ url_input = st.text_input(
     placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...",
     label_visibility="collapsed"
 )
-st.caption("📁 Compatível com vídeos longos, lives gravadas e podcasts do YouTube")
+st.caption("📁 A IA do GravitiCuts fará um raio-x da transcrição para encontrar os momentos com maior força de atração e retenção.")
 
-# Card 2: Opções de Configuração em Grid (Estilo Imagem 4)
+# Card 2: Opções de Configuração em Grid
 st.markdown("<br>", unsafe_allow_html=True)
 col_cfg1, col_cfg2 = st.columns(2)
 
@@ -402,7 +391,7 @@ with col_cfg2:
                 sub_style = st.selectbox(
                     "Estilo da Legenda",
                     options=[
-                        ("yellow_black", "🟡 Amarelo com Borda Preta (Mais Viral)"),
+                        ("yellow_black", "🟡 Amarelo Gamer com Borda Preta (Mais Viral)"),
                         ("white_yellow", "⚪ Branco com Borda Preta (Hormozi)"),
                         ("neon_green", "🟢 Ciano / Neon")
                     ],
@@ -432,17 +421,17 @@ with col_cfg2:
         """, unsafe_allow_html=True)
         custom_prompt = st.text_input(
             "Prompt Personalizado",
-            placeholder="Ex: Quero cortes com mais explicações claras, insights fortes e humor...",
+            placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
             label_visibility="collapsed"
         )
-        st.caption("Sugestões rápidas: Informativos • Engraçados • Polêmicos • Insights • Melhores Momentos")
+        st.caption("Sugestões rápidas: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Botão Principal de Ação (Estilo Imagem 3 e 4)
+# Botão Principal de Ação
 col_act1, col_act2, col_act3 = st.columns([1, 2, 1])
 with col_act2:
-    analyze_btn = st.button("⚡ Gerar Cortes com Inteligência Artificial", type="primary", use_container_width=True)
+    analyze_btn = st.button("⚡ Gerar Cortes com GravitiCuts IA", type="primary", use_container_width=True)
 
 # Processamento da Análise
 if analyze_btn:
@@ -471,7 +460,7 @@ if analyze_btn:
                     st.error(f"❌ {str(e)}")
                     st.stop()
 
-            with st.spinner("🧠 3/3 - IA analisando momentos de retenção, ganchos e HotPeaks..."):
+            with st.spinner("🧠 3/3 - GravitiCuts IA calculando HotPeaks de retenção e ganchos..."):
                 try:
                     title_context = f"{video_info.get('title', '')}. Foco: {custom_prompt}" if custom_prompt else video_info.get("title", "")
                     cuts = find_best_shorts(
@@ -483,7 +472,7 @@ if analyze_btn:
                         api_key=api_key_input
                     )
                     st.session_state.cuts = cuts
-                    st.success(f"🔥 {len(cuts)} cortes virais identificados com sucesso!")
+                    st.success(f"🔥 {len(cuts)} cortes virais identificados com sucesso pelo GravitiCuts!")
                 except Exception as e:
                     st.error(f"❌ Erro na análise com IA: {str(e)}")
                     st.stop()

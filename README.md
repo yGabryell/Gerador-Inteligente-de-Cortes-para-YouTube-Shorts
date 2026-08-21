@@ -1,16 +1,18 @@
-# ⚡ ViralShorts AI - Gerador Automático de Cortes para YouTube Shorts
+# ⚡ GravitiCuts AI - Gerador Inteligente de Cortes para YouTube Shorts
 
-Plataforma Web open-source para transformar vídeos longos, podcasts e lives do YouTube em **Shorts / TikToks / Reels no formato 9:16**, com análise de viralidade por **Inteligência Artificial (Google Gemini)** e **legendas dinâmicas animadas**.
+Plataforma Web open-source para transformar vídeos longos, podcasts e lives do YouTube em **Shorts / TikToks / Reels no formato vertical 9:16**, com análise de retenção e viralidade por **Inteligência Artificial (Google Gemini)** e **legendas dinâmicas animadas**.
+
+> Criado por **Gabriel Alves** (*@gravitiGames* / *Raio-X dos Dados*) 🚀
 
 ---
 
 ## 🌟 Funcionalidades
 
 - 📥 **Download & Extração Automática:** Obtém metadados e legendas com timestamps em segundos via `youtube-transcript-api` e `yt-dlp`.
-- 🧠 **Análise com IA (Gemini 3.6 / Flash):** Identifica os momentos com maior potencial de retenção (*HotPeaks*), ganchos iniciais (*hooks*) e histórias completas.
+- 🧠 **GravitiCuts IA Engine:** Motor que faz um raio-x na transcrição e identifica momentos de alta atração e retenção (*HotPeaks*), ganchos iniciais (*hooks*) e histórias completas.
 - 📱 **Enquadramento 9:16 Vertical:** Converte vídeos 16:9 em formato vertical com fundo desfocado (*blurred backdrop*) ou corte centralizado.
-- 💬 **Legendas Animadas (TikTok Style):** Queima legendas em amarelo vibrante com borda preta espessa e animação *Pop/Bounce* para retenção máxima.
-- 🎨 **Interface SaaS Moderna:** Dashboard inspirado no *Real Oficial* e *ViralShorts AI*, com feed de prévia instantânea e download em `.mp4`.
+- 💬 **Legendas Animadas (TikTok / Shorts Style):** Queima legendas em amarelo vibrante com borda preta espessa e animação *Pop/Bounce* para retenção máxima.
+- 🎨 **Interface SaaS Moderna:** Dashboard escuro minimalista inspirado em ferramentas profissionais como *Real Oficial*, com feed de prévia instantânea e download em `.mp4`.
 
 ---
 
@@ -18,8 +20,8 @@ Plataforma Web open-source para transformar vídeos longos, podcasts e lives do 
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
-cd lucid-meitner
+git clone https://github.com/yGabryell/cortes-ia.git
+cd cortes-ia
 ```
 
 ### 2. Instalar dependências
@@ -45,7 +47,7 @@ Ou no Windows, dê dois cliques em `iniciar_app.bat`.
 ## 🛠️ Tecnologias Utilizadas
 
 - **Interface:** [Streamlit](https://streamlit.io/)
-- **IA / LLM:** [Google GenAI SDK (Gemini)](https://ai.google.dev/)
+- **IA / LLM:** [Google GenAI SDK (Gemini 3.6 Flash)](https://ai.google.dev/)
 - **Download:** [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - **Speech-to-Text / Legendas:** [youtube-transcript-api](https://github.com/jdepoix/youtube-transcript-api)
 - **Processamento de Vídeo:** [imageio-ffmpeg / FFmpeg](https://github.com/imageio/imageio-ffmpeg)
