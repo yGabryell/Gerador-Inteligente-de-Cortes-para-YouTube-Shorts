@@ -615,7 +615,7 @@ if st.session_state.current_step == 1:
     with col_act2:
         analyze_btn = st.button("⚡ Gerar Cortes com GravitiCuts IA", type="primary", use_container_width=True)
 
-    # Processamento da Análise (Etapa 1 -> Etapa 2)
+    # Ação do Botão Principal (Muda IMEDIATAMENTE para a Página 2)
     if analyze_btn:
         if not url_input.strip():
             st.warning("⚠️ Por favor, insira o link do vídeo do YouTube.")
@@ -624,59 +624,83 @@ if st.session_state.current_step == 1:
             if not video_id:
                 st.error("❌ Não foi possível identificar o vídeo. Verifique a URL.")
             else:
-                # Salva configurações no session_state
+                # Salva todas as opções no session_state
                 st.session_state.cfg_url = url_input
+                st.session_state.cfg_video_id = video_id
                 st.session_state.cfg_video_style = video_style
                 st.session_state.cfg_enable_subtitles = enable_subtitles
                 st.session_state.cfg_sub_style = sub_style
                 st.session_state.cfg_sub_anim = sub_anim
                 st.session_state.cfg_sub_fontsize = sub_fontsize
-
-                with st.spinner("📥 1/3 - Coletando metadados do vídeo..."):
-                    try:
-                        video_info = get_video_info(url_input)
-                        st.session_state.video_info = video_info
-                    except Exception as e:
-                        st.error(f"Erro ao obter metadados: {e}")
-                        video_info = {"title": "Vídeo do YouTube", "duration": 0, "thumbnail": "", "channel": ""}
-                        st.session_state.video_info = video_info
-
-                with st.spinner("📝 2/3 - Extraindo transcrição inteligente com timestamps..."):
-                    try:
-                        raw_transcript, formatted_transcript = get_transcript(video_id)
-                        st.session_state.raw_transcript = raw_transcript
-                        st.session_state.formatted_transcript = formatted_transcript
-                    except Exception as e:
-                        st.error(f"❌ {str(e)}")
-                        st.stop()
-
-                with st.spinner("🧠 3/3 - GravitiCuts IA calculando HotPeaks de retenção e ganchos..."):
-                    try:
-                        title_context = f"{video_info.get('title', '')}. Foco: {custom_prompt}" if custom_prompt else video_info.get("title", "")
-                        cuts = find_best_shorts(
-                            formatted_transcript=st.session_state.formatted_transcript,
-                            video_title=title_context,
-                            min_duration=min_sec,
-                            max_duration=max_sec,
-                            num_cuts=num_cuts,
-                            api_key=api_key_input
-                        )
-                        st.session_state.cuts = cuts
-                        st.session_state.current_step = 2
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"❌ Erro na análise com IA: {str(e)}")
-                        st.stop()
+                st.session_state.cfg_num_cuts = num_cuts
+                st.session_state.cfg_min_sec = min_sec
+                st.session_state.cfg_max_sec = max_sec
+                st.session_state.cfg_custom_prompt = custom_prompt
+                
+                # Ativa processamento e transita IMEDIATAMENTE para a Etapa 2
+                st.session_state.is_processing = True
+                st.session_state.cuts = []
+                st.session_state.current_step = 2
+                st.rerun()
 
 # ==============================================================================
 # ETAPA 2: PROCESSAR E EXPORTAR (PÁGINA 2)
 # ==============================================================================
 elif st.session_state.current_step == 2:
+    # Executa o processamento dentro da Página 2
+    if st.session_state.get("is_processing", False):
+        st.markdown("""
+        <div class="saas-card" style="text-align:center; padding:35px 20px; border:1px solid #7C3AED; box-shadow:0 0 30px rgba(124,58,237,0.25);">
+            <div style="font-size:2.8rem; margin-bottom:12px;">🧠⚡</div>
+            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:6px;">GravitiCuts AI Analisando seu Vídeo</div>
+            <div style="color:#A78BFA; font-size:0.95rem;">Minerando a transcrição e calculando a taxa de retenção dos melhores momentos...</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        with st.spinner("📥 1/3 - Coletando metadados do vídeo..."):
+            try:
+                video_info = get_video_info(st.session_state.cfg_url)
+                st.session_state.video_info = video_info
+            except Exception as e:
+                st.error(f"Erro ao obter metadados: {e}")
+                video_info = {"title": "Vídeo do YouTube", "duration": 0, "thumbnail": "", "channel": ""}
+                st.session_state.video_info = video_info
+
+        with st.spinner("📝 2/3 - Extraindo transcrição inteligente com timestamps..."):
+            try:
+                raw_transcript, formatted_transcript = get_transcript(st.session_state.cfg_video_id)
+                st.session_state.raw_transcript = raw_transcript
+                st.session_state.formatted_transcript = formatted_transcript
+            except Exception as e:
+                st.error(f"❌ {str(e)}")
+                st.session_state.is_processing = False
+                st.stop()
+
+        with st.spinner("🧠 3/3 - GravitiCuts IA calculando HotPeaks de retenção e ganchos..."):
+            try:
+                title_context = f"{video_info.get('title', '')}. Foco: {st.session_state.cfg_custom_prompt}" if st.session_state.cfg_custom_prompt else video_info.get("title", "")
+                cuts = find_best_shorts(
+                    formatted_transcript=st.session_state.formatted_transcript,
+                    video_title=title_context,
+                    min_duration=st.session_state.cfg_min_sec,
+                    max_duration=st.session_state.cfg_max_sec,
+                    num_cuts=st.session_state.cfg_num_cuts,
+                    api_key=api_key_input
+                )
+                st.session_state.cuts = cuts
+                st.session_state.is_processing = False
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Erro na análise com IA: {str(e)}")
+                st.session_state.is_processing = False
+                st.stop()
+
     # Barra de Ações Superior
     col_nav1, col_nav2 = st.columns([1, 4])
     with col_nav1:
         if st.button("⬅️ Configurar Outro Vídeo", use_container_width=True):
             st.session_state.current_step = 1
+            st.session_state.is_processing = False
             st.rerun()
     with col_nav2:
         st.markdown(f"""
