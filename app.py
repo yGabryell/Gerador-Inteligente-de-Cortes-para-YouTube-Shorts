@@ -676,7 +676,7 @@ elif st.session_state.current_step == 2:
                 st.session_state.is_processing = False
                 st.stop()
 
-        with st.spinner("🧠 3/3 - GravitiCuts IA calculando HotPeaks de retenção e ganchos..."):
+        with st.spinner("🧠 3/3 - GravitiCuts IA calculando Picos Virais de retenção e ganchos..."):
             try:
                 title_context = f"{video_info.get('title', '')}. Foco: {st.session_state.cfg_custom_prompt}" if st.session_state.cfg_custom_prompt else video_info.get("title", "")
                 cuts = find_best_shorts(
@@ -741,7 +741,7 @@ elif st.session_state.current_step == 2:
                         st.markdown(f"""
                         <div class="hotpeak-item">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <span class="score-chip">🔥 HOTPEAK {cut['score']}%</span>
+                                <span class="score-chip">🔥 PICO VIRAL {cut['score']}%</span>
                                 <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
                             </div>
                             <div style="font-weight:800; font-size:1.02rem; color:#FFFFFF; line-height:1.35; margin-bottom:8px;">
