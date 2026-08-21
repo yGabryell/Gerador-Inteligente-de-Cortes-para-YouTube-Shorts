@@ -40,7 +40,8 @@ def generate_ass_subtitles(
     font_size: int = 78,
     style: str = "yellow_black", # 'yellow_black', 'white_yellow', 'neon_green'
     animation: str = "pop", # 'pop', 'fade', 'none'
-    chunk_size: int = 3
+    chunk_size: int = 3,
+    is_widescreen: bool = False
 ) -> str:
     """
     Gera arquivo de legendas .ass estilizado para YouTube Shorts e TikTok.
@@ -48,7 +49,7 @@ def generate_ass_subtitles(
     - Permite texto customizado/corrigido pelo usuário.
     - Letras em Amarelo (#FFFF00) com borda preta grossa e sombra.
     - Transição Pop-in dinâmica a cada 2 a 4 palavras.
-    - Posicionamento otimizado para não cobrir a interface do YouTube Shorts.
+    - Posicionamento otimizado para não cobrir a interface do YouTube Shorts ou Widescreen.
     """
     os.makedirs(os.path.dirname(os.path.abspath(ass_path)), exist_ok=True)
     
@@ -63,18 +64,28 @@ def generate_ass_subtitles(
         primary_color = "&H00FFFFFF" # Branco
         outline_color = "&H00000000"
 
+    # Resolução adaptativa
+    if is_widescreen:
+        play_x, play_y = 1920, 1080
+        margin_v = 110
+        calib_font = max(36, int(font_size * 0.72))
+    else:
+        play_x, play_y = 1080, 1920
+        margin_v = 480
+        calib_font = font_size
+
     header = f"""[Script Info]
 Title: GravitiCuts Dynamic Subtitles
 ScriptType: v4.00+
 WrapStyle: 0
 ScaledBorderAndShadow: yes
 YCbCr Matrix: None
-PlayResX: 1080
-PlayResY: 1920
+PlayResX: {play_x}
+PlayResY: {play_y}
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: ShortsStyle,{font_name},{font_size},{primary_color},&H00FFFFFF,{outline_color},&H80000000,-1,0,0,0,100,100,2,0,1,8,4,2,60,60,480,1
+Style: ShortsStyle,{font_name},{calib_font},{primary_color},&H00FFFFFF,{outline_color},&H80000000,-1,0,0,0,100,100,2,0,1,8,4,2,60,60,{margin_v},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

@@ -644,7 +644,7 @@ if st.session_state.current_step == 1:
 
     with col_cfg2:
         # Coluna Dinâmica de Prévia (Smartphone 9:16 ou Widescreen 16:9)
-        is_widescreen = "16:9" in video_style
+        is_widescreen = (video_style == "original" or "16:9" in str(video_style))
         preview_title = "Prévia em Tempo Real (16:9)" if is_widescreen else "Prévia em Tempo Real (9:16)"
         preview_icon = "🖥️" if is_widescreen else "📱"
         
@@ -951,6 +951,7 @@ elif st.session_state.current_step == 2:
                                         sub_path = None
                                         safe_title = sanitize_filename(cut['title'])[:30]
                                         if is_subbed:
+                                            is_wide_cut = (st.session_state.cfg_video_style == "original" or "16:9" in str(st.session_state.cfg_video_style))
                                             ass_filename = f"output/sub_{cut_idx+1}_{safe_title}.ass"
                                             sub_path = generate_ass_subtitles(
                                                 transcript_items=st.session_state.raw_transcript,
@@ -960,10 +961,11 @@ elif st.session_state.current_step == 2:
                                                 custom_text=st.session_state.get(edited_key),
                                                 font_size=st.session_state.cfg_sub_fontsize,
                                                 style=st.session_state.cfg_sub_style,
-                                                animation=st.session_state.cfg_sub_anim
+                                                animation=st.session_state.cfg_sub_anim,
+                                                is_widescreen=is_wide_cut
                                             )
 
-                                        # 3. Corte e Formatação 9:16
+                                        # 3. Corte e Formatação
                                         output_suffix = "sub" if is_subbed else "clean"
                                         output_filename = f"output/short_{cut_idx+1}_{output_suffix}_{safe_title}.mp4"
                                         
@@ -977,7 +979,7 @@ elif st.session_state.current_step == 2:
                                         )
                                         
                                         st.session_state[f"ready_video_{cut_idx}"] = short_path
-                                        st.success(f"✅ Short 9:16 {label_status} pronto para download!")
+                                        st.success(f"✅ Vídeo #{cut_idx+1} {label_status} pronto para download!")
                                     except Exception as e:
                                         st.error(f"Erro ao gerar vídeo: {str(e)}")
 
