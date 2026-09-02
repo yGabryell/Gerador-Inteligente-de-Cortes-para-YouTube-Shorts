@@ -727,7 +727,7 @@ if st.session_state.current_step == 1:
             """, unsafe_allow_html=True)
             col_d1, col_d2, col_d3 = st.columns(3)
             with col_d1:
-                num_cuts = st.number_input("Cortes", min_value=1, max_value=12, value=6)
+                num_cuts = st.number_input("Cortes (Máx: 5)", min_value=1, max_value=5, value=3, help="Limite fixado em até 5 cortes por análise para testes rápidos e economia de cota")
             with col_d2:
                 min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=30)
             with col_d3:
@@ -901,7 +901,7 @@ if st.session_state.current_step == 1:
                 st.session_state.cfg_sub_style = sub_style
                 st.session_state.cfg_sub_anim = sub_anim
                 st.session_state.cfg_sub_fontsize = sub_fontsize
-                st.session_state.cfg_num_cuts = num_cuts
+                st.session_state.cfg_num_cuts = min(5, max(1, int(num_cuts)))
                 st.session_state.cfg_min_sec = min_sec
                 st.session_state.cfg_max_sec = max_sec
                 st.session_state.cfg_custom_prompt = custom_prompt

@@ -71,6 +71,7 @@ def find_best_shorts(
     Analisa a transcrição com a API Gemini e retorna os melhores cortes para Shorts.
     """
     client = get_client(api_key)
+    num_cuts = min(5, max(1, int(num_cuts)))
 
     prompt = f"""
 Você é um editor sênior especialista em YouTube Shorts, TikTok e Reels com mais de 100 milhões de visualizações.
