@@ -19,623 +19,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS Moderna, Responsiva e com Animações Fluidas (Glassmorphism & Cyber Obsidian 2026)
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
-    
-    html, body, [class*="css"], .stApp, p, h1, h2, h3, h4, h5, h6, label, input, textarea, button {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    
-    *, *::before, *::after {
-        box-sizing: border-box;
-    }
-
-    /* Preservar ícones do Streamlit (Material Symbols / Icons) como o olho de senha */
-    [data-testid="stIconMaterial"], [class*="material-symbols"], [class*="material-icons"], span[translate="no"] {
-        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
-    }
-    
-    /* Fundo Dark Obsidian com Aura Glow Ambiental */
-    .stApp {
-        background-color: #08090F;
-        background-image: 
-            radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.15) 0%, transparent 45%),
-            radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
-            radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
-        background-attachment: fixed;
-        color: #F8FAFC;
-    }
-    
-    /* Header do Streamlit */
-    header[data-testid="stHeader"] {
-        background: rgba(8, 9, 15, 0.75) !important;
-        backdrop-filter: blur(16px) !important;
-    }
-    
-    /* Espaçamento do container principal */
-    .block-container {
-        padding-top: 4.5rem !important;
-        padding-bottom: 3.5rem !important;
-        max-width: 1440px;
-    }
-    
-    /* Barra Lateral Escura e Minimalista */
-    [data-testid="stSidebar"] {
-        background-color: rgba(12, 14, 24, 0.95) !important;
-        backdrop-filter: blur(20px) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding-top: 1rem;
-    }
-    
-    /* Animações Principais */
-    @keyframes floatSlow {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-6px); }
-    }
-    @keyframes shimmerButton {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    @keyframes popBounceEffect {
-        0%, 100% { transform: scale(1.12); }
-        50% { transform: scale(0.96); }
-    }
-    @keyframes fadeSoftEffect {
-        0%, 100% { opacity: 0.25; transform: translateY(3px); }
-        50% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes videoLightsFlow {
-        0% { background-position: 0% 0%; filter: brightness(0.95) contrast(1.1); }
-        25% { background-position: 50% 100%; filter: brightness(1.2) contrast(1.2); }
-        50% { background-position: 100% 50%; filter: brightness(0.9) contrast(1.1); }
-        75% { background-position: 50% 0%; filter: brightness(1.25) contrast(1.25); }
-        100% { background-position: 0% 0%; filter: brightness(0.95) contrast(1.1); }
-    }
-    @keyframes rotateVinyl {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    @keyframes videoTimelineBar {
-        0% { width: 0%; }
-        100% { width: 100%; }
-    }
-    @keyframes pulseGamerGlow {
-        0%, 100% { opacity: 0.3; transform: scale(1); }
-        50% { opacity: 0.65; transform: scale(1.08); }
-    }
-    
-    .anim-pop { animation: popBounceEffect 0.75s infinite ease-in-out; }
-    .anim-fade { animation: fadeSoftEffect 1.1s infinite ease-in-out; }
-    
-    /* Topbar Navigation */
-    .top-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 20px;
-        background: rgba(18, 21, 38, 0.65);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        margin-bottom: 22px;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-    .brand-logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 1.25rem;
-        font-weight: 900;
-        letter-spacing: -0.5px;
-        background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 60%, #A78BFA 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    .brand-icon {
-        background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.15rem;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-    }
-    
-    /* Stepper Bar 3 Etapas */
-    .stepper-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 22px;
-        flex-wrap: nowrap;
-    }
-    .step-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 16px;
-        border-radius: 25px;
-        font-weight: 700;
-        font-size: 0.82rem;
-        white-space: nowrap;
-        transition: all 0.3s ease;
-    }
-    .step-active {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.35) 0%, rgba(236, 72, 153, 0.25) 100%);
-        border: 1px solid #8B5CF6;
-        color: #FFFFFF;
-        box-shadow: 0 4px 18px rgba(139, 92, 246, 0.3);
-    }
-    .step-inactive {
-        background: rgba(18, 21, 38, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        color: #64748B;
-    }
-    .step-done {
-        color: #10B981 !important;
-        border: 1px solid rgba(16, 185, 129, 0.4) !important;
-        background: rgba(16, 185, 129, 0.12) !important;
-    }
-    
-    /* Cards Modernos no Estilo Glassmorphism 2.0 */
-    .saas-card {
-        background: linear-gradient(135deg, rgba(18, 21, 38, 0.75) 0%, rgba(12, 14, 26, 0.85) 100%);
-        backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        border-radius: 18px;
-        padding: 18px 20px;
-        margin-bottom: 16px;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-    .saas-card:hover {
-        border-color: rgba(139, 92, 246, 0.35);
-        box-shadow: 0 14px 40px -10px rgba(139, 92, 246, 0.15);
-        transform: translateY(-2px);
-    }
-    .saas-card-header {
-        font-size: 1.02rem;
-        font-weight: 800;
-        color: #F8FAFC;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        letter-spacing: -0.2px;
-    }
-    .saas-card-header span {
-        font-size: 1.15rem;
-    }
-    
-    /* Input Box Estilo SaaS Futurista */
-    .stTextInput > div > div > input {
-        background-color: rgba(10, 12, 22, 0.85) !important;
-        border: 1px solid rgba(255, 255, 255, 0.09) !important;
-        border-radius: 14px !important;
-        color: #FFFFFF !important;
-        padding: 14px 18px !important;
-        font-size: 0.96rem !important;
-        transition: all 0.2s ease !important;
-    }
-    .stTextInput > div > div > input:focus {
-        border-color: #8B5CF6 !important;
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.35) !important;
-        background-color: rgba(14, 16, 30, 0.95) !important;
-    }
-    
-    /* Botões Modernos com Gradiente e Efeito Shimmer */
-    .stButton > button {
-        border-radius: 14px !important;
-        font-weight: 800 !important;
-        padding: 12px 24px !important;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        letter-spacing: -0.2px !important;
-    }
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%) !important;
-        background-size: 200% 200% !important;
-        animation: shimmerButton 6s ease infinite !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        color: white !important;
-        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4) !important;
-    }
-    .stButton > button[kind="primary"]:hover {
-        box-shadow: 0 12px 35px rgba(124, 58, 237, 0.65) !important;
-        transform: translateY(-2px) scale(1.01) !important;
-    }
-    .stButton > button:not([kind="primary"]) {
-        background: rgba(19, 23, 41, 0.8) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #E2E8F0 !important;
-    }
-    .stButton > button:not([kind="primary"]):hover {
-        background: rgba(30, 36, 64, 0.9) !important;
-        border-color: #8B5CF6 !important;
-        transform: translateY(-1px) !important;
-    }
-    
-    /* Chips de Amostras / Presets */
-    .sample-pill {
-        display: inline-block;
-        background: rgba(139, 92, 246, 0.08);
-        border: 1px solid rgba(139, 92, 246, 0.25);
-        color: #C4B5FD;
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 0.76rem;
-        font-weight: 700;
-        margin: 4px 4px 4px 0;
-        cursor: default;
-    }
-    
-    /* Mockup do Smartphone (Proporção 9:16 com Animação Float) */
-    .sub-phone-container {
-        display: flex;
-        justify-content: center;
-        margin: 10px 0;
-        animation: floatSlow 5s ease-in-out infinite;
-    }
-    .sub-phone-mockup {
-        width: 190px;
-        height: 338px; /* Exato 9:16 */
-        background: #090B14;
-        border: 3.5px solid #2F3554;
-        border-radius: 28px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
-    }
-    .phone-screen {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 8px 6px;
-        background: linear-gradient(135deg, #1E1B4B 0%, #311042 25%, #0B1528 50%, #4A0E4E 75%, #0F172A 100%);
-        background-size: 300% 300%;
-        animation: videoLightsFlow 8s ease infinite;
-        overflow: hidden;
-    }
-    .video-timeline {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #8B5CF6, #EC4899);
-        box-shadow: 0 0 8px #EC4899;
-        animation: videoTimelineBar 10s linear infinite;
-        z-index: 10;
-    }
-    .vinyl-disc {
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: radial-gradient(circle, #EC4899 25%, #111 26%, #111 60%, #444 61%, #111 100%);
-        border: 1.5px solid rgba(255, 255, 255, 0.4);
-        animation: rotateVinyl 4s linear infinite;
-        box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
-    }
-    .gamer-bg-glow {
-        position: absolute;
-        top: 35%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(139, 92, 246, 0.45) 0%, rgba(236, 72, 153, 0.25) 50%, transparent 80%);
-        animation: pulseGamerGlow 4s ease-in-out infinite;
-        pointer-events: none;
-    }
-    .phone-notch {
-        width: 44px;
-        height: 4px;
-        background: #334155;
-        border-radius: 4px;
-        margin: 0 auto;
-        z-index: 5;
-    }
-    .phone-badge-tag {
-        font-size: 0.62rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: #94A3B8;
-        letter-spacing: 0.5px;
-        text-align: center;
-        margin-top: 4px;
-        z-index: 5;
-    }
-    .phone-side-icons {
-        position: absolute;
-        right: 6px;
-        bottom: 45px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        z-index: 4;
-        font-size: 0.62rem;
-        color: rgba(255, 255, 255, 0.75);
-        text-align: center;
-    }
-    .sub-preview-content {
-        position: absolute;
-        bottom: 64px;
-        left: 8px;
-        right: 28px;
-        text-align: center;
-        z-index: 5;
-    }
-    .sub-preview-text {
-        font-family: 'Impact', 'Arial Black', sans-serif !important;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        line-height: 1.15;
-        font-weight: 900;
-        display: inline-block;
-    }
-    
-    /* Mockup Widescreen (16:9 com Animação Float) */
-    .sub-wide-container {
-        display: flex;
-        justify-content: center;
-        margin: 10px 0;
-        animation: floatSlow 5s ease-in-out infinite;
-    }
-    .sub-wide-mockup {
-        width: 100%;
-        max-width: 320px;
-        height: 180px; /* 16:9 */
-        background: #090B14;
-        border: 3.5px solid #2F3554;
-        border-radius: 16px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
-    }
-    .wide-screen {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 10px 14px;
-        background: linear-gradient(135deg, #1E1B4B 0%, #311042 25%, #0B1528 50%, #4A0E4E 75%, #0F172A 100%);
-        background-size: 300% 300%;
-        animation: videoLightsFlow 8s ease infinite;
-        overflow: hidden;
-    }
-    .wide-badge-tag {
-        font-size: 0.65rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        color: #94A3B8;
-        letter-spacing: 0.5px;
-        text-align: left;
-        z-index: 5;
-    }
-    .wide-preview-content {
-        position: absolute;
-        bottom: 24px;
-        left: 10px;
-        right: 10px;
-        text-align: center;
-        z-index: 5;
-    }
-
-    /* Cards de Corte Individual (Página 3) */
-    .hotpeak-item {
-        background: linear-gradient(135deg, rgba(18, 21, 38, 0.8) 0%, rgba(12, 14, 26, 0.9) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 16px;
-        margin-bottom: 20px;
-        transition: all 0.25s ease;
-    }
-    .hotpeak-item:hover {
-        border-color: #8B5CF6;
-        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.25);
-    }
-    .score-chip {
-        background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-weight: 800;
-        font-size: 0.78rem;
-        box-shadow: 0 2px 10px rgba(236, 72, 153, 0.3);
-    }
-    .time-chip {
-        background: rgba(255, 255, 255, 0.06);
-        color: #94A3B8;
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.78rem;
-    }
-    .hook-badge-box {
-        background: rgba(236, 72, 153, 0.09);
-        border-left: 3px solid #EC4899;
-        padding: 8px 12px;
-        border-radius: 8px;
-        margin: 10px 0;
-        font-size: 0.85rem;
-        color: #FCE7F3;
-        font-style: italic;
-    }
-
-    /* Elementos Nativos com Tema Escuro Consistente */
-    [data-testid="stSelectbox"] div[data-baseweb="select"] {
-        background-color: rgba(10, 12, 22, 0.85) !important;
-        border: 1px solid rgba(255, 255, 255, 0.09) !important;
-        border-radius: 12px !important;
-        color: #FFFFFF !important;
-    }
-    [data-testid="stSelectbox"] div[data-baseweb="select"] * {
-        color: #FFFFFF !important;
-    }
-    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {
-        background-color: #121528 !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 12px !important;
-    }
-    li[data-baseweb="menu-item"] {
-        color: #FFFFFF !important;
-        background-color: #121528 !important;
-    }
-    li[data-baseweb="menu-item"]:hover {
-        background-color: #201D3D !important;
-        color: #C4B5FD !important;
-    }
-    label, [data-testid="stWidgetLabel"] p {
-        color: #CBD5E1 !important;
-        font-weight: 600 !important;
-    }
-    textarea {
-        background-color: rgba(10, 12, 22, 0.85) !important;
-        color: #FFFFFF !important;
-        border: 1px solid rgba(255, 255, 255, 0.09) !important;
-        border-radius: 12px !important;
-    }
-    div[data-testid="stExpander"] {
-        background-color: rgba(15, 17, 30, 0.75) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 14px !important;
-    }
-    div[data-testid="stExpander"] details summary {
-        color: #E2E8F0 !important;
-    }
-    .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 14px;
-        border-radius: 10px;
-        color: #94A3B8;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
-        text-decoration: none;
-    }
-    .nav-item-active {
-        background: rgba(139, 92, 246, 0.15);
-        color: #FFFFFF;
-        border-left: 3px solid #8B5CF6;
-    }
-
-    /* OTIMIZAÇÕES RESPONSIVAS ESPECÍFICAS PARA SMARTPHONES / CELULARES */
-    @media (max-width: 768px) {
-        .block-container {
-            padding-top: 4.2rem !important;
-            padding-bottom: 2rem !important;
-            padding-left: 0.75rem !important;
-            padding-right: 0.75rem !important;
-        }
-        .top-nav {
-            padding: 10px 14px !important;
-            margin-bottom: 14px !important;
-            border-radius: 14px !important;
-        }
-        .brand-logo {
-            font-size: 1.05rem !important;
-            gap: 8px !important;
-        }
-        .brand-icon {
-            width: 30px !important;
-            height: 30px !important;
-            font-size: 1rem !important;
-            border-radius: 8px !important;
-        }
-        .stepper-container {
-            gap: 4px !important;
-            margin-bottom: 14px !important;
-        }
-        .step-item {
-            padding: 5px 8px !important;
-            font-size: 0.68rem !important;
-            border-radius: 16px !important;
-        }
-        .saas-card {
-            padding: 14px 14px !important;
-            margin-bottom: 12px !important;
-            border-radius: 14px !important;
-        }
-        .saas-card-header {
-            font-size: 0.92rem !important;
-            margin-bottom: 8px !important;
-            gap: 6px !important;
-        }
-        .sample-pill {
-            padding: 3px 8px !important;
-            font-size: 0.7rem !important;
-            margin: 2px 2px 2px 0 !important;
-        }
-        .sub-phone-container {
-            margin: 8px 0 !important;
-            animation: none !important;
-        }
-        .sub-phone-mockup {
-            width: 145px !important;
-            height: 258px !important;
-            border-width: 2.5px !important;
-            border-radius: 20px !important;
-        }
-        .sub-wide-container {
-            margin: 8px 0 !important;
-            animation: none !important;
-        }
-        .sub-wide-mockup {
-            max-width: 250px !important;
-            height: 140px !important;
-            border-width: 2.5px !important;
-            border-radius: 12px !important;
-        }
-        .sub-preview-content {
-            bottom: 48px !important;
-            left: 4px !important;
-            right: 20px !important;
-        }
-        .sub-preview-text {
-            font-size: 10px !important;
-        }
-        .phone-side-icons {
-            bottom: 35px !important;
-            right: 4px !important;
-            gap: 5px !important;
-            font-size: 0.52rem !important;
-        }
-        .stButton > button {
-            padding: 10px 16px !important;
-            font-size: 0.88rem !important;
-            border-radius: 12px !important;
-        }
-        .stTextInput > div > div > input {
-            padding: 10px 14px !important;
-            font-size: 0.88rem !important;
-            border-radius: 10px !important;
-        }
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Inicialização do Tema
-if "theme_mode" not in st.session_state:
-    st.session_state.theme_mode = "dark"
+# Inicialização do Tema (Padrão: Modo Claro / Light)
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
 
 # Barra Lateral de Navegação
 with st.sidebar:
     st.markdown("""
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
         <div class="brand-icon">⚡</div>
-        <div style="font-size:1.25rem; font-weight:900; letter-spacing:-0.5px;">GravitiCuts AI</div>
+        <div style="font-size:1.25rem; font-weight:900; letter-spacing:-0.5px; color:var(--text-main);">GravitiCuts AI</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -644,16 +37,14 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     
     st.markdown("---")
-    st.caption("🌓 APARÊNCIA & TEMA")
-    theme_choice = st.selectbox(
-        "Tema:",
-        options=["🌙 Modo Escuro (Dark)", "☀️ Modo Claro (Light)"],
-        index=0 if st.session_state.theme_mode == "dark" else 1,
-        label_visibility="collapsed"
+    st.caption("🌓 APARÊNCIA")
+    toggle_val = st.toggle(
+        "🌙 Modo Escuro (Dark)", 
+        value=st.session_state.dark_mode,
+        key="dark_mode_toggle"
     )
-    selected_theme = "dark" if "Escuro" in theme_choice else "light"
-    if selected_theme != st.session_state.theme_mode:
-        st.session_state.theme_mode = selected_theme
+    if toggle_val != st.session_state.dark_mode:
+        st.session_state.dark_mode = toggle_val
         st.rerun()
     
     st.markdown("---")
@@ -666,135 +57,684 @@ with st.sidebar:
         help="Sua chave de API do Google Gemini Studio"
     )
 
-# Injeção Dinâmica do Tema Claro (se selecionado)
-if st.session_state.theme_mode == "light":
-    st.markdown("""
-    <style>
-        /* MODO CLARO (LIGHT SNOW / CLEAN SAAS 2026) */
-        body, .stApp {
-            background-color: #F8FAFC !important;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.08) 0%, transparent 45%),
-                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.06) 0%, transparent 40%),
-                radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 50%) !important;
-            color: #0F172A !important;
-        }
-        header[data-testid="stHeader"] {
-            background: rgba(248, 250, 252, 0.85) !important;
-        }
-        [data-testid="stSidebar"] {
-            background-color: #FFFFFF !important;
-            border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
-        }
-        [data-testid="stSidebar"] div, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {
-            color: #0F172A !important;
-        }
-        .top-nav {
-            background: rgba(255, 255, 255, 0.9) !important;
-            border: 1px solid rgba(139, 92, 246, 0.2) !important;
-            box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.06) !important;
-        }
-        .brand-logo {
-            background: linear-gradient(135deg, #1E1B4B 0%, #4338CA 60%, #7C3AED 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-        }
-        .saas-card {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 1px solid rgba(139, 92, 246, 0.16) !important;
-            box-shadow: 0 8px 25px -10px rgba(0, 0, 0, 0.06) !important;
-        }
-        .saas-card:hover {
-            border-color: rgba(139, 92, 246, 0.45) !important;
-            box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.12) !important;
-        }
-        .saas-card-header {
-            color: #0F172A !important;
-        }
-        .step-inactive {
-            background: #EDF2F7 !important;
-            border: 1px solid rgba(0, 0, 0, 0.06) !important;
-            color: #64748B !important;
-        }
-        .stTextInput > div > div > input {
-            background-color: #FFFFFF !important;
-            border: 1px solid #CBD5E1 !important;
-            color: #0F172A !important;
-        }
-        .stTextInput > div > div > input:focus {
-            border-color: #7C3AED !important;
-            box-shadow: 0 0 15px rgba(124, 58, 237, 0.2) !important;
-            background-color: #FFFFFF !important;
-        }
-        .stButton > button:not([kind="primary"]) {
-            background: #FFFFFF !important;
-            border: 1px solid #CBD5E1 !important;
-            color: #334155 !important;
-        }
-        .stButton > button:not([kind="primary"]):hover {
-            background: #F1F5F9 !important;
-            border-color: #7C3AED !important;
-        }
-        .hotpeak-item {
-            background: #FFFFFF !important;
-            border: 1px solid rgba(139, 92, 246, 0.18) !important;
-            box-shadow: 0 8px 25px -10px rgba(0, 0, 0, 0.06) !important;
-        }
-        .hotpeak-item div {
-            color: #0F172A !important;
-        }
-        .time-chip {
-            background: #F1F5F9 !important;
-            color: #475569 !important;
-        }
-        .hook-badge-box {
-            background: rgba(236, 72, 153, 0.08) !important;
-            color: #831843 !important;
-        }
-        [data-testid="stSelectbox"] div[data-baseweb="select"] {
-            background-color: #FFFFFF !important;
-            border: 1px solid #CBD5E1 !important;
-            color: #0F172A !important;
-        }
-        [data-testid="stSelectbox"] div[data-baseweb="select"] * {
-            color: #0F172A !important;
-        }
-        div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {
-            background-color: #FFFFFF !important;
-            border: 1px solid #CBD5E1 !important;
-        }
-        li[data-baseweb="menu-item"] {
-            color: #0F172A !important;
-            background-color: #FFFFFF !important;
-        }
-        li[data-baseweb="menu-item"]:hover {
-            background-color: #F1F5F9 !important;
-            color: #7C3AED !important;
-        }
-        label, [data-testid="stWidgetLabel"] p {
-            color: #334155 !important;
-        }
-        textarea {
-            background-color: #FFFFFF !important;
-            color: #0F172A !important;
-            border: 1px solid #CBD5E1 !important;
-        }
-        div[data-testid="stExpander"] {
-            background-color: #FFFFFF !important;
-            border: 1px solid #E2E8F0 !important;
-        }
-        div[data-testid="stExpander"] details summary {
-            color: #1E293B !important;
-        }
-        .nav-item {
-            color: #64748B !important;
-        }
-        .nav-item-active {
-            background: rgba(139, 92, 246, 0.12) !important;
-            color: #7C3AED !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+# Configurações Dinâmicas de Cores por Tema (CSS Variables)
+if st.session_state.dark_mode:
+    theme_vars = """
+        --bg-app: #08090F;
+        --bg-aura1: rgba(124, 58, 237, 0.15);
+        --bg-aura2: rgba(236, 72, 153, 0.12);
+        --bg-aura3: rgba(6, 182, 212, 0.08);
+        --header-bg: rgba(8, 9, 15, 0.85);
+        --sidebar-bg: rgba(12, 14, 24, 0.95);
+        --sidebar-border: rgba(255, 255, 255, 0.08);
+        --top-nav-bg: rgba(18, 21, 38, 0.75);
+        --top-nav-border: rgba(255, 255, 255, 0.09);
+        --card-bg: linear-gradient(135deg, rgba(18, 21, 38, 0.8) 0%, rgba(12, 14, 26, 0.9) 100%);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+        --text-main: #F8FAFC;
+        --text-muted: #94A3B8;
+        --text-heading: #FFFFFF;
+        --input-bg: rgba(12, 15, 28, 0.9);
+        --input-border: rgba(255, 255, 255, 0.12);
+        --input-text: #FFFFFF;
+        --stepper-inactive-bg: rgba(18, 21, 38, 0.6);
+        --stepper-inactive-text: #64748B;
+        --secondary-btn-bg: rgba(19, 23, 41, 0.85);
+        --secondary-btn-border: rgba(255, 255, 255, 0.12);
+        --secondary-btn-text: #E2E8F0;
+        --brand-title-grad: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 60%, #A78BFA 100%);
+    """
+else:
+    theme_vars = """
+        --bg-app: #F8FAFC;
+        --bg-aura1: rgba(124, 58, 237, 0.07);
+        --bg-aura2: rgba(236, 72, 153, 0.05);
+        --bg-aura3: rgba(6, 182, 212, 0.04);
+        --header-bg: rgba(248, 250, 252, 0.9);
+        --sidebar-bg: #FFFFFF;
+        --sidebar-border: rgba(0, 0, 0, 0.08);
+        --top-nav-bg: rgba(255, 255, 255, 0.95);
+        --top-nav-border: rgba(139, 92, 246, 0.2);
+        --card-bg: #FFFFFF;
+        --card-border: rgba(139, 92, 246, 0.16);
+        --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.07);
+        --text-main: #0F172A;
+        --text-muted: #64748B;
+        --text-heading: #0F172A;
+        --input-bg: #FFFFFF;
+        --input-border: #CBD5E1;
+        --input-text: #0F172A;
+        --stepper-inactive-bg: #EDF2F7;
+        --stepper-inactive-text: #64748B;
+        --secondary-btn-bg: #FFFFFF;
+        --secondary-btn-border: #CBD5E1;
+        --secondary-btn-text: #1E293B;
+        --brand-title-grad: linear-gradient(135deg, #1E1B4B 0%, #4338CA 60%, #7C3AED 100%);
+    """
+
+# Estilização CSS Moderna, Responsiva e com Animações Fluidas
+st.markdown(f"""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+    
+    :root {{
+        {theme_vars}
+    }}
+
+    html, body, [class*="css"], .stApp, p, h1, h2, h3, h4, h5, h6, label, input, textarea, button {{
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }}
+    
+    *, *::before, *::after {{
+        box-sizing: border-box;
+    }}
+
+    /* Preservar ícones do Streamlit (Material Symbols / Icons) como o olho de senha */
+    [data-testid="stIconMaterial"], [class*="material-symbols"], [class*="material-icons"], span[translate="no"] {{
+        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
+    }}
+    
+    /* Fundo da Aplicação */
+    .stApp {{
+        background-color: var(--bg-app) !important;
+        background-image: 
+            radial-gradient(circle at 15% 15%, var(--bg-aura1) 0%, transparent 45%),
+            radial-gradient(circle at 85% 30%, var(--bg-aura2) 0%, transparent 40%),
+            radial-gradient(circle at 50% 85%, var(--bg-aura3) 0%, transparent 50%) !important;
+        background-attachment: fixed;
+        color: var(--text-main) !important;
+    }}
+    
+    /* Header do Streamlit */
+    header[data-testid="stHeader"] {{
+        background: var(--header-bg) !important;
+        backdrop-filter: blur(16px) !important;
+    }}
+    
+    /* Espaçamento do container principal */
+    .block-container {{
+        padding-top: 4.5rem !important;
+        padding-bottom: 3.5rem !important;
+        max-width: 1440px;
+    }}
+    
+    /* Barra Lateral */
+    [data-testid="stSidebar"] {{
+        background-color: var(--sidebar-bg) !important;
+        border-right: 1px solid var(--sidebar-border) !important;
+        padding-top: 1rem;
+    }}
+    [data-testid="stSidebar"] div, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {{
+        color: var(--text-main);
+    }}
+    
+    /* Animações Principais */
+    @keyframes floatSlow {{
+        0%, 100% {{ transform: translateY(0px); }}
+        50% {{ transform: translateY(-6px); }}
+    }}
+    @keyframes shimmerButton {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
+    @keyframes popBounceEffect {{
+        0%, 100% {{ transform: scale(1.12); }}
+        50% {{ transform: scale(0.96); }}
+    }}
+    @keyframes fadeSoftEffect {{
+        0%, 100% {{ opacity: 0.25; transform: translateY(3px); }}
+        50% {{ opacity: 1; transform: translateY(0); }}
+    }}
+    @keyframes videoLightsFlow {{
+        0% {{ background-position: 0% 0%; filter: brightness(0.95) contrast(1.1); }}
+        25% {{ background-position: 50% 100%; filter: brightness(1.2) contrast(1.2); }}
+        50% {{ background-position: 100% 50%; filter: brightness(0.9) contrast(1.1); }}
+        75% {{ background-position: 50% 0%; filter: brightness(1.25) contrast(1.25); }}
+        100% {{ background-position: 0% 0%; filter: brightness(0.95) contrast(1.1); }}
+    }}
+    @keyframes rotateVinyl {{
+        from {{ transform: rotate(0deg); }}
+        to {{ transform: rotate(360deg); }}
+    }}
+    @keyframes videoTimelineBar {{
+        0% {{ width: 0%; }}
+        100% {{ width: 100%; }}
+    }}
+    @keyframes pulseGamerGlow {{
+        0%, 100% {{ opacity: 0.3; transform: scale(1); }}
+        50% {{ opacity: 0.65; transform: scale(1.08); }}
+    }}
+    
+    .anim-pop {{ animation: popBounceEffect 0.75s infinite ease-in-out; }}
+    .anim-fade {{ animation: fadeSoftEffect 1.1s infinite ease-in-out; }}
+    
+    /* Topbar Navigation */
+    .top-nav {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        background: var(--top-nav-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--top-nav-border);
+        border-radius: 18px;
+        margin-bottom: 22px;
+        box-shadow: var(--card-shadow);
+    }}
+    .brand-logo {{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.25rem;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        background: var(--brand-title-grad);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }}
+    .brand-icon {{
+        background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+    }}
+    
+    /* Stepper Bar 3 Etapas */
+    .stepper-container {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+        flex-wrap: nowrap;
+    }}
+    .step-item {{
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 16px;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+    }}
+    .step-active {{
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.35) 0%, rgba(236, 72, 153, 0.25) 100%) !important;
+        border: 1.5px solid #8B5CF6 !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 18px rgba(139, 92, 246, 0.3);
+    }}
+    .step-inactive {{
+        background: var(--stepper-inactive-bg) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        color: var(--stepper-inactive-text) !important;
+    }}
+    .step-done {{
+        color: #10B981 !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+        background: rgba(16, 185, 129, 0.12) !important;
+    }}
+    
+    /* Cards Modernos */
+    .saas-card {{
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: var(--card-shadow);
+    }}
+    .saas-card-header {{
+        font-size: 1.02rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        letter-spacing: -0.2px;
+    }}
+    
+    /* Título de Seções de Configuração */
+    .setting-title {{
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--text-heading);
+        margin-top: 14px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.2px;
+    }}
+    
+    /* Input Box Estilo SaaS Futurista */
+    .stTextInput > div > div > input, textarea {{
+        background-color: var(--input-bg) !important;
+        border: 1.5px solid var(--input-border) !important;
+        border-radius: 14px !important;
+        color: var(--input-text) !important;
+        padding: 12px 16px !important;
+        font-size: 0.95rem !important;
+        transition: all 0.2s ease !important;
+    }}
+    .stTextInput > div > div > input:focus, textarea:focus {{
+        border-color: #8B5CF6 !important;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3) !important;
+    }}
+    
+    /* Botões */
+    .stButton > button {{
+        border-radius: 14px !important;
+        font-weight: 800 !important;
+        padding: 12px 24px !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        letter-spacing: -0.2px !important;
+    }}
+    .stButton > button[kind="primary"] {{
+        background: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%) !important;
+        background-size: 200% 200% !important;
+        animation: shimmerButton 6s ease infinite !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4) !important;
+    }}
+    .stButton > button[kind="primary"]:hover {{
+        box-shadow: 0 12px 35px rgba(124, 58, 237, 0.65) !important;
+        transform: translateY(-2px) scale(1.01) !important;
+    }}
+    .stButton > button:not([kind="primary"]) {{
+        background: var(--secondary-btn-bg) !important;
+        border: 1.5px solid var(--secondary-btn-border) !important;
+        color: var(--secondary-btn-text) !important;
+    }}
+    .stButton > button:not([kind="primary"]):hover {{
+        border-color: #8B5CF6 !important;
+        transform: translateY(-1px) !important;
+    }}
+    
+    /* Chips de Amostras / Presets */
+    .sample-pill {{
+        display: inline-block;
+        background: rgba(139, 92, 246, 0.08);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        color: #8B5CF6;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin: 4px 4px 4px 0;
+        cursor: default;
+    }}
+    
+    /* Mockup do Smartphone (Proporção 9:16) */
+    .sub-phone-container {{
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+        animation: floatSlow 5s ease-in-out infinite;
+    }}
+    .sub-phone-mockup {{
+        width: 190px;
+        height: 338px;
+        background: #090B14;
+        border: 3.5px solid #2F3554;
+        border-radius: 28px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
+    }}
+    .phone-screen {{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 8px 6px;
+        background: linear-gradient(135deg, #1E1B4B 0%, #311042 25%, #0B1528 50%, #4A0E4E 75%, #0F172A 100%);
+        background-size: 300% 300%;
+        animation: videoLightsFlow 8s ease infinite;
+        overflow: hidden;
+    }}
+    .video-timeline {{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8B5CF6, #EC4899);
+        box-shadow: 0 0 8px #EC4899;
+        animation: videoTimelineBar 10s linear infinite;
+        z-index: 10;
+    }}
+    .vinyl-disc {{
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #EC4899 25%, #111 26%, #111 60%, #444 61%, #111 100%);
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        animation: rotateVinyl 4s linear infinite;
+        box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+    }}
+    .gamer-bg-glow {{
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.45) 0%, rgba(236, 72, 153, 0.25) 50%, transparent 80%);
+        animation: pulseGamerGlow 4s ease-in-out infinite;
+        pointer-events: none;
+    }}
+    .phone-notch {{
+        width: 44px;
+        height: 4px;
+        background: #334155;
+        border-radius: 4px;
+        margin: 0 auto;
+        z-index: 5;
+    }}
+    .phone-badge-tag {{
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #94A3B8;
+        letter-spacing: 0.5px;
+        text-align: center;
+        margin-top: 4px;
+        z-index: 5;
+    }}
+    .phone-side-icons {{
+        position: absolute;
+        right: 6px;
+        bottom: 45px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 4;
+        font-size: 0.62rem;
+        color: rgba(255, 255, 255, 0.75);
+        text-align: center;
+    }}
+    .sub-preview-content {{
+        position: absolute;
+        bottom: 64px;
+        left: 8px;
+        right: 28px;
+        text-align: center;
+        z-index: 5;
+    }}
+    .sub-preview-text {{
+        font-family: 'Impact', 'Arial Black', sans-serif !important;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        line-height: 1.15;
+        font-weight: 900;
+        display: inline-block;
+    }}
+    
+    /* Mockup Widescreen (16:9) */
+    .sub-wide-container {{
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+        animation: floatSlow 5s ease-in-out infinite;
+    }}
+    .sub-wide-mockup {{
+        width: 100%;
+        max-width: 320px;
+        height: 180px;
+        background: #090B14;
+        border: 3.5px solid #2F3554;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
+    }}
+    .wide-screen {{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: linear-gradient(135deg, #1E1B4B 0%, #311042 25%, #0B1528 50%, #4A0E4E 75%, #0F172A 100%);
+        background-size: 300% 300%;
+        animation: videoLightsFlow 8s ease infinite;
+        overflow: hidden;
+    }}
+    .wide-badge-tag {{
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #94A3B8;
+        letter-spacing: 0.5px;
+        text-align: left;
+        z-index: 5;
+    }}
+    .wide-preview-content {{
+        position: absolute;
+        bottom: 24px;
+        left: 10px;
+        right: 10px;
+        text-align: center;
+        z-index: 5;
+    }}
+
+    /* Cards de Corte Individual (Página 3) */
+    .hotpeak-item {{
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 20px;
+        transition: all 0.25s ease;
+        box-shadow: var(--card-shadow);
+    }}
+    .hotpeak-item:hover {{
+        border-color: #8B5CF6;
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.25);
+    }}
+    .score-chip {{
+        background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+        color: white !important;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.78rem;
+        box-shadow: 0 2px 10px rgba(236, 72, 153, 0.3);
+    }}
+    .time-chip {{
+        background: rgba(139, 92, 246, 0.08);
+        color: var(--text-muted) !important;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.78rem;
+    }}
+    .hook-badge-box {{
+        background: rgba(236, 72, 153, 0.08);
+        border-left: 3px solid #EC4899;
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--text-main);
+        font-style: italic;
+    }}
+
+    /* Seletores e Menus */
+    [data-testid="stSelectbox"] div[data-baseweb="select"] {{
+        background-color: var(--input-bg) !important;
+        border: 1.5px solid var(--input-border) !important;
+        border-radius: 12px !important;
+        color: var(--input-text) !important;
+    }}
+    [data-testid="stSelectbox"] div[data-baseweb="select"] * {{
+        color: var(--input-text) !important;
+    }}
+    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {{
+        background-color: var(--input-bg) !important;
+        border: 1.5px solid var(--input-border) !important;
+        border-radius: 12px !important;
+    }}
+    li[data-baseweb="menu-item"] {{
+        color: var(--input-text) !important;
+        background-color: var(--input-bg) !important;
+    }}
+    li[data-baseweb="menu-item"]:hover {{
+        background-color: rgba(139, 92, 246, 0.15) !important;
+        color: #8B5CF6 !important;
+    }}
+    
+    /* Radio Buttons & Labels */
+    [data-testid="stRadio"] label p, label, [data-testid="stWidgetLabel"] p {{
+        color: var(--text-main) !important;
+        font-weight: 600 !important;
+    }}
+    
+    /* Number Input */
+    [data-testid="stNumberInput"] button {{
+        background-color: var(--secondary-btn-bg) !important;
+        border-color: var(--input-border) !important;
+        color: var(--text-main) !important;
+    }}
+    
+    /* Expander */
+    div[data-testid="stExpander"] {{
+        background-color: var(--card-bg) !important;
+        border: 1px solid var(--card-border) !important;
+        border-radius: 14px !important;
+    }}
+    div[data-testid="stExpander"] details summary {{
+        color: var(--text-main) !important;
+        font-weight: 700 !important;
+    }}
+    
+    .nav-item {{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        text-decoration: none;
+    }}
+    .nav-item-active {{
+        background: rgba(139, 92, 246, 0.15);
+        color: #8B5CF6 !important;
+        border-left: 3px solid #8B5CF6;
+    }}
+
+    /* OTIMIZAÇÕES RESPONSIVAS ESPECÍFICAS PARA SMARTPHONES / CELULARES */
+    @media (max-width: 768px) {{
+        .block-container {{
+            padding-top: 4.2rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }}
+        .top-nav {{
+            padding: 10px 14px !important;
+            margin-bottom: 14px !important;
+            border-radius: 14px !important;
+        }}
+        .brand-logo {{
+            font-size: 1.05rem !important;
+            gap: 8px !important;
+        }}
+        .brand-icon {{
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 1rem !important;
+            border-radius: 8px !important;
+        }}
+        .stepper-container {{
+            gap: 4px !important;
+            margin-bottom: 14px !important;
+        }}
+        .step-item {{
+            padding: 5px 8px !important;
+            font-size: 0.68rem !important;
+            border-radius: 16px !important;
+        }}
+        .saas-card {{
+            padding: 14px 14px !important;
+            margin-bottom: 12px !important;
+            border-radius: 14px !important;
+        }}
+        .saas-card-header {{
+            font-size: 0.92rem !important;
+            margin-bottom: 8px !important;
+            gap: 6px !important;
+        }}
+        .sample-pill {{
+            padding: 3px 8px !important;
+            font-size: 0.7rem !important;
+            margin: 2px 2px 2px 0 !important;
+        }}
+        .sub-phone-container {{
+            margin: 8px 0 !important;
+            animation: none !important;
+        }}
+        .sub-phone-mockup {{
+            width: 145px !important;
+            height: 258px !important;
+            border-width: 2.5px !important;
+            border-radius: 20px !important;
+        }}
+        .sub-wide-container {{
+            margin: 8px 0 !important;
+            animation: none !important;
+        }}
+        .sub-wide-mockup {{
+            max-width: 250px !important;
+            height: 140px !important;
+            border-width: 2.5px !important;
+            border-radius: 12px !important;
+        }}
+        .sub-preview-content {{
+            bottom: 48px !important;
+            left: 4px !important;
+            right: 20px !important;
+        }}
+        .sub-preview-text {{
+            font-size: 10px !important;
+        }}
+        .phone-side-icons {{
+            bottom: 35px !important;
+            right: 4px !important;
+            gap: 5px !important;
+            font-size: 0.52rem !important;
+        }}
+        .stButton > button {{
+            padding: 10px 16px !important;
+            font-size: 0.88rem !important;
+            border-radius: 12px !important;
+        }}
+        .stTextInput > div > div > input {{
+            padding: 10px 14px !important;
+            font-size: 0.88rem !important;
+            border-radius: 10px !important;
+        }}
+    }}
+</style>
+""", unsafe_allow_html=True)
 
 # Top Bar (Header Minimalista e Moderno)
 st.markdown("""
@@ -854,8 +794,8 @@ def render_stepper(step):
     s3_icon = "3️⃣" if step == 3 else "✨"
     s3_text = "3. Cortes & Exportação"
     
-    sep1 = "#8B5CF6" if step > 1 else "rgba(255,255,255,0.15)"
-    sep2 = "#8B5CF6" if step > 2 else "rgba(255,255,255,0.15)"
+    sep1 = "#8B5CF6" if step > 1 else "rgba(139, 92, 246, 0.2)"
+    sep2 = "#8B5CF6" if step > 2 else "rgba(139, 92, 246, 0.2)"
     
     return f"""
     <div class="stepper-container">
@@ -874,7 +814,7 @@ st.markdown(render_stepper(st.session_state.current_step), unsafe_allow_html=Tru
 # ==============================================================================
 if st.session_state.current_step == 1:
     st.markdown("""
-    <div class="saas-card" style="border: 1px solid rgba(139, 92, 246, 0.35); background: linear-gradient(135deg, rgba(25, 20, 50, 0.75) 0%, rgba(13, 15, 28, 0.85) 100%);">
+    <div class="saas-card">
         <div class="saas-card-header" style="margin-bottom:0px;">
             <span>🔗</span> Insira o Link do Vídeo do YouTube
         </div>
@@ -926,8 +866,8 @@ elif st.session_state.current_step == 2:
             <div class="saas-card" style="display:flex; gap:16px; align-items:center; padding:12px 16px; margin-bottom:16px;">
                 <img src="{v_info.get('thumbnail', '')}" style="width:90px; height:52px; border-radius:8px; object-fit:cover;">
                 <div>
-                    <div style="font-weight:800; font-size:0.95rem; color:#FFFFFF; line-height:1.2;">{v_info.get('title', 'Vídeo Selecionado')}</div>
-                    <div style="color:#94A3B8; font-size:0.78rem;">👤 {v_info.get('channel', '')} &nbsp;|&nbsp; ⏱️ {format_timestamp(v_info.get('duration', 0))}</div>
+                    <div style="font-weight:800; font-size:0.95rem; color:var(--text-heading); line-height:1.2;">{v_info.get('title', 'Vídeo Selecionado')}</div>
+                    <div style="color:var(--text-muted); font-size:0.78rem;">👤 {v_info.get('channel', '')} &nbsp;|&nbsp; ⏱️ {format_timestamp(v_info.get('duration', 0))}</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -941,112 +881,91 @@ elif st.session_state.current_step == 2:
 
     with col_cfg1:
         # 1. Proporção & Formato
-        with st.container():
-            st.markdown("""
-            <div class="saas-card">
-                <div class="saas-card-header">📱 Formato & Proporção do Vídeo</div>
-            </div>
-            """, unsafe_allow_html=True)
-            video_style = st.selectbox(
-                "Proporção do Vídeo",
-                options=[
-                    ("blur_bg", "📱 Vertical (9:16) - TikTok, Reels, Shorts (Fundo Desfocado)"),
-                    ("center_crop", "📱 Vertical (9:16) - Corte Centralizado"),
-                    ("original", "🖥️ Horizontal (16:9) - Formato Original")
-                ],
-                format_func=lambda x: x[1],
-                label_visibility="collapsed"
-            )[0]
+        st.markdown('<div class="setting-title"><span>📱</span> Formato & Proporção do Vídeo</div>', unsafe_allow_html=True)
+        video_style = st.selectbox(
+            "Proporção do Vídeo",
+            options=[
+                ("blur_bg", "📱 Vertical (9:16) - TikTok, Reels, Shorts (Fundo Desfocado)"),
+                ("center_crop", "📱 Vertical (9:16) - Corte Centralizado"),
+                ("original", "🖥️ Horizontal (16:9) - Formato Original")
+            ],
+            format_func=lambda x: x[1],
+            label_visibility="collapsed"
+        )[0]
 
-        # 2. Legendas nos Cortes (Com Legenda vs Sem Legenda)
-        with st.container():
+        # 2. Legendas nos Cortes
+        st.markdown('<div class="setting-title"><span>💬</span> Legendas Dinâmicas nos Cortes</div>', unsafe_allow_html=True)
+        sub_option = st.radio(
+            "Opção de Legenda:",
+            options=[
+                ("with_sub", "✨ Com Legendas Dinâmicas (Estilizadas)"),
+                ("no_sub", "🚫 Sem Legenda (Vídeo Limpo)")
+            ],
+            format_func=lambda x: x[1],
+            label_visibility="collapsed",
+            horizontal=True
+        )[0]
+        enable_subtitles = (sub_option == "with_sub")
+        
+        if enable_subtitles:
+            col_s1, col_s2 = st.columns(2)
+            with col_s1:
+                sub_style = st.selectbox(
+                    "Estilo da Legenda",
+                    options=[
+                        ("yellow_black", "🟡 Amarelo Gamer (Borda Preta)"),
+                        ("white_yellow", "⚪ Branco Hormozi (Borda Preta)"),
+                        ("neon_green", "🟢 Ciano / Neon")
+                    ],
+                    format_func=lambda x: x[1]
+                )[0]
+            with col_s2:
+                sub_anim = st.selectbox(
+                    "Animação",
+                    options=[
+                        ("pop", "💥 Pop / Bounce (Dinâmico)"),
+                        ("fade", "✨ Fade Suave"),
+                        ("none", "Estática")
+                    ],
+                    format_func=lambda x: x[1]
+                )[0]
+            sub_fontsize = st.slider("Tamanho da Legenda no Vídeo (px)", min_value=50, max_value=120, value=78, step=2, help="Padrão recomendado para Shorts: 75 a 85px")
+        else:
+            sub_style = "yellow_black"
+            sub_anim = "pop"
+            sub_fontsize = 78
             st.markdown("""
-            <div class="saas-card">
-                <div class="saas-card-header">💬 Legendas Dinâmicas nos Cortes</div>
+            <div style="background:rgba(139,92,246,0.06); border:1px solid var(--card-border); border-radius:12px; padding:12px; color:var(--text-muted); font-size:0.86rem; margin-top:8px;">
+                🎬 <strong>Modo Vídeo Limpo:</strong> Os cortes serão exportados na proporção escolhida sem legendas na tela.
             </div>
             """, unsafe_allow_html=True)
-            
-            sub_option = st.radio(
-                "Opção de Legenda:",
-                options=[
-                    ("with_sub", "✨ Com Legendas Dinâmicas (Estilizadas)"),
-                    ("no_sub", "🚫 Sem Legenda (Vídeo Limpo)")
-                ],
-                format_func=lambda x: x[1],
-                label_visibility="collapsed",
-                horizontal=True
-            )[0]
-            enable_subtitles = (sub_option == "with_sub")
-            
-            if enable_subtitles:
-                col_s1, col_s2 = st.columns(2)
-                with col_s1:
-                    sub_style = st.selectbox(
-                        "Estilo da Legenda",
-                        options=[
-                            ("yellow_black", "🟡 Amarelo Gamer (Borda Preta)"),
-                            ("white_yellow", "⚪ Branco Hormozi (Borda Preta)"),
-                            ("neon_green", "🟢 Ciano / Neon")
-                        ],
-                        format_func=lambda x: x[1]
-                    )[0]
-                with col_s2:
-                    sub_anim = st.selectbox(
-                        "Animação",
-                        options=[
-                            ("pop", "💥 Pop / Bounce (Dinâmico)"),
-                            ("fade", "✨ Fade Suave"),
-                            ("none", "Estática")
-                        ],
-                        format_func=lambda x: x[1]
-                    )[0]
-                sub_fontsize = st.slider("Tamanho da Legenda no Vídeo (px)", min_value=50, max_value=120, value=78, step=2, help="Padrão recomendado para Shorts: 75 a 85px")
-            else:
-                sub_style = "yellow_black"
-                sub_anim = "pop"
-                sub_fontsize = 78
-                st.markdown("""
-                <div style="background:rgba(15,17,32,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; color:#94A3B8; font-size:0.86rem; margin-top:8px;">
-                    🎬 <strong>Modo Vídeo Limpo:</strong> Os cortes serão exportados na proporção escolhida sem nenhuma legenda queimada na tela.
-                </div>
-                """, unsafe_allow_html=True)
-            
+        
         # 3. Duração dos Cortes
-        with st.container():
-            st.markdown("""
-            <div class="saas-card">
-                <div class="saas-card-header">⏱️ Duração dos Cortes (IA Automática)</div>
-            </div>
-            """, unsafe_allow_html=True)
-            col_d1, col_d2, col_d3 = st.columns(3)
-            with col_d1:
-                num_cuts = st.number_input("Cortes (Máx: 5)", min_value=1, max_value=5, value=st.session_state.cfg_num_cuts, help="Limite fixado em até 5 cortes por análise")
-            with col_d2:
-                min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=st.session_state.cfg_min_sec)
-            with col_d3:
-                max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=st.session_state.cfg_max_sec)
+        st.markdown('<div class="setting-title"><span>⏱️</span> Duração dos Cortes (IA Automática)</div>', unsafe_allow_html=True)
+        col_d1, col_d2, col_d3 = st.columns(3)
+        with col_d1:
+            num_cuts = st.number_input("Cortes (Máx: 5)", min_value=1, max_value=5, value=st.session_state.cfg_num_cuts, help="Limite fixado em até 5 cortes por análise")
+        with col_d2:
+            min_sec = st.number_input("Mín (s)", min_value=15, max_value=60, value=st.session_state.cfg_min_sec)
+        with col_d3:
+            max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=st.session_state.cfg_max_sec)
 
         # 4. Instrução Personalizada com IA
-        with st.container():
-            st.markdown("""
-            <div class="saas-card">
-                <div class="saas-card-header">🎯 Instrução Personalizada para a IA (Opcional)</div>
-            </div>
-            """, unsafe_allow_html=True)
-            custom_prompt = st.text_input(
-                "Prompt Personalizado",
-                value=st.session_state.cfg_custom_prompt,
-                placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
-                label_visibility="collapsed"
-            )
-            st.markdown("""
-            <div>
-                <span class="sample-pill">🔥 Melhores Ganchos</span>
-                <span class="sample-pill">😂 Momentos Engraçados</span>
-                <span class="sample-pill">📊 Insights & Dados</span>
-                <span class="sample-pill">🎮 Melhores Jogadas</span>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown('<div class="setting-title"><span>🎯</span> Instrução Personalizada para a IA (Opcional)</div>', unsafe_allow_html=True)
+        custom_prompt = st.text_input(
+            "Prompt Personalizado",
+            value=st.session_state.cfg_custom_prompt,
+            placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
+            label_visibility="collapsed"
+        )
+        st.markdown("""
+        <div>
+            <span class="sample-pill">🔥 Melhores Ganchos</span>
+            <span class="sample-pill">😂 Momentos Engraçados</span>
+            <span class="sample-pill">📊 Insights & Dados</span>
+            <span class="sample-pill">🎮 Melhores Jogadas</span>
+        </div>
+        """, unsafe_allow_html=True)
 
     with col_cfg2:
         # Coluna Dinâmica de Prévia com Efeito Flutuante e Iluminação Neon
@@ -1054,140 +973,139 @@ elif st.session_state.current_step == 2:
         preview_title = "Prévia em Tempo Real (16:9)" if is_widescreen else "Prévia em Tempo Real (9:16)"
         preview_icon = "🖥️" if is_widescreen else "📱"
         
-        with st.container():
-            st.markdown(f"""
-            <div class="saas-card" style="text-align:center; padding:16px 12px; border: 1px solid rgba(139, 92, 246, 0.25);">
-                <div class="saas-card-header" style="justify-content:center;">
-                    <span>{preview_icon}</span> {preview_title}
-                </div>
+        st.markdown(f"""
+        <div class="saas-card" style="text-align:center; padding:14px 12px; margin-bottom:10px;">
+            <div class="saas-card-header" style="justify-content:center; margin-bottom:0;">
+                <span>{preview_icon}</span> {preview_title}
             </div>
-            """, unsafe_allow_html=True)
-            
-            if enable_subtitles:
-                if sub_style == "yellow_black":
-                    color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
-                elif sub_style == "white_yellow":
-                    color_css = "color: #FFFFFF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
-                else: # neon_green
-                    color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if enable_subtitles:
+            if sub_style == "yellow_black":
+                color_css = "color: #FFE600; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
+            elif sub_style == "white_yellow":
+                color_css = "color: #FFFFFF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 4px 10px rgba(0,0,0,0.9);"
+            else: # neon_green
+                color_css = "color: #00F0FF; text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 0 16px rgba(0,240,255,0.85);"
 
-                anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
-                preview_font_size = max(11, int(sub_fontsize * 0.165))
+            anim_css_class = "anim-pop" if sub_anim == "pop" else ("anim-fade" if sub_anim == "fade" else "")
+            preview_font_size = max(11, int(sub_fontsize * 0.165))
 
-                if is_widescreen:
-                    mockup_html = (
-                        f'<div class="sub-wide-container">'
-                        f'<div class="sub-wide-mockup">'
-                        f'<div class="wide-screen">'
-                        f'<div class="video-timeline"></div>'
-                        f'<div class="gamer-bg-glow"></div>'
-                        f'<div style="display:flex; justify-content:space-between; align-items:center; z-index:5;">'
-                        f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen Preview</div>'
-                        f'<div style="font-size:0.6rem; color:#94A3B8;">🔴 1080p60</div>'
-                        f'</div>'
-                        f'<div class="wide-preview-content">'
-                        f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
-                        f'OLHA ESSA JOGADA! 🔥'
-                        f'</div>'
-                        f'</div>'
-                        f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
-                        f'<span>▶️ 01:24 / 08:30</span>'
-                        f'<span>⚙️ 1080p60 🔲</span>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                    )
-                else:
-                    mockup_html = (
-                        f'<div class="sub-phone-container">'
-                        f'<div class="sub-phone-mockup">'
-                        f'<div class="phone-screen">'
-                        f'<div class="video-timeline"></div>'
-                        f'<div class="gamer-bg-glow"></div>'
-                        f'<div>'
-                        f'<div class="phone-notch"></div>'
-                        f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
-                        f'</div>'
-                        f'<div class="phone-side-icons">'
-                        f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
-                        f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
-                        f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
-                        f'<div style="margin-top:2px;"><div class="vinyl-disc"></div></div>'
-                        f'</div>'
-                        f'<div style="position:absolute; bottom:14px; left:8px; display:flex; align-items:center; gap:5px; z-index:6;">'
-                        f'<div style="width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, #8B5CF6, #EC4899); border:1px solid #FFF; font-size:0.5rem; display:flex; align-items:center; justify-content:center;">⚡</div>'
-                        f'<span style="font-size:0.55rem; font-weight:800; color:#FFF;">@gravitiGames</span>'
-                        f'</div>'
-                        f'<div class="sub-preview-content">'
-                        f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
-                        f'OLHA ESSA JOGADA! 🔥'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                    )
-                st.markdown(mockup_html, unsafe_allow_html=True)
-                st.caption(f"<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Acompanhe ao vivo as cores, animação e tamanho exato para os seus cortes {('16:9' if is_widescreen else '9:16')}.</div>", unsafe_allow_html=True)
+            if is_widescreen:
+                mockup_html = (
+                    f'<div class="sub-wide-container">'
+                    f'<div class="sub-wide-mockup">'
+                    f'<div class="wide-screen">'
+                    f'<div class="video-timeline"></div>'
+                    f'<div class="gamer-bg-glow"></div>'
+                    f'<div style="display:flex; justify-content:space-between; align-items:center; z-index:5;">'
+                    f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen Preview</div>'
+                    f'<div style="font-size:0.6rem; color:#94A3B8;">🔴 1080p60</div>'
+                    f'</div>'
+                    f'<div class="wide-preview-content">'
+                    f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
+                    f'OLHA ESSA JOGADA! 🔥'
+                    f'</div>'
+                    f'</div>'
+                    f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
+                    f'<span>▶️ 01:24 / 08:30</span>'
+                    f'<span>⚙️ 1080p60 🔲</span>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                )
             else:
-                # Prévia do vídeo LIMPO (sem legendas)
-                if is_widescreen:
-                    mockup_html = (
-                        f'<div class="sub-wide-container">'
-                        f'<div class="sub-wide-mockup">'
-                        f'<div class="wide-screen">'
-                        f'<div class="video-timeline"></div>'
-                        f'<div class="gamer-bg-glow"></div>'
-                        f'<div style="display:flex; justify-content:space-between; align-items:center; z-index:5;">'
-                        f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen</div>'
-                        f'<div style="font-size:0.6rem; color:#10B981;">● Vídeo Limpo</div>'
-                        f'</div>'
-                        f'<div class="wide-preview-content">'
-                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
-                        f'🎬 SEM LEGENDAS'
-                        f'</div>'
-                        f'</div>'
-                        f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
-                        f'<span>▶️ 01:24 / 08:30</span>'
-                        f'<span>⚙️ 1080p60 🔲</span>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                    )
-                else:
-                    mockup_html = (
-                        f'<div class="sub-phone-container">'
-                        f'<div class="sub-phone-mockup">'
-                        f'<div class="phone-screen">'
-                        f'<div class="video-timeline"></div>'
-                        f'<div class="gamer-bg-glow"></div>'
-                        f'<div>'
-                        f'<div class="phone-notch"></div>'
-                        f'<div class="phone-badge-tag">📱 9:16 Shorts</div>'
-                        f'</div>'
-                        f'<div class="phone-side-icons">'
-                        f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
-                        f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
-                        f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
-                        f'<div style="margin-top:2px;"><div class="vinyl-disc"></div></div>'
-                        f'</div>'
-                        f'<div style="position:absolute; bottom:14px; left:8px; display:flex; align-items:center; gap:5px; z-index:6;">'
-                        f'<div style="width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, #8B5CF6, #EC4899); border:1px solid #FFF; font-size:0.5rem; display:flex; align-items:center; justify-content:center;">⚡</div>'
-                        f'<span style="font-size:0.55rem; font-weight:800; color:#FFF;">@gravitiGames</span>'
-                        f'</div>'
-                        f'<div class="sub-preview-content">'
-                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
-                        f'🎬 SEM LEGENDAS'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                        f'</div>'
-                    )
-                st.markdown(mockup_html, unsafe_allow_html=True)
-                st.caption(f"<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Prévia do seu corte {('16:9' if is_widescreen else '9:16')} sem legendas (vídeo original limpo).</div>", unsafe_allow_html=True)
+                mockup_html = (
+                    f'<div class="sub-phone-container">'
+                    f'<div class="sub-phone-mockup">'
+                    f'<div class="phone-screen">'
+                    f'<div class="video-timeline"></div>'
+                    f'<div class="gamer-bg-glow"></div>'
+                    f'<div>'
+                    f'<div class="phone-notch"></div>'
+                    f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
+                    f'</div>'
+                    f'<div class="phone-side-icons">'
+                    f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
+                    f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
+                    f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                    f'<div style="margin-top:2px;"><div class="vinyl-disc"></div></div>'
+                    f'</div>'
+                    f'<div style="position:absolute; bottom:14px; left:8px; display:flex; align-items:center; gap:5px; z-index:6;">'
+                    f'<div style="width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, #8B5CF6, #EC4899); border:1px solid #FFF; font-size:0.5rem; display:flex; align-items:center; justify-content:center;">⚡</div>'
+                    f'<span style="font-size:0.55rem; font-weight:800; color:#FFF;">@gravitiGames</span>'
+                    f'</div>'
+                    f'<div class="sub-preview-content">'
+                    f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
+                    f'OLHA ESSA JOGADA! 🔥'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                )
+            st.markdown(mockup_html, unsafe_allow_html=True)
+            st.caption(f"<div style='text-align:center; color:var(--text-muted); margin-top:8px;'>✨ Acompanhe ao vivo as cores, animação e tamanho exato para os seus cortes {('16:9' if is_widescreen else '9:16')}.</div>", unsafe_allow_html=True)
+        else:
+            # Prévia do vídeo LIMPO (sem legendas)
+            if is_widescreen:
+                mockup_html = (
+                    f'<div class="sub-wide-container">'
+                    f'<div class="sub-wide-mockup">'
+                    f'<div class="wide-screen">'
+                    f'<div class="video-timeline"></div>'
+                    f'<div class="gamer-bg-glow"></div>'
+                    f'<div style="display:flex; justify-content:space-between; align-items:center; z-index:5;">'
+                    f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen</div>'
+                    f'<div style="font-size:0.6rem; color:#10B981;">● Vídeo Limpo</div>'
+                    f'</div>'
+                    f'<div class="wide-preview-content">'
+                    f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
+                    f'🎬 SEM LEGENDAS'
+                    f'</div>'
+                    f'</div>'
+                    f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
+                    f'<span>▶️ 01:24 / 08:30</span>'
+                    f'<span>⚙️ 1080p60 🔲</span>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                )
+            else:
+                mockup_html = (
+                    f'<div class="sub-phone-container">'
+                    f'<div class="sub-phone-mockup">'
+                    f'<div class="phone-screen">'
+                    f'<div class="video-timeline"></div>'
+                    f'<div class="gamer-bg-glow"></div>'
+                    f'<div>'
+                    f'<div class="phone-notch"></div>'
+                    f'<div class="phone-badge-tag">📱 9:16 Shorts</div>'
+                    f'</div>'
+                    f'<div class="phone-side-icons">'
+                    f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
+                    f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
+                    f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                    f'<div style="margin-top:2px;"><div class="vinyl-disc"></div></div>'
+                    f'</div>'
+                    f'<div style="position:absolute; bottom:14px; left:8px; display:flex; align-items:center; gap:5px; z-index:6;">'
+                    f'<div style="width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, #8B5CF6, #EC4899); border:1px solid #FFF; font-size:0.5rem; display:flex; align-items:center; justify-content:center;">⚡</div>'
+                    f'<span style="font-size:0.55rem; font-weight:800; color:#FFF;">@gravitiGames</span>'
+                    f'</div>'
+                    f'<div class="sub-preview-content">'
+                    f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
+                    f'🎬 SEM LEGENDAS'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                    f'</div>'
+                )
+            st.markdown(mockup_html, unsafe_allow_html=True)
+            st.caption(f"<div style='text-align:center; color:var(--text-muted); margin-top:8px;'>✨ Prévia do seu corte {('16:9' if is_widescreen else '9:16')} sem legendas (vídeo original limpo).</div>", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1230,10 +1148,10 @@ elif st.session_state.current_step == 3:
         
         # Etapa 1/3 (Metadados)
         status_slot.markdown("""
-        <div class="saas-card" style="text-align:center; padding:40px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
+        <div class="saas-card" style="text-align:center; padding:40px 20px; border:1.5px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
             <div style="font-size:3rem; margin-bottom:12px;">📥⚡</div>
-            <div style="font-size:1.4rem; font-weight:900; color:#FFFFFF; margin-bottom:6px; letter-spacing:-0.5px;">Etapa 1/3: Sincronizando Vídeo</div>
-            <div style="color:#C4B5FD; font-size:0.92rem;">Verificando integridade e canal do YouTube...</div>
+            <div style="font-size:1.4rem; font-weight:900; color:var(--text-heading); margin-bottom:6px; letter-spacing:-0.5px;">Etapa 1/3: Sincronizando Vídeo</div>
+            <div style="color:#8B5CF6; font-size:0.92rem;">Verificando integridade e canal do YouTube...</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1250,10 +1168,10 @@ elif st.session_state.current_step == 3:
         # Etapa 2/3 (Transcrição)
         progress_bar.progress(55)
         status_slot.markdown("""
-        <div class="saas-card" style="text-align:center; padding:40px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
+        <div class="saas-card" style="text-align:center; padding:40px 20px; border:1.5px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
             <div style="font-size:3rem; margin-bottom:12px;">📝⚡</div>
-            <div style="font-size:1.4rem; font-weight:900; color:#FFFFFF; margin-bottom:6px; letter-spacing:-0.5px;">Etapa 2/3: Extraindo Transcrição e Timestamps</div>
-            <div style="color:#C4B5FD; font-size:0.92rem;">Lendo e sincronizando as falas com precisão milimétrica...</div>
+            <div style="font-size:1.4rem; font-weight:900; color:var(--text-heading); margin-bottom:6px; letter-spacing:-0.5px;">Etapa 2/3: Extraindo Transcrição e Timestamps</div>
+            <div style="color:#8B5CF6; font-size:0.92rem;">Lendo e sincronizando as falas com precisão milimétrica...</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1269,10 +1187,10 @@ elif st.session_state.current_step == 3:
         # Etapa 3/3 (IA Gemini Minerando Momentos Virais)
         progress_bar.progress(85)
         status_slot.markdown("""
-        <div class="saas-card" style="text-align:center; padding:40px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
+        <div class="saas-card" style="text-align:center; padding:40px 20px; border:1.5px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
             <div style="font-size:3rem; margin-bottom:12px;">🧠⚡</div>
-            <div style="font-size:1.4rem; font-weight:900; color:#FFFFFF; margin-bottom:6px; letter-spacing:-0.5px;">Etapa 3/3: GravitiCuts IA Minerando Picos Virais</div>
-            <div style="color:#C4B5FD; font-size:0.92rem;">Calculando HotPeaks de retenção, ganchos magnéticos e viralidade...</div>
+            <div style="font-size:1.4rem; font-weight:900; color:var(--text-heading); margin-bottom:6px; letter-spacing:-0.5px;">Etapa 3/3: GravitiCuts IA Minerando Picos Virais</div>
+            <div style="color:#8B5CF6; font-size:0.92rem;">Calculando HotPeaks de retenção, ganchos magnéticos e viralidade...</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1313,9 +1231,9 @@ elif st.session_state.current_step == 3:
                 st.rerun()
         with col_nav3:
             st.markdown(f"""
-            <div style="background:rgba(19, 21, 38, 0.75); border:1px solid rgba(255,255,255,0.08); padding:8px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-weight:900; color:#C4B5FD; font-size:0.92rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Gerados</span>
-                <span style="font-size:0.8rem; color:#94A3B8;">Formato: <strong style="color:#F1F5F9;">{st.session_state.cfg_video_style}</strong> | Legendas: <strong style="color:#F1F5F9;">{'Sim' if st.session_state.cfg_enable_subtitles else 'Não'}</strong></span>
+            <div style="background:var(--card-bg); border:1px solid var(--card-border); padding:8px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--card-shadow);">
+                <span style="font-weight:900; color:#8B5CF6; font-size:0.92rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Gerados</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">Formato: <strong style="color:var(--text-heading);">{st.session_state.cfg_video_style}</strong> | Legendas: <strong style="color:var(--text-heading);">{'Sim' if st.session_state.cfg_enable_subtitles else 'Não'}</strong></span>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1325,10 +1243,10 @@ elif st.session_state.current_step == 3:
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(f"""
             <div class="saas-card" style="display:flex; gap:20px; align-items:center;">
-                <img src="{v_info.get('thumbnail', '')}" style="width:140px; border-radius:10px; object-fit:cover; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                <img src="{v_info.get('thumbnail', '')}" style="width:140px; border-radius:10px; object-fit:cover; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                 <div>
-                    <div style="font-weight:900; font-size:1.15rem; color:#FFFFFF; margin-bottom:4px; letter-spacing:-0.3px;">{v_info.get('title', '')}</div>
-                    <div style="color:#94A3B8; font-size:0.85rem;">👤 Canal: <strong style="color:#E2E8F0;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#E2E8F0;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
+                    <div style="font-weight:900; font-size:1.15rem; color:var(--text-heading); margin-bottom:4px; letter-spacing:-0.3px;">{v_info.get('title', '')}</div>
+                    <div style="color:var(--text-muted); font-size:0.85rem;">👤 Canal: <strong style="color:var(--text-heading);">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:var(--text-heading);">{format_timestamp(v_info.get('duration', 0))}</strong></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -1336,7 +1254,7 @@ elif st.session_state.current_step == 3:
         # Grid de Cortes Sugeridos (Estilo Feed de Cortes Moderno)
         if st.session_state.cuts:
             current_video_id = extract_video_id(st.session_state.cfg_url)
-            grid_columns = 3 # 3 colunas padrão no PC
+            grid_columns = 3
             
             for row_idx in range(0, len(st.session_state.cuts), grid_columns):
                 cols = st.columns(grid_columns)
@@ -1353,7 +1271,7 @@ elif st.session_state.current_step == 3:
                                     <span class="score-chip">🔥 PICO VIRAL {cut['score']}%</span>
                                     <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
                                 </div>
-                                <div style="font-weight:900; font-size:1.05rem; color:#FFFFFF; line-height:1.35; margin-bottom:10px; letter-spacing:-0.2px;">
+                                <div style="font-weight:900; font-size:1.05rem; color:var(--text-heading); line-height:1.35; margin-bottom:10px; letter-spacing:-0.2px;">
                                     #{cut_idx+1} {cut['title']}
                                 </div>
                             </div>
