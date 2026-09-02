@@ -7,10 +7,16 @@ import imageio_ffmpeg
 
 def get_ffmpeg_executable() -> str:
     """
-    Obtém o caminho do executável do FFmpeg e garante que exista um 'ffmpeg.exe'
-    reconhecível pelo yt-dlp.
+    Obtém o caminho do executável do FFmpeg compatível tanto com Windows quanto Linux/Cloud.
     """
+    system_ffmpeg = shutil.which("ffmpeg")
+    if system_ffmpeg:
+        return system_ffmpeg
+
     ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+    if os.name != 'nt':
+        return ffmpeg_exe
+
     ffmpeg_dir = os.path.dirname(ffmpeg_exe)
     target_ffmpeg = os.path.join(ffmpeg_dir, 'ffmpeg.exe')
     
