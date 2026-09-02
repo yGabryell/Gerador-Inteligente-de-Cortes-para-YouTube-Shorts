@@ -24,9 +24,17 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
     
-    * {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    html, body, [class*="css"], .stApp, p, h1, h2, h3, h4, h5, h6, label, input, textarea, button {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    *, *::before, *::after {
         box-sizing: border-box;
+    }
+
+    /* Preservar ícones do Streamlit (Material Symbols / Icons) como o olho de senha */
+    [data-testid="stIconMaterial"], [class*="material-symbols"], [class*="material-icons"], span[translate="no"] {
+        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
     }
     
     /* Fundo Dark Obsidian com Aura Glow Ambiental */
