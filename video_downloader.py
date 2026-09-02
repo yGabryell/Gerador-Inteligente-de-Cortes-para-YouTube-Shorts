@@ -46,11 +46,8 @@ def get_video_info(url: str) -> Dict[str, Any]:
         'geo_bypass': True,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android']
+                'player_client': ['android', 'mweb']
             }
-        },
-        'http_headers': {
-            'User-Agent': 'com.google.android.youtube/19.29.37 (Linux; U; Android 14; US) gzip'
         }
     }
     
@@ -69,8 +66,8 @@ def get_video_info(url: str) -> Dict[str, Any]:
 
 def download_video(url: str, output_dir: str = "downloads", video_id: Optional[str] = None) -> str:
     """
-    Baixa o vídeo completo em formato MP4 (máx 1080p) para permitir cortes rápidos.
-    Usa o cliente nativo do App do YouTube para Android que é 100% livre de bloqueios anti-bot e 403.
+    Baixa o vídeo completo em formato MP4 para permitir cortes rápidos.
+    Utiliza múltiplos canais de extração (Android + MWeb) para garantir download contínuo no Streamlit Cloud.
     Retorna o caminho do arquivo baixado.
     """
     os.makedirs(output_dir, exist_ok=True)
@@ -79,7 +76,7 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
     out_template = os.path.join(output_dir, f"{video_id or '%(id)s'}.%(ext)s")
     
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[ext=mp4]/best/18/22',
+        'format': 'best/bestvideo+bestaudio',
         'outtmpl': out_template,
         'merge_output_format': 'mp4',
         'ffmpeg_location': ffmpeg_path,
@@ -88,13 +85,12 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
         'overwrites': False,
         'nocheckcertificate': True,
         'geo_bypass': True,
+        'retries': 10,
+        'fragment_retries': 10,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android']
+                'player_client': ['android', 'mweb']
             }
-        },
-        'http_headers': {
-            'User-Agent': 'com.google.android.youtube/19.29.37 (Linux; U; Android 14; US) gzip'
         }
     }
     
@@ -111,20 +107,19 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
     except Exception as e:
         # Fallback de emergência com stream direto progressivo
         fallback_opts = {
-            'format': '18/22/best[ext=mp4]/best',
+            'format': '18/22/best',
             'outtmpl': out_template,
             'ffmpeg_location': ffmpeg_path,
             'quiet': False,
             'no_warnings': True,
             'nocheckcertificate': True,
             'geo_bypass': True,
+            'retries': 10,
+            'fragment_retries': 10,
             'extractor_args': {
                 'youtube': {
                     'player_client': ['android']
                 }
-            },
-            'http_headers': {
-                'User-Agent': 'com.google.android.youtube/19.29.37 (Linux; U; Android 14; US) gzip'
             }
         }
         with yt_dlp.YoutubeDL(fallback_opts) as ydl:

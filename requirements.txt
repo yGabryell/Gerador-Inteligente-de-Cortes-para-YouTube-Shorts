@@ -1,7 +1,9 @@
 streamlit>=1.41.0
-yt-dlp>=2025.1.15
+yt-dlp>=2025.2.19
 youtube-transcript-api>=0.6.3
 google-genai>=2.19.0
 python-dotenv>=1.0.1
 imageio-ffmpeg>=0.5.1
 requests>=2.31.0
+curl-cffi>=0.7.0
+pycryptodomex>=3.20.0
