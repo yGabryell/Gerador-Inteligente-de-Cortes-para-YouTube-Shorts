@@ -507,7 +507,7 @@ st.markdown("""
 # Barra Lateral de Navegação
 with st.sidebar:
     st.markdown("""
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
         <div class="brand-icon">⚡</div>
         <div style="font-size:1.25rem; font-weight:900; color:#FFFFFF; letter-spacing:-0.5px;">GravitiCuts AI</div>
     </div>
@@ -515,10 +515,6 @@ with st.sidebar:
     
     st.markdown("""
     <div class="nav-item nav-item-active">📊 Studio de Cortes</div>
-    <div class="nav-item">📁 Histórico de Projetos</div>
-    <div class="nav-item">💲 Créditos & Planos</div>
-    <div class="nav-item">🎧 Suporte VIP</div>
-    <div class="nav-item">💬 Chat Inteligente</div>
     """, unsafe_allow_html=True)
     
     st.markdown("---")
@@ -530,34 +526,13 @@ with st.sidebar:
         type="password",
         help="Sua chave de API do Google Gemini Studio"
     )
-    
-    st.markdown("""
-    <div class="plan-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-weight:800; font-size:0.85rem; color:#FFFFFF;">🎁 Plano Ilimitado</span>
-            <span style="color:#10B981; font-weight:700; font-size:0.75rem;">● Ativo</span>
-        </div>
-        <div style="color:#94A3B8; font-size:0.78rem; margin-bottom:10px;">Motor: Gemini 3.6 Flash IA</div>
-        <div style="background:linear-gradient(135deg, #10B981 0%, #059669 100%); color:#FFFFFF; padding:6px 10px; border-radius:8px; font-weight:800; font-size:0.75rem; text-align:center;">
-            ⚡ GRAVITICUTS PRONTO
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
-# Top Bar (Header Moderno com Avatar e Status)
+# Top Bar (Header Minimalista e Moderno)
 st.markdown("""
 <div class="top-nav">
     <div class="brand-logo">
         <div class="brand-icon">⚡</div>
         <span>GravitiCuts AI Studio</span>
-    </div>
-    <div class="user-pill">
-        <span class="credit-badge">💎 Créditos Ilimitados</span>
-        <span class="free-badge">Grátis</span>
-        <div style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:5px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.08);">
-            <span style="font-size:0.85rem;">🇧🇷 PT-BR</span>
-            <span style="font-weight:700; font-size:0.85rem; color:#E2E8F0;">👤 Gabriel Alves</span>
-        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
