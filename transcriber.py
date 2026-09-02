@@ -44,19 +44,105 @@ def format_timestamp(seconds: float) -> str:
         return f"{hours:02d}:{minutes:02d}:{secs:02d}"
     return f"{minutes:02d}:{secs:02d}"
 
+def get_transcript_via_ytdlp(video_id: str, preferred_languages: Optional[List[str]] = None) -> Tuple[List[Dict[str, Any]], str]:
+    """
+    Fallback robusto usando yt-dlp para extrair legendas (manuais e automáticas)
+    em formato json3 ou vtt diretamente do YouTube, sem sofrer timeout de conexão.
+    """
+    import yt_dlp
+    import requests
+
+    if preferred_languages is None:
+        preferred_languages = ['pt', 'pt-BR', 'pt-PT', 'en', 'es']
+
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    ydl_opts = {
+        'skip_download': True,
+        'quiet': True,
+        'no_warnings': True,
+        'socket_timeout': 15,
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
+        subtitles = info.get('subtitles') or {}
+        auto_subtitles = info.get('automatic_captions') or {}
+
+        # 1. Procura nas legendas manuais
+        target_sub = None
+        for lang in preferred_languages:
+            if lang in subtitles:
+                target_sub = subtitles[lang]
+                break
+        
+        # 2. Se não achar manual, procura nas automáticas
+        if not target_sub:
+            for lang in preferred_languages:
+                if lang in auto_subtitles:
+                    target_sub = auto_subtitles[lang]
+                    break
+
+        # 3. Se ainda não achar, pega a primeira disponível
+        if not target_sub:
+            if subtitles:
+                target_sub = list(subtitles.values())[0]
+            elif auto_subtitles:
+                target_sub = list(auto_subtitles.values())[0]
+
+        if not target_sub:
+            raise NoTranscriptFound("Não foram encontradas legendas disponíveis para este vídeo.")
+
+        # Prefere json3 por ter timestamps com precisão em milissegundos
+        fmt = next((f for f in target_sub if f.get('ext') == 'json3'), target_sub[0])
+        sub_url = fmt.get('url')
+        if not sub_url:
+            raise NoTranscriptFound("URL de legendas não encontrada.")
+
+        res = requests.get(sub_url, timeout=15)
+        if res.status_code != 200:
+            raise Exception(f"Falha ao baixar arquivo de legendas (HTTP {res.status_code})")
+
+        data = res.json()
+        events = data.get('events', [])
+        
+        normalized_data = []
+        formatted_lines = []
+
+        for e in events:
+            tStart = e.get('tStartMs', 0) / 1000.0
+            dDuration = e.get('dDurationMs', 0) / 1000.0
+            segs = e.get('segs', [])
+            text = ''.join([s.get('utf8', '') for s in segs]).replace('\n', ' ').strip()
+            
+            # Filtra eventos vazios ou marcadores
+            if text and text != '\n' and text != '[Music]' and text != '[Música]':
+                normalized_data.append({
+                    "text": text,
+                    "start": float(tStart),
+                    "duration": float(dDuration)
+                })
+                start_str = format_timestamp(float(tStart))
+                formatted_lines.append(f"[{start_str}] {text}")
+
+        if not normalized_data:
+            raise NoTranscriptFound("Transcrição vazia ou não processável.")
+
+        formatted_text = "\n".join(formatted_lines)
+        return normalized_data, formatted_text
+
 def get_transcript(video_id: str, preferred_languages: Optional[List[str]] = None) -> Tuple[List[Dict[str, Any]], str]:
     """
-    Obtém a transcrição do vídeo com timestamps.
-    Retorna uma tupla: (lista de itens com {'text', 'start', 'duration'}, texto_formatado_para_ia)
+    Obtém a transcrição do vídeo com timestamps com fallback de alta disponibilidade.
+    Primeiro tenta YouTubeTranscriptApi; se falhar ou der timeout, usa yt-dlp json3.
     """
     if preferred_languages is None:
-        preferred_languages = ['pt', 'pt-BR', 'en', 'es']
+        preferred_languages = ['pt', 'pt-BR', 'pt-PT', 'en', 'es']
 
+    # 1. Tenta YouTubeTranscriptApi
     try:
         yta = YouTubeTranscriptApi()
         transcript_list = yta.list(video_id)
         
-        # Tenta encontrar transcrição manual ou automática nas línguas preferidas
         transcript = None
         try:
             transcript = transcript_list.find_transcript(preferred_languages)
@@ -64,40 +150,44 @@ def get_transcript(video_id: str, preferred_languages: Optional[List[str]] = Non
             try:
                 transcript = transcript_list.find_generated_transcript(preferred_languages)
             except Exception:
-                # Pega a primeira transcrição disponível no vídeo
                 for t in transcript_list:
                     transcript = t
                     break
 
-        if not transcript:
-            raise NoTranscriptFound("Nenhuma transcrição encontrada para este vídeo.")
-
-        raw_data = transcript.fetch()
-        
-        normalized_data = []
-        formatted_lines = []
-        
-        for item in raw_data:
-            text = getattr(item, 'text', None) or (item.get('text') if isinstance(item, dict) else str(item))
-            start = getattr(item, 'start', None) if hasattr(item, 'start') else (item.get('start', 0.0) if isinstance(item, dict) else 0.0)
-            duration = getattr(item, 'duration', None) if hasattr(item, 'duration') else (item.get('duration', 0.0) if isinstance(item, dict) else 0.0)
+        if transcript:
+            raw_data = transcript.fetch()
+            normalized_data = []
+            formatted_lines = []
             
-            clean_text = str(text).replace('\n', ' ').strip()
-            if clean_text:
-                normalized_data.append({
-                    "text": clean_text,
-                    "start": float(start),
-                    "duration": float(duration)
-                })
-                start_str = format_timestamp(float(start))
-                formatted_lines.append(f"[{start_str}] {clean_text}")
+            for item in raw_data:
+                text = getattr(item, 'text', None) or (item.get('text') if isinstance(item, dict) else str(item))
+                start = getattr(item, 'start', None) if hasattr(item, 'start') else (item.get('start', 0.0) if isinstance(item, dict) else 0.0)
+                duration = getattr(item, 'duration', None) if hasattr(item, 'duration') else (item.get('duration', 0.0) if isinstance(item, dict) else 0.0)
                 
-        formatted_text = "\n".join(formatted_lines)
-        return normalized_data, formatted_text
+                clean_text = str(text).replace('\n', ' ').strip()
+                if clean_text:
+                    normalized_data.append({
+                        "text": clean_text,
+                        "start": float(start),
+                        "duration": float(duration)
+                    })
+                    start_str = format_timestamp(float(start))
+                    formatted_lines.append(f"[{start_str}] {clean_text}")
+                    
+            if normalized_data:
+                formatted_text = "\n".join(formatted_lines)
+                return normalized_data, formatted_text
+    except Exception:
+        # Se falhar (ex: Timeout ou bloqueio), segue imediatamente para o fallback yt-dlp
+        pass
 
+    # 2. Fallback resiliente com yt-dlp
+    try:
+        return get_transcript_via_ytdlp(video_id, preferred_languages)
     except TranscriptsDisabled:
         raise Exception("As legendas e transcrições estão desativadas neste vídeo.")
     except NoTranscriptFound:
         raise Exception("Não foram encontradas legendas/transcrição disponíveis para este vídeo.")
     except Exception as e:
         raise Exception(f"Erro ao obter transcrição: {str(e)}")
+
