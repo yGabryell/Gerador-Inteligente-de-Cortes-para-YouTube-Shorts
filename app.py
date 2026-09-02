@@ -626,18 +626,35 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Inicialização do Tema
+if "theme_mode" not in st.session_state:
+    st.session_state.theme_mode = "dark"
+
 # Barra Lateral de Navegação
 with st.sidebar:
     st.markdown("""
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
         <div class="brand-icon">⚡</div>
-        <div style="font-size:1.25rem; font-weight:900; color:#FFFFFF; letter-spacing:-0.5px;">GravitiCuts AI</div>
+        <div style="font-size:1.25rem; font-weight:900; letter-spacing:-0.5px;">GravitiCuts AI</div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
     <div class="nav-item nav-item-active">📊 Studio de Cortes</div>
     """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.caption("🌓 APARÊNCIA & TEMA")
+    theme_choice = st.selectbox(
+        "Tema:",
+        options=["🌙 Modo Escuro (Dark)", "☀️ Modo Claro (Light)"],
+        index=0 if st.session_state.theme_mode == "dark" else 1,
+        label_visibility="collapsed"
+    )
+    selected_theme = "dark" if "Escuro" in theme_choice else "light"
+    if selected_theme != st.session_state.theme_mode:
+        st.session_state.theme_mode = selected_theme
+        st.rerun()
     
     st.markdown("---")
     st.caption("⚙️ CONFIGURAÇÕES DE API")
@@ -648,6 +665,136 @@ with st.sidebar:
         type="password",
         help="Sua chave de API do Google Gemini Studio"
     )
+
+# Injeção Dinâmica do Tema Claro (se selecionado)
+if st.session_state.theme_mode == "light":
+    st.markdown("""
+    <style>
+        /* MODO CLARO (LIGHT SNOW / CLEAN SAAS 2026) */
+        body, .stApp {
+            background-color: #F8FAFC !important;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 50%) !important;
+            color: #0F172A !important;
+        }
+        header[data-testid="stHeader"] {
+            background: rgba(248, 250, 252, 0.85) !important;
+        }
+        [data-testid="stSidebar"] {
+            background-color: #FFFFFF !important;
+            border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+        [data-testid="stSidebar"] div, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p {
+            color: #0F172A !important;
+        }
+        .top-nav {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid rgba(139, 92, 246, 0.2) !important;
+            box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.06) !important;
+        }
+        .brand-logo {
+            background: linear-gradient(135deg, #1E1B4B 0%, #4338CA 60%, #7C3AED 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        .saas-card {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(139, 92, 246, 0.16) !important;
+            box-shadow: 0 8px 25px -10px rgba(0, 0, 0, 0.06) !important;
+        }
+        .saas-card:hover {
+            border-color: rgba(139, 92, 246, 0.45) !important;
+            box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.12) !important;
+        }
+        .saas-card-header {
+            color: #0F172A !important;
+        }
+        .step-inactive {
+            background: #EDF2F7 !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            color: #64748B !important;
+        }
+        .stTextInput > div > div > input {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+            color: #0F172A !important;
+        }
+        .stTextInput > div > div > input:focus {
+            border-color: #7C3AED !important;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.2) !important;
+            background-color: #FFFFFF !important;
+        }
+        .stButton > button:not([kind="primary"]) {
+            background: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+            color: #334155 !important;
+        }
+        .stButton > button:not([kind="primary"]):hover {
+            background: #F1F5F9 !important;
+            border-color: #7C3AED !important;
+        }
+        .hotpeak-item {
+            background: #FFFFFF !important;
+            border: 1px solid rgba(139, 92, 246, 0.18) !important;
+            box-shadow: 0 8px 25px -10px rgba(0, 0, 0, 0.06) !important;
+        }
+        .hotpeak-item div {
+            color: #0F172A !important;
+        }
+        .time-chip {
+            background: #F1F5F9 !important;
+            color: #475569 !important;
+        }
+        .hook-badge-box {
+            background: rgba(236, 72, 153, 0.08) !important;
+            color: #831843 !important;
+        }
+        [data-testid="stSelectbox"] div[data-baseweb="select"] {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+            color: #0F172A !important;
+        }
+        [data-testid="stSelectbox"] div[data-baseweb="select"] * {
+            color: #0F172A !important;
+        }
+        div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+        li[data-baseweb="menu-item"] {
+            color: #0F172A !important;
+            background-color: #FFFFFF !important;
+        }
+        li[data-baseweb="menu-item"]:hover {
+            background-color: #F1F5F9 !important;
+            color: #7C3AED !important;
+        }
+        label, [data-testid="stWidgetLabel"] p {
+            color: #334155 !important;
+        }
+        textarea {
+            background-color: #FFFFFF !important;
+            color: #0F172A !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+        div[data-testid="stExpander"] {
+            background-color: #FFFFFF !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+        div[data-testid="stExpander"] details summary {
+            color: #1E293B !important;
+        }
+        .nav-item {
+            color: #64748B !important;
+        }
+        .nav-item-active {
+            background: rgba(139, 92, 246, 0.12) !important;
+            color: #7C3AED !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Top Bar (Header Minimalista e Moderno)
 st.markdown("""
