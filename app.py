@@ -576,14 +576,25 @@ if st.session_state.current_step == 1:
                 label_visibility="collapsed"
             )[0]
 
-        # 2. Legendas Automáticas (Configurações)
+        # 2. Legendas nos Cortes (Com Legenda vs Sem Legenda)
         with st.container():
             st.markdown("""
             <div class="saas-card">
-                <div class="saas-card-header">💬 Legendas Automáticas Animadas</div>
+                <div class="saas-card-header">💬 Legendas nos Cortes</div>
             </div>
             """, unsafe_allow_html=True)
-            enable_subtitles = st.checkbox("Queimar legendas automaticamente nos cortes", value=True)
+            
+            sub_option = st.radio(
+                "Opção de Legenda:",
+                options=[
+                    ("with_sub", "✨ Com Legendas Dinâmicas (Estilizadas)"),
+                    ("no_sub", "🚫 Sem Legenda (Vídeo Limpo)")
+                ],
+                format_func=lambda x: x[1],
+                label_visibility="collapsed",
+                horizontal=True
+            )[0]
+            enable_subtitles = (sub_option == "with_sub")
             
             if enable_subtitles:
                 col_s1, col_s2 = st.columns(2)
@@ -612,6 +623,11 @@ if st.session_state.current_step == 1:
                 sub_style = "yellow_black"
                 sub_anim = "pop"
                 sub_fontsize = 78
+                st.markdown("""
+                <div style="background:#0E101D; border:1px solid #1E2238; border-radius:10px; padding:12px 14px; color:#94A3B8; font-size:0.86rem; margin-top:8px;">
+                    🎬 <strong>Modo Vídeo Limpo:</strong> Os cortes serão exportados na proporção escolhida sem nenhuma legenda queimada na tela.
+                </div>
+                """, unsafe_allow_html=True)
             
         # 3. Duração dos Cortes
         with st.container():
@@ -716,11 +732,54 @@ if st.session_state.current_step == 1:
                 st.markdown(mockup_html, unsafe_allow_html=True)
                 st.caption(f"<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Acompanhe ao vivo as cores, animação e tamanho exato para os seus cortes {('16:9' if is_widescreen else '9:16')}.</div>", unsafe_allow_html=True)
             else:
-                st.markdown("""
-                <div style="background:#131526; border:1px dashed #2A2F4C; border-radius:16px; padding:40px 20px; text-align:center; color:#94A3B8; margin-top:16px;">
-                    💬 Ative as <strong>Legendas Automáticas</strong> ao lado para visualizar a prévia ao vivo.
-                </div>
-                """, unsafe_allow_html=True)
+                # Prévia do vídeo LIMPO (sem legendas)
+                if is_widescreen:
+                    mockup_html = (
+                        f'<div class="sub-wide-container">'
+                        f'<div class="sub-wide-mockup">'
+                        f'<div class="wide-screen">'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center;">'
+                        f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen</div>'
+                        f'<div style="font-size:0.6rem; color:#10B981;">● Vídeo Limpo</div>'
+                        f'</div>'
+                        f'<div class="wide-preview-content">'
+                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.8rem; font-weight:700;">'
+                        f'🎬 Sem Legendas'
+                        f'</div>'
+                        f'</div>'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
+                        f'<span>▶️ 01:24 / 08:30</span>'
+                        f'<span>⚙️ 1080p60 🔲</span>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                    )
+                else:
+                    mockup_html = (
+                        f'<div class="sub-phone-container">'
+                        f'<div class="sub-phone-mockup">'
+                        f'<div class="phone-screen">'
+                        f'<div>'
+                        f'<div class="phone-notch"></div>'
+                        f'<div class="phone-badge-tag">📱 9:16 Shorts</div>'
+                        f'</div>'
+                        f'<div class="phone-side-icons">'
+                        f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
+                        f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
+                        f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                        f'</div>'
+                        f'<div class="sub-preview-content">'
+                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.8rem; font-weight:700;">'
+                        f'🎬 Sem Legendas'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                        f'</div>'
+                    )
+                st.markdown(mockup_html, unsafe_allow_html=True)
+                st.caption(f"<div style='text-align:center; color:#94A3B8; margin-top:8px;'>✨ Prévia do seu corte {('16:9' if is_widescreen else '9:16')} sem legendas (vídeo original limpo).</div>", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -929,17 +988,23 @@ elif st.session_state.current_step == 2:
                                 )
                                 st.session_state[edited_key] = user_text
 
-                            # Botões para Renderizar o Short 9:16 (Com Legenda ou Sem Legenda)
+                            # Botões para Renderizar o Vídeo (Com Legenda ou Sem Legenda)
                             col_b1, col_b2 = st.columns(2)
-                            with col_b1:
-                                btn_with_sub = st.button("✂️ Com Legenda", key=f"btn_sub_{cut_idx}", type="primary", use_container_width=True)
-                            with col_b2:
-                                btn_no_sub = st.button("🎬 Sem Legenda", key=f"btn_nosub_{cut_idx}", use_container_width=True)
+                            if st.session_state.get("cfg_enable_subtitles", True):
+                                with col_b1:
+                                    btn_with_sub = st.button("✂️ Com Legenda", key=f"btn_sub_{cut_idx}", type="primary", use_container_width=True)
+                                with col_b2:
+                                    btn_no_sub = st.button("🎬 Sem Legenda", key=f"btn_nosub_{cut_idx}", use_container_width=True)
+                            else:
+                                with col_b1:
+                                    btn_no_sub = st.button("🎬 Sem Legenda", key=f"btn_nosub_{cut_idx}", type="primary", use_container_width=True)
+                                with col_b2:
+                                    btn_with_sub = st.button("✂️ Com Legenda", key=f"btn_sub_{cut_idx}", use_container_width=True)
                                 
                             if btn_with_sub or btn_no_sub:
                                 is_subbed = bool(btn_with_sub)
                                 label_status = "com Legendas" if is_subbed else "sem Legendas"
-                                with st.spinner(f"Renderizando Short #{cut_idx+1} {label_status}..."):
+                                with st.spinner(f"Renderizando Corte #{cut_idx+1} {label_status}..."):
                                     try:
                                         # 1. Download
                                         if not st.session_state.downloaded_video_path or not os.path.exists(st.session_state.downloaded_video_path):
