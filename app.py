@@ -322,71 +322,71 @@ st.markdown(f"""
     [data-testid="collapsedControl"] button,
     [data-testid="collapsedControl"],
     header[data-testid="stHeader"] button,
-    [data-testid="stSidebarHeader"] button {
+    [data-testid="stSidebarHeader"] button {{
         color: var(--text-main) !important;
         background: var(--top-nav-bg) !important;
         border: 1px solid var(--card-border) !important;
         border-radius: 10px !important;
-    }
+    }}
     [data-testid="stSidebarCollapseButton"] svg,
     [data-testid="collapsedControl"] svg,
     header[data-testid="stHeader"] svg,
-    [data-testid="stSidebarHeader"] svg {
+    [data-testid="stSidebarHeader"] svg {{
         fill: var(--text-main) !important;
         stroke: var(--text-main) !important;
         color: var(--text-main) !important;
-    }
+    }}
     
     /* Input Box e Password API Unificados */
     div[data-baseweb="base-input"],
-    div[data-baseweb="input"] {
+    div[data-baseweb="input"] {{
         background-color: var(--input-bg) !important;
         border: 1.5px solid var(--input-border) !important;
         border-radius: 14px !important;
         overflow: hidden !important;
-    }
-    div[data-baseweb="input"]:focus-within {
+    }}
+    div[data-baseweb="input"]:focus-within {{
         border-color: #8B5CF6 !important;
         box-shadow: 0 0 15px rgba(139, 92, 246, 0.3) !important;
-    }
+    }}
     div[data-baseweb="input"] input,
     .stTextInput > div > div > input,
-    textarea {
+    textarea {{
         background-color: transparent !important;
         border: none !important;
         color: var(--input-text) !important;
         padding: 12px 14px !important;
         font-size: 0.95rem !important;
         box-shadow: none !important;
-    }
-    div[data-baseweb="input"] button {
+    }}
+    div[data-baseweb="input"] button {{
         background-color: transparent !important;
         border: none !important;
         color: var(--input-text) !important;
         box-shadow: none !important;
         padding-right: 12px !important;
-    }
-    div[data-baseweb="input"] button:hover {
+    }}
+    div[data-baseweb="input"] button:hover {{
         background-color: transparent !important;
-    }
+    }}
     div[data-baseweb="input"] button svg,
-    div[data-baseweb="input"] button span {
+    div[data-baseweb="input"] button span {{
         color: var(--input-text) !important;
         fill: var(--input-text) !important;
-    }
-    input::placeholder, textarea::placeholder {
+    }}
+    input::placeholder, textarea::placeholder {{
         color: var(--text-muted) !important;
         opacity: 0.75 !important;
-    }
+    }}
     
     /* Toggle Switch */
-    [data-testid="stToggle"] label p {
+    [data-testid="stToggle"] label p {{
         color: var(--text-main) !important;
         font-weight: 700 !important;
-    }
-    [data-testid="stToggle"] div {
+    }}
+    [data-testid="stToggle"] div {{
         background: transparent !important;
-    }
+    }}
     
     /* Botões */
     .stButton > button {{
