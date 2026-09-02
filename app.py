@@ -292,6 +292,26 @@ st.markdown("""
         overflow: hidden;
         box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
     }
+    @keyframes videoLightsFlow {
+        0% { background-position: 0% 0%; filter: brightness(0.95) contrast(1.1); }
+        25% { background-position: 50% 100%; filter: brightness(1.2) contrast(1.2); }
+        50% { background-position: 100% 50%; filter: brightness(0.9) contrast(1.1); }
+        75% { background-position: 50% 0%; filter: brightness(1.25) contrast(1.25); }
+        100% { background-position: 0% 0%; filter: brightness(0.95) contrast(1.1); }
+    }
+    @keyframes rotateVinyl {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes videoTimelineBar {
+        0% { width: 0%; }
+        100% { width: 100%; }
+    }
+    @keyframes pulseGamerGlow {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 0.65; transform: scale(1.08); }
+    }
+
     .phone-screen {
         width: 100%;
         height: 100%;
@@ -300,7 +320,41 @@ st.markdown("""
         flex-direction: column;
         justify-content: space-between;
         padding: 8px 6px;
-        background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 50%, #070914 100%);
+        background: linear-gradient(135deg, #1E1B4B 0%, #311042 25%, #0B1528 50%, #4A0E4E 75%, #0F172A 100%);
+        background-size: 300% 300%;
+        animation: videoLightsFlow 8s ease infinite;
+        overflow: hidden;
+    }
+    .video-timeline {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #8B5CF6, #EC4899);
+        box-shadow: 0 0 8px #EC4899;
+        animation: videoTimelineBar 10s linear infinite;
+        z-index: 10;
+    }
+    .vinyl-disc {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #EC4899 25%, #111 26%, #111 60%, #444 61%, #111 100%);
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        animation: rotateVinyl 4s linear infinite;
+        box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+    }
+    .gamer-bg-glow {
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.45) 0%, rgba(236, 72, 153, 0.25) 50%, transparent 80%);
+        animation: pulseGamerGlow 4s ease-in-out infinite;
+        pointer-events: none;
     }
     .phone-notch {
         width: 44px;
@@ -323,18 +377,18 @@ st.markdown("""
     .phone-side-icons {
         position: absolute;
         right: 6px;
-        bottom: 50px;
+        bottom: 45px;
         display: flex;
         flex-direction: column;
         gap: 8px;
         z-index: 4;
         font-size: 0.62rem;
-        color: rgba(255, 255, 255, 0.65);
+        color: rgba(255, 255, 255, 0.75);
         text-align: center;
     }
     .sub-preview-content {
         position: absolute;
-        bottom: 68px;
+        bottom: 64px;
         left: 8px;
         right: 28px;
         text-align: center;
@@ -375,7 +429,10 @@ st.markdown("""
         flex-direction: column;
         justify-content: space-between;
         padding: 10px 14px;
-        background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 50%, #070914 100%);
+        background: linear-gradient(135deg, #1E1B4B 0%, #311042 25%, #0B1528 50%, #4A0E4E 75%, #0F172A 100%);
+        background-size: 300% 300%;
+        animation: videoLightsFlow 8s ease infinite;
+        overflow: hidden;
     }
     .wide-badge-tag {
         font-size: 0.65rem;
@@ -846,7 +903,9 @@ if st.session_state.current_step == 1:
                         f'<div class="sub-wide-container">'
                         f'<div class="sub-wide-mockup">'
                         f'<div class="wide-screen">'
-                        f'<div style="display:flex; justify-content:space-between; align-items:center;">'
+                        f'<div class="video-timeline"></div>'
+                        f'<div class="gamer-bg-glow"></div>'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center; z-index:5;">'
                         f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen Preview</div>'
                         f'<div style="font-size:0.6rem; color:#94A3B8;">🔴 1080p60</div>'
                         f'</div>'
@@ -868,6 +927,8 @@ if st.session_state.current_step == 1:
                         f'<div class="sub-phone-container">'
                         f'<div class="sub-phone-mockup">'
                         f'<div class="phone-screen">'
+                        f'<div class="video-timeline"></div>'
+                        f'<div class="gamer-bg-glow"></div>'
                         f'<div>'
                         f'<div class="phone-notch"></div>'
                         f'<div class="phone-badge-tag">📱 9:16 Shorts Preview</div>'
@@ -876,6 +937,11 @@ if st.session_state.current_step == 1:
                         f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
                         f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
                         f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                        f'<div style="margin-top:2px;"><div class="vinyl-disc"></div></div>'
+                        f'</div>'
+                        f'<div style="position:absolute; bottom:14px; left:8px; display:flex; align-items:center; gap:5px; z-index:6;">'
+                        f'<div style="width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, #8B5CF6, #EC4899); border:1px solid #FFF; font-size:0.5rem; display:flex; align-items:center; justify-content:center;">⚡</div>'
+                        f'<span style="font-size:0.55rem; font-weight:800; color:#FFF;">@gravitiGames</span>'
                         f'</div>'
                         f'<div class="sub-preview-content">'
                         f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
@@ -895,7 +961,9 @@ if st.session_state.current_step == 1:
                         f'<div class="sub-wide-container">'
                         f'<div class="sub-wide-mockup">'
                         f'<div class="wide-screen">'
-                        f'<div style="display:flex; justify-content:space-between; align-items:center;">'
+                        f'<div class="video-timeline"></div>'
+                        f'<div class="gamer-bg-glow"></div>'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center; z-index:5;">'
                         f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen</div>'
                         f'<div style="font-size:0.6rem; color:#10B981;">● Vídeo Limpo</div>'
                         f'</div>'
@@ -917,6 +985,8 @@ if st.session_state.current_step == 1:
                         f'<div class="sub-phone-container">'
                         f'<div class="sub-phone-mockup">'
                         f'<div class="phone-screen">'
+                        f'<div class="video-timeline"></div>'
+                        f'<div class="gamer-bg-glow"></div>'
                         f'<div>'
                         f'<div class="phone-notch"></div>'
                         f'<div class="phone-badge-tag">📱 9:16 Shorts</div>'
@@ -925,6 +995,11 @@ if st.session_state.current_step == 1:
                         f'<div>❤️<br><span style="font-size:0.52rem;">42K</span></div>'
                         f'<div>💬<br><span style="font-size:0.52rem;">1.2K</span></div>'
                         f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
+                        f'<div style="margin-top:2px;"><div class="vinyl-disc"></div></div>'
+                        f'</div>'
+                        f'<div style="position:absolute; bottom:14px; left:8px; display:flex; align-items:center; gap:5px; z-index:6;">'
+                        f'<div style="width:14px; height:14px; border-radius:50%; background:linear-gradient(135deg, #8B5CF6, #EC4899); border:1px solid #FFF; font-size:0.5rem; display:flex; align-items:center; justify-content:center;">⚡</div>'
+                        f'<span style="font-size:0.55rem; font-weight:800; color:#FFF;">@gravitiGames</span>'
                         f'</div>'
                         f'<div class="sub-preview-content">'
                         f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
