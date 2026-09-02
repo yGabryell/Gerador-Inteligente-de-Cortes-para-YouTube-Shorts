@@ -631,17 +631,27 @@ st.markdown(f"""
         font-style: italic;
     }}
 
-    /* Seletores e Menus */
-    [data-testid="stSelectbox"] div[data-baseweb="select"] {{
+    /* Seletores e Menus Dropdown */
+    [data-testid="stSelectbox"] div[data-baseweb="select"],
+    [data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+    [data-testid="stSelectbox"] div[data-baseweb="select"] div {{
         background-color: var(--input-bg) !important;
+        border-color: var(--input-border) !important;
+        color: var(--input-text) !important;
+    }}
+    [data-testid="stSelectbox"] div[data-baseweb="select"] {{
         border: 1.5px solid var(--input-border) !important;
         border-radius: 12px !important;
-        color: var(--input-text) !important;
     }}
-    [data-testid="stSelectbox"] div[data-baseweb="select"] * {{
+    [data-testid="stSelectbox"] span,
+    [data-testid="stSelectbox"] p,
+    [data-testid="stSelectbox"] svg {{
         color: var(--input-text) !important;
+        fill: var(--input-text) !important;
     }}
-    div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {{
+    div[data-baseweb="popover"],
+    div[data-baseweb="menu"],
+    ul[data-baseweb="menu"] {{
         background-color: var(--input-bg) !important;
         border: 1.5px solid var(--input-border) !important;
         border-radius: 12px !important;
@@ -651,7 +661,7 @@ st.markdown(f"""
         background-color: var(--input-bg) !important;
     }}
     li[data-baseweb="menu-item"]:hover {{
-        background-color: rgba(139, 92, 246, 0.15) !important;
+        background-color: rgba(139, 92, 246, 0.12) !important;
         color: #8B5CF6 !important;
     }}
     
@@ -661,11 +671,25 @@ st.markdown(f"""
         font-weight: 600 !important;
     }}
     
-    /* Number Input */
+    /* Number Input Completo */
+    [data-testid="stNumberInput"] div[data-baseweb="input"],
+    [data-testid="stNumberInput"] input {{
+        background-color: var(--input-bg) !important;
+        border-color: var(--input-border) !important;
+        color: var(--input-text) !important;
+    }}
     [data-testid="stNumberInput"] button {{
         background-color: var(--secondary-btn-bg) !important;
-        border-color: var(--input-border) !important;
-        color: var(--text-main) !important;
+        border: 1px solid var(--input-border) !important;
+        color: var(--input-text) !important;
+    }}
+    [data-testid="stNumberInput"] button:hover {{
+        border-color: #8B5CF6 !important;
+        color: #8B5CF6 !important;
+    }}
+    [data-testid="stNumberInput"] svg {{
+        fill: var(--input-text) !important;
+        color: var(--input-text) !important;
     }}
     
     /* Expander */
