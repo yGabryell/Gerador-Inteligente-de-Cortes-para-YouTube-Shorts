@@ -494,12 +494,98 @@ st.markdown("""
         color: #FFFFFF;
         border-left: 3px solid #8B5CF6;
     }
-    .plan-card {
-        background: rgba(19, 21, 37, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        padding: 14px;
-        margin-top: 25px;
+
+    /* OTIMIZAÇÕES RESPONSIVAS ESPECÍFICAS PARA SMARTPHONES / CELULARES */
+    @media (max-width: 768px) {
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+        .top-nav {
+            padding: 10px 14px !important;
+            margin-bottom: 14px !important;
+            border-radius: 14px !important;
+        }
+        .brand-logo {
+            font-size: 1.05rem !important;
+            gap: 8px !important;
+        }
+        .brand-icon {
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 1rem !important;
+            border-radius: 8px !important;
+        }
+        .stepper-container {
+            gap: 6px !important;
+            margin-bottom: 14px !important;
+        }
+        .step-item {
+            padding: 6px 12px !important;
+            font-size: 0.75rem !important;
+            border-radius: 20px !important;
+        }
+        .saas-card {
+            padding: 14px 14px !important;
+            margin-bottom: 12px !important;
+            border-radius: 14px !important;
+        }
+        .saas-card-header {
+            font-size: 0.92rem !important;
+            margin-bottom: 8px !important;
+            gap: 6px !important;
+        }
+        .sample-pill {
+            padding: 3px 8px !important;
+            font-size: 0.7rem !important;
+            margin: 2px 2px 2px 0 !important;
+        }
+        .sub-phone-container {
+            margin: 8px 0 !important;
+            animation: none !important;
+        }
+        .sub-phone-mockup {
+            width: 145px !important;
+            height: 258px !important;
+            border-width: 2.5px !important;
+            border-radius: 20px !important;
+        }
+        .sub-wide-container {
+            margin: 8px 0 !important;
+            animation: none !important;
+        }
+        .sub-wide-mockup {
+            max-width: 250px !important;
+            height: 140px !important;
+            border-width: 2.5px !important;
+            border-radius: 12px !important;
+        }
+        .sub-preview-content {
+            bottom: 48px !important;
+            left: 4px !important;
+            right: 20px !important;
+        }
+        .sub-preview-text {
+            font-size: 10px !important;
+        }
+        .phone-side-icons {
+            bottom: 35px !important;
+            right: 4px !important;
+            gap: 5px !important;
+            font-size: 0.52rem !important;
+        }
+        .stButton > button {
+            padding: 10px 16px !important;
+            font-size: 0.88rem !important;
+            border-radius: 12px !important;
+        }
+        .stTextInput > div > div > input {
+            padding: 10px 14px !important;
+            font-size: 0.88rem !important;
+            border-radius: 10px !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -854,10 +940,8 @@ if st.session_state.current_step == 1:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Botão Principal de Ação (CTA Moderno)
-    col_act1, col_act2, col_act3 = st.columns([1, 2.2, 1])
-    with col_act2:
-        analyze_btn = st.button("⚡ GERAR CORTES VIRAIS COM GRAVITICUTS IA", type="primary", use_container_width=True)
+    # Botão Principal de Ação (CTA Moderno e Responsivo)
+    analyze_btn = st.button("⚡ GERAR CORTES VIRAIS COM GRAVITICUTS IA", type="primary", use_container_width=True)
 
     # Ação do Botão Principal (Muda IMEDIATAMENTE para a Página 2)
     if analyze_btn:
