@@ -19,67 +19,108 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilização CSS Idêntica às Imagens do Dashboard SaaS
+# Estilização CSS Moderna, Responsiva e com Animações Fluidas (Glassmorphism & Cyber Obsidian 2026)
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
     
     * {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        box-sizing: border-box;
     }
     
-    /* Fundo Dark Obsidian / Deep Purple */
+    /* Fundo Dark Obsidian com Aura Glow Ambiental */
     .stApp {
-        background-color: #090A10;
-        color: #F1F5F9;
+        background-color: #08090F;
+        background-image: 
+            radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.15) 0%, transparent 45%),
+            radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+            radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+        background-attachment: fixed;
+        color: #F8FAFC;
     }
     
     /* Header do Streamlit */
     header[data-testid="stHeader"] {
-        background: rgba(9, 10, 16, 0.8) !important;
-        backdrop-filter: blur(10px) !important;
+        background: rgba(8, 9, 15, 0.75) !important;
+        backdrop-filter: blur(16px) !important;
     }
     
-    /* Espaçamento do topo para deixar o título 100% visível e destacado */
+    /* Espaçamento do container principal */
     .block-container {
-        padding-top: 5.5rem !important;
-        padding-bottom: 3rem !important;
-        max-width: 1400px;
+        padding-top: 5rem !important;
+        padding-bottom: 4rem !important;
+        max-width: 1440px;
     }
     
     /* Barra Lateral Escura e Minimalista */
     [data-testid="stSidebar"] {
-        background-color: #0E101A !important;
-        border-right: 1px solid #1C1F33 !important;
+        background-color: rgba(12, 14, 24, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
         padding-top: 1rem;
     }
+    
+    /* Animações Principais */
+    @keyframes floatSlow {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+    }
+    @keyframes pulseGlow {
+        0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+        50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); }
+    }
+    @keyframes shimmerButton {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes popBounceEffect {
+        0%, 100% { transform: scale(1.12); }
+        50% { transform: scale(0.96); }
+    }
+    @keyframes fadeSoftEffect {
+        0%, 100% { opacity: 0.25; transform: translateY(3px); }
+        50% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .anim-pop { animation: popBounceEffect 0.75s infinite ease-in-out; }
+    .anim-fade { animation: fadeSoftEffect 1.1s infinite ease-in-out; }
     
     /* Topbar Navigation */
     .top-nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #1A1D2E;
+        padding: 14px 22px;
+        background: rgba(18, 21, 38, 0.65);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
         margin-bottom: 25px;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
     .brand-logo {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: #FFFFFF;
+        gap: 12px;
+        font-size: 1.25rem;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 60%, #A78BFA 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     .brand-icon {
-        background: linear-gradient(135deg, #8B5CF6, #EC4899);
-        width: 34px;
-        height: 34px;
-        border-radius: 8px;
+        background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
     }
     .user-pill {
         display: flex;
@@ -87,17 +128,17 @@ st.markdown("""
         gap: 12px;
     }
     .credit-badge {
-        background: #171A2B;
-        border: 1px solid #282C48;
+        background: rgba(139, 92, 246, 0.12);
+        border: 1px solid rgba(139, 92, 246, 0.35);
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 0.82rem;
         font-weight: 700;
-        color: #A78BFA;
+        color: #C4B5FD;
     }
     .free-badge {
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.4);
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.35);
         color: #34D399;
         padding: 5px 12px;
         border-radius: 20px;
@@ -110,161 +151,138 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 18px;
-        margin-bottom: 30px;
+        gap: 14px;
+        margin-bottom: 28px;
     }
     .step-item {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 18px;
-        border-radius: 25px;
+        padding: 8px 20px;
+        border-radius: 30px;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
+        transition: all 0.3s ease;
     }
     .step-active {
-        background: #201D3D;
-        border: 1px solid #7C3AED;
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.3) 0%, rgba(236, 72, 153, 0.2) 100%);
+        border: 1px solid #8B5CF6;
         color: #FFFFFF;
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
     }
     .step-inactive {
-        background: #111320;
-        border: 1px solid #1C2035;
+        background: rgba(18, 21, 38, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         color: #64748B;
     }
     
-    /* Cards do Dashboard */
+    /* Cards Modernos no Estilo Glassmorphism 2.0 */
     .saas-card {
-        background: #111322;
-        border: 1px solid #1E2238;
-        border-radius: 16px;
-        padding: 22px;
-        margin-bottom: 20px;
+        background: linear-gradient(135deg, rgba(18, 21, 38, 0.75) 0%, rgba(12, 14, 26, 0.85) 100%);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 18px;
+        padding: 20px 22px;
+        margin-bottom: 16px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .saas-card:hover {
+        border-color: rgba(139, 92, 246, 0.35);
+        box-shadow: 0 14px 40px -10px rgba(139, 92, 246, 0.15);
+        transform: translateY(-2px);
     }
     .saas-card-header {
-        font-size: 1.05rem;
+        font-size: 1.02rem;
         font-weight: 800;
         color: #F8FAFC;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        letter-spacing: -0.2px;
+    }
+    .saas-card-header span {
+        font-size: 1.15rem;
     }
     
-    /* Input Box Estilo SaaS */
+    /* Input Box Estilo SaaS Futurista */
     .stTextInput > div > div > input {
-        background-color: #0A0C16 !important;
-        border: 1px solid #232742 !important;
-        border-radius: 12px !important;
+        background-color: rgba(10, 12, 22, 0.85) !important;
+        border: 1px solid rgba(255, 255, 255, 0.09) !important;
+        border-radius: 14px !important;
         color: #FFFFFF !important;
-        padding: 12px 16px !important;
-        font-size: 0.95rem !important;
+        padding: 14px 18px !important;
+        font-size: 0.96rem !important;
+        transition: all 0.2s ease !important;
     }
     .stTextInput > div > div > input:focus {
         border-color: #8B5CF6 !important;
-        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3) !important;
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.35) !important;
+        background-color: rgba(14, 16, 30, 0.95) !important;
     }
     
-    /* HotPeak Cards */
-    .hotpeak-item {
-        background: #111322;
-        border: 1px solid #1F243D;
-        border-radius: 16px;
-        padding: 16px;
-        margin-bottom: 20px;
-        transition: all 0.2s ease;
-    }
-    .hotpeak-item:hover {
-        border-color: #8B5CF6;
-        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
-    }
-    .score-chip {
-        background: linear-gradient(135deg, #EC4899, #8B5CF6);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-weight: 800;
-        font-size: 0.78rem;
-    }
-    .time-chip {
-        background: #1A1D33;
-        color: #94A3B8;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-weight: 700;
-        font-size: 0.78rem;
-    }
-    .hook-badge-box {
-        background: rgba(236, 72, 153, 0.08);
-        border-left: 3px solid #EC4899;
-        padding: 8px 12px;
-        border-radius: 6px;
-        margin: 10px 0;
-        font-size: 0.85rem;
-        color: #FCE7F3;
-        font-style: italic;
-    }
-    
-    /* Botões */
+    /* Botões Modernos com Gradiente e Efeito Shimmer */
     .stButton > button {
-        border-radius: 12px !important;
-        font-weight: 700 !important;
-        padding: 10px 20px !important;
+        border-radius: 14px !important;
+        font-weight: 800 !important;
+        padding: 12px 24px !important;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        letter-spacing: -0.2px !important;
     }
     .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
-        border: 1px solid #8B5CF6 !important;
+        background: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%) !important;
+        background-size: 200% 200% !important;
+        animation: shimmerButton 6s ease infinite !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
         color: white !important;
-        box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35) !important;
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4) !important;
     }
     .stButton > button[kind="primary"]:hover {
-        box-shadow: 0 6px 22px rgba(124, 58, 237, 0.55) !important;
+        box-shadow: 0 12px 35px rgba(124, 58, 237, 0.65) !important;
+        transform: translateY(-2px) scale(1.01) !important;
+    }
+    .stButton > button:not([kind="primary"]) {
+        background: rgba(19, 23, 41, 0.8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #E2E8F0 !important;
+    }
+    .stButton > button:not([kind="primary"]):hover {
+        background: rgba(30, 36, 64, 0.9) !important;
+        border-color: #8B5CF6 !important;
         transform: translateY(-1px) !important;
     }
     
-    /* Sidebar Navigation Links */
-    .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 14px;
-        border-radius: 10px;
-        color: #94A3B8;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
-        text-decoration: none;
-    }
-    .nav-item-active {
-        background: #1B1E33;
-        color: #FFFFFF;
-        border-left: 3px solid #8B5CF6;
+    /* Chips de Amostras / Presets */
+    .sample-pill {
+        display: inline-block;
+        background: rgba(139, 92, 246, 0.08);
+        border: 1px solid rgba(139, 92, 246, 0.25);
+        color: #C4B5FD;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin: 4px 4px 4px 0;
+        cursor: default;
     }
     
-    /* Free Plan Card */
-    .plan-card {
-        background: #131525;
-        border: 1px solid #222640;
-        border-radius: 14px;
-        padding: 14px;
-        margin-top: 25px;
-    }
-    
-    /* Subtitle Live Preview Box (Proporção Exata 9:16 de Smartphone) */
+    /* Mockup do Smartphone (Proporção 9:16 com Animação Float) */
     .sub-phone-container {
         display: flex;
         justify-content: center;
-        margin: 16px 0;
+        margin: 12px 0;
+        animation: floatSlow 5s ease-in-out infinite;
     }
     .sub-phone-mockup {
-        width: 180px;
-        height: 320px; /* Exato 9:16 (180 * 16 / 9 = 320px) */
+        width: 190px;
+        height: 338px; /* Exato 9:16 */
         background: #090B14;
-        border: 3px solid #2F3554;
-        border-radius: 26px;
+        border: 3.5px solid #2F3554;
+        border-radius: 28px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.15);
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
     }
     .phone-screen {
         width: 100%;
@@ -277,7 +295,7 @@ st.markdown("""
         background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 50%, #070914 100%);
     }
     .phone-notch {
-        width: 42px;
+        width: 44px;
         height: 4px;
         background: #334155;
         border-radius: 4px;
@@ -308,7 +326,7 @@ st.markdown("""
     }
     .sub-preview-content {
         position: absolute;
-        bottom: 68px; /* ~22-25% do fundo, exatamente MarginV do ASS */
+        bottom: 68px;
         left: 8px;
         right: 28px;
         text-align: center;
@@ -323,37 +341,23 @@ st.markdown("""
         display: inline-block;
     }
     
-    @keyframes popBounceEffect {
-        0%, 100% { transform: scale(1.14); }
-        50% { transform: scale(0.96); }
-    }
-    @keyframes fadeSoftEffect {
-        0%, 100% { opacity: 0.3; transform: translateY(2px); }
-        50% { opacity: 1; transform: translateY(0); }
-    }
-    .anim-pop {
-        animation: popBounceEffect 0.75s infinite ease-in-out;
-    }
-    .anim-fade {
-        animation: fadeSoftEffect 1.1s infinite ease-in-out;
-    }
-    
-    /* Prévia Widescreen (16:9) */
+    /* Mockup Widescreen (16:9 com Animação Float) */
     .sub-wide-container {
         display: flex;
         justify-content: center;
-        margin: 16px 0;
+        margin: 12px 0;
+        animation: floatSlow 5s ease-in-out infinite;
     }
     .sub-wide-mockup {
         width: 100%;
         max-width: 320px;
-        height: 180px; /* Exato 16:9 (320 * 9 / 16 = 180px) */
+        height: 180px; /* 16:9 */
         background: #090B14;
-        border: 3px solid #2F3554;
-        border-radius: 14px;
+        border: 3.5px solid #2F3554;
+        border-radius: 16px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.15);
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(139, 92, 246, 0.2);
     }
     .wide-screen {
         width: 100%;
@@ -362,7 +366,7 @@ st.markdown("""
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 8px 12px;
+        padding: 10px 14px;
         background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 50%, #070914 100%);
     }
     .wide-badge-tag {
@@ -376,17 +380,58 @@ st.markdown("""
     }
     .wide-preview-content {
         position: absolute;
-        bottom: 22px;
+        bottom: 24px;
         left: 10px;
         right: 10px;
         text-align: center;
         z-index: 5;
     }
 
-    /* Forçar tema escuro de alto contraste em todos os componentes nativos */
+    /* Cards de Corte Individual (Página 2) */
+    .hotpeak-item {
+        background: linear-gradient(135deg, rgba(18, 21, 38, 0.8) 0%, rgba(12, 14, 26, 0.9) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 20px;
+        transition: all 0.25s ease;
+    }
+    .hotpeak-item:hover {
+        border-color: #8B5CF6;
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.25);
+    }
+    .score-chip {
+        background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.78rem;
+        box-shadow: 0 2px 10px rgba(236, 72, 153, 0.3);
+    }
+    .time-chip {
+        background: rgba(255, 255, 255, 0.06);
+        color: #94A3B8;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.78rem;
+    }
+    .hook-badge-box {
+        background: rgba(236, 72, 153, 0.09);
+        border-left: 3px solid #EC4899;
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: #FCE7F3;
+        font-style: italic;
+    }
+
+    /* Elementos Nativos com Tema Escuro Consistente */
     [data-testid="stSelectbox"] div[data-baseweb="select"] {
-        background-color: #0A0C16 !important;
-        border: 1px solid #232742 !important;
+        background-color: rgba(10, 12, 22, 0.85) !important;
+        border: 1px solid rgba(255, 255, 255, 0.09) !important;
         border-radius: 12px !important;
         color: #FFFFFF !important;
     }
@@ -394,35 +439,59 @@ st.markdown("""
         color: #FFFFFF !important;
     }
     div[data-baseweb="popover"], div[data-baseweb="menu"], ul[data-baseweb="menu"] {
-        background-color: #131526 !important;
-        border: 1px solid #272C49 !important;
-        border-radius: 10px !important;
+        background-color: #121528 !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 12px !important;
     }
     li[data-baseweb="menu-item"] {
         color: #FFFFFF !important;
-        background-color: #131526 !important;
+        background-color: #121528 !important;
     }
     li[data-baseweb="menu-item"]:hover {
         background-color: #201D3D !important;
-        color: #A78BFA !important;
+        color: #C4B5FD !important;
     }
     label, [data-testid="stWidgetLabel"] p {
         color: #CBD5E1 !important;
         font-weight: 600 !important;
     }
     textarea {
-        background-color: #0A0C16 !important;
+        background-color: rgba(10, 12, 22, 0.85) !important;
         color: #FFFFFF !important;
-        border: 1px solid #232742 !important;
-        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.09) !important;
+        border-radius: 12px !important;
     }
     div[data-testid="stExpander"] {
-        background-color: #0F111E !important;
-        border: 1px solid #20243B !important;
-        border-radius: 12px !important;
+        background-color: rgba(15, 17, 30, 0.75) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 14px !important;
     }
     div[data-testid="stExpander"] details summary {
         color: #E2E8F0 !important;
+    }
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        color: #94A3B8;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        text-decoration: none;
+    }
+    .nav-item-active {
+        background: rgba(139, 92, 246, 0.15);
+        color: #FFFFFF;
+        border-left: 3px solid #8B5CF6;
+    }
+    .plan-card {
+        background: rgba(19, 21, 37, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 14px;
+        margin-top: 25px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -430,18 +499,18 @@ st.markdown("""
 # Barra Lateral de Navegação
 with st.sidebar:
     st.markdown("""
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:25px;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
         <div class="brand-icon">⚡</div>
-        <div style="font-size:1.2rem; font-weight:900; color:#FFFFFF;">GravitiCuts AI</div>
+        <div style="font-size:1.25rem; font-weight:900; color:#FFFFFF; letter-spacing:-0.5px;">GravitiCuts AI</div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("""
-    <div class="nav-item nav-item-active">📊 Dashboard</div>
-    <div class="nav-item">📁 Projetos</div>
-    <div class="nav-item">💲 Financeiro</div>
-    <div class="nav-item">🎧 Suporte</div>
-    <div class="nav-item">💬 Chat IA</div>
+    <div class="nav-item nav-item-active">📊 Studio de Cortes</div>
+    <div class="nav-item">📁 Histórico de Projetos</div>
+    <div class="nav-item">💲 Créditos & Planos</div>
+    <div class="nav-item">🎧 Suporte VIP</div>
+    <div class="nav-item">💬 Chat Inteligente</div>
     """, unsafe_allow_html=True)
     
     st.markdown("---")
@@ -461,20 +530,23 @@ with st.sidebar:
             <span style="color:#10B981; font-weight:700; font-size:0.75rem;">● Ativo</span>
         </div>
         <div style="color:#94A3B8; font-size:0.78rem; margin-bottom:10px;">Motor: Gemini 3.6 Flash IA</div>
-        <div style="background:#10B981; color:#042F2E; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.72rem; text-align:center;">
+        <div style="background:linear-gradient(135deg, #10B981 0%, #059669 100%); color:#FFFFFF; padding:6px 10px; border-radius:8px; font-weight:800; font-size:0.75rem; text-align:center;">
             ⚡ GRAVITICUTS PRONTO
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-# Top Bar (Header)
+# Top Bar (Header Moderno com Avatar e Status)
 st.markdown("""
 <div class="top-nav">
-    <div style="font-size:1.4rem; font-weight:900; color:#FFFFFF;">GravitiCuts AI | Criar Novo Projeto</div>
+    <div class="brand-logo">
+        <div class="brand-icon">⚡</div>
+        <span>GravitiCuts AI Studio</span>
+    </div>
     <div class="user-pill">
         <span class="credit-badge">💎 Créditos Ilimitados</span>
         <span class="free-badge">Grátis</span>
-        <div style="display:flex; align-items:center; gap:8px; background:#141729; padding:4px 12px; border-radius:20px; border:1px solid #232742;">
+        <div style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:5px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.08);">
             <span style="font-size:0.85rem;">🇧🇷 PT-BR</span>
             <span style="font-weight:700; font-size:0.85rem; color:#E2E8F0;">👤 Gabriel Alves</span>
         </div>
@@ -482,9 +554,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Inicializa estados de sessão
+# Inicialização do Session State
 if "current_step" not in st.session_state:
     st.session_state.current_step = 1
+if "is_processing" not in st.session_state:
+    st.session_state.is_processing = False
 if "cuts" not in st.session_state:
     st.session_state.cuts = []
 if "video_info" not in st.session_state:
@@ -513,7 +587,7 @@ if st.session_state.current_step == 1:
         <div class="step-item step-active">
             <span>⚙️</span> 1. Configurar Projeto
         </div>
-        <div style="color:#334155;">──────</div>
+        <div style="color:rgba(255,255,255,0.15); font-weight:900;">──────</div>
         <div class="step-item step-inactive">
             <span>✨</span> 2. Processar e Exportar
         </div>
@@ -525,7 +599,7 @@ else:
         <div class="step-item step-inactive" style="color:#10B981; border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.1);">
             <span>✅</span> 1. Configuração Concluída
         </div>
-        <div style="color:#8B5CF6;">──────</div>
+        <div style="color:#8B5CF6; font-weight:900;">──────</div>
         <div class="step-item step-active">
             <span>✨</span> 2. Processar e Exportar
         </div>
@@ -536,11 +610,11 @@ else:
 # ETAPA 1: CONFIGURAÇÃO DO PROJETO
 # ==============================================================================
 if st.session_state.current_step == 1:
-    # Card 1: Input da URL do Vídeo
+    # Card 1: Input da URL do Vídeo com Estilo Hero
     st.markdown("""
-    <div class="saas-card">
+    <div class="saas-card" style="border: 1px solid rgba(139, 92, 246, 0.3); background: linear-gradient(135deg, rgba(25, 20, 50, 0.7) 0%, rgba(13, 15, 28, 0.85) 100%);">
         <div class="saas-card-header">
-            <span>🔗</span> Cole o link do YouTube (Vídeo, Live ou Podcast)
+            <span>🔗</span> Link do Vídeo do YouTube (Vídeo Longo, Podcast ou Live)
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -551,10 +625,17 @@ if st.session_state.current_step == 1:
         placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...",
         label_visibility="collapsed"
     )
-    st.caption("📁 A IA do GravitiCuts fará um raio-x da transcrição para encontrar os momentos com maior força de atração e retenção.")
+    
+    st.markdown("""
+    <div style="margin-top: 4px; margin-bottom: 20px;">
+        <span class="sample-pill">📁 Mineração Automática com IA</span>
+        <span class="sample-pill">🎯 Detecção de Ganchos Magnéticos</span>
+        <span class="sample-pill">⚡ Reenquadramento 9:16 Inteligente</span>
+        <span class="sample-pill">💬 Legendas Estilizadas</span>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Card 2: Opções de Configuração na Esquerda e Celular Dedicado na Direita
-    st.markdown("<br>", unsafe_allow_html=True)
+    # Grid Responsivo: Configurações à Esquerda e Prévia Interativa à Direita
     col_cfg1, col_cfg2 = st.columns([1.15, 0.85], gap="large")
 
     with col_cfg1:
@@ -562,7 +643,7 @@ if st.session_state.current_step == 1:
         with st.container():
             st.markdown("""
             <div class="saas-card">
-                <div class="saas-card-header">📱 Proporção & Formato</div>
+                <div class="saas-card-header">📱 Formato & Proporção do Vídeo</div>
             </div>
             """, unsafe_allow_html=True)
             video_style = st.selectbox(
@@ -580,7 +661,7 @@ if st.session_state.current_step == 1:
         with st.container():
             st.markdown("""
             <div class="saas-card">
-                <div class="saas-card-header">💬 Legendas nos Cortes</div>
+                <div class="saas-card-header">💬 Legendas Dinâmicas nos Cortes</div>
             </div>
             """, unsafe_allow_html=True)
             
@@ -624,7 +705,7 @@ if st.session_state.current_step == 1:
                 sub_anim = "pop"
                 sub_fontsize = 78
                 st.markdown("""
-                <div style="background:#0E101D; border:1px solid #1E2238; border-radius:10px; padding:12px 14px; color:#94A3B8; font-size:0.86rem; margin-top:8px;">
+                <div style="background:rgba(15,17,32,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; color:#94A3B8; font-size:0.86rem; margin-top:8px;">
                     🎬 <strong>Modo Vídeo Limpo:</strong> Os cortes serão exportados na proporção escolhida sem nenhuma legenda queimada na tela.
                 </div>
                 """, unsafe_allow_html=True)
@@ -644,7 +725,7 @@ if st.session_state.current_step == 1:
             with col_d3:
                 max_sec = st.number_input("Máx (s)", min_value=30, max_value=180, value=60)
 
-        # 4. Instrução Personalizada
+        # 4. Instrução Personalizada com IA
         with st.container():
             st.markdown("""
             <div class="saas-card">
@@ -656,17 +737,24 @@ if st.session_state.current_step == 1:
                 placeholder="Ex: Quero cortes com jogadas incríveis, explicações claras, momentos engraçados...",
                 label_visibility="collapsed"
             )
-            st.caption("Sugestões: Informativos • Engraçados • Polêmicos • Insights • Melhores Jogadas")
+            st.markdown("""
+            <div>
+                <span class="sample-pill">🔥 Melhores Ganchos</span>
+                <span class="sample-pill">😂 Momentos Engraçados</span>
+                <span class="sample-pill">📊 Insights & Dados</span>
+                <span class="sample-pill">🎮 Melhores Jogadas</span>
+            </div>
+            """, unsafe_allow_html=True)
 
     with col_cfg2:
-        # Coluna Dinâmica de Prévia (Smartphone 9:16 ou Widescreen 16:9)
+        # Coluna Dinâmica de Prévia com Efeito Flutuante e Iluminação Neon
         is_widescreen = (video_style == "original" or "16:9" in str(video_style))
         preview_title = "Prévia em Tempo Real (16:9)" if is_widescreen else "Prévia em Tempo Real (9:16)"
         preview_icon = "🖥️" if is_widescreen else "📱"
         
         with st.container():
             st.markdown(f"""
-            <div class="saas-card" style="text-align:center; padding:18px 12px;">
+            <div class="saas-card" style="text-align:center; padding:18px 12px; border: 1px solid rgba(139, 92, 246, 0.25);">
                 <div class="saas-card-header" style="justify-content:center;">
                     <span>{preview_icon}</span> {preview_title}
                 </div>
@@ -691,7 +779,7 @@ if st.session_state.current_step == 1:
                         f'<div class="wide-screen">'
                         f'<div style="display:flex; justify-content:space-between; align-items:center;">'
                         f'<div class="wide-badge-tag">🖥️ 16:9 Widescreen Preview</div>'
-                        f'<div style="font-size:0.6rem; color:#94A3B8;">🔴 1080p</div>'
+                        f'<div style="font-size:0.6rem; color:#94A3B8;">🔴 1080p60</div>'
                         f'</div>'
                         f'<div class="wide-preview-content">'
                         f'<div class="sub-preview-text {anim_css_class}" style="{color_css} font-size: {preview_font_size}px;">'
@@ -743,8 +831,8 @@ if st.session_state.current_step == 1:
                         f'<div style="font-size:0.6rem; color:#10B981;">● Vídeo Limpo</div>'
                         f'</div>'
                         f'<div class="wide-preview-content">'
-                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.8rem; font-weight:700;">'
-                        f'🎬 Sem Legendas'
+                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
+                        f'🎬 SEM LEGENDAS'
                         f'</div>'
                         f'</div>'
                         f'<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.6rem; color:#94A3B8; z-index:5;">'
@@ -770,8 +858,8 @@ if st.session_state.current_step == 1:
                         f'<div>↗️<br><span style="font-size:0.52rem;">Share</span></div>'
                         f'</div>'
                         f'<div class="sub-preview-content">'
-                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.8rem; font-weight:700;">'
-                        f'🎬 Sem Legendas'
+                        f'<div style="color:rgba(255,255,255,0.45); font-size:0.85rem; font-weight:800; letter-spacing:0.5px;">'
+                        f'🎬 SEM LEGENDAS'
                         f'</div>'
                         f'</div>'
                         f'</div>'
@@ -783,10 +871,10 @@ if st.session_state.current_step == 1:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Botão Principal de Ação
-    col_act1, col_act2, col_act3 = st.columns([1, 2, 1])
+    # Botão Principal de Ação (CTA Moderno)
+    col_act1, col_act2, col_act3 = st.columns([1, 2.2, 1])
     with col_act2:
-        analyze_btn = st.button("⚡ Gerar Cortes com GravitiCuts IA", type="primary", use_container_width=True)
+        analyze_btn = st.button("⚡ GERAR CORTES VIRAIS COM GRAVITICUTS IA", type="primary", use_container_width=True)
 
     # Ação do Botão Principal (Muda IMEDIATAMENTE para a Página 2)
     if analyze_btn:
@@ -835,9 +923,9 @@ elif st.session_state.current_step == 2:
         # Etapa 1
         status_slot.markdown("""
         <div class="saas-card" style="text-align:center; padding:45px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
-            <div style="font-size:3rem; margin-bottom:14px;">📥⚡</div>
-            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:8px;">Etapa 1/3: Coletando Metadados do Vídeo</div>
-            <div style="color:#A78BFA; font-size:0.95rem;">Buscando título, canal, miniatura e duração original...</div>
+            <div style="font-size:3.2rem; margin-bottom:14px;">📥⚡</div>
+            <div style="font-size:1.5rem; font-weight:900; color:#FFFFFF; margin-bottom:8px; letter-spacing:-0.5px;">Etapa 1/3: Coletando Metadados do Vídeo</div>
+            <div style="color:#C4B5FD; font-size:0.95rem;">Buscando título, canal, miniatura e duração original com alta fidelidade...</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -852,9 +940,9 @@ elif st.session_state.current_step == 2:
         progress_bar.progress(55)
         status_slot.markdown("""
         <div class="saas-card" style="text-align:center; padding:45px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
-            <div style="font-size:3rem; margin-bottom:14px;">📝⚡</div>
-            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:8px;">Etapa 2/3: Extraindo Transcrição e Timestamps</div>
-            <div style="color:#A78BFA; font-size:0.95rem;">Lendo e sincronizando as legendas para análise precisa...</div>
+            <div style="font-size:3.2rem; margin-bottom:14px;">📝⚡</div>
+            <div style="font-size:1.5rem; font-weight:900; color:#FFFFFF; margin-bottom:8px; letter-spacing:-0.5px;">Etapa 2/3: Extraindo Transcrição e Timestamps</div>
+            <div style="color:#C4B5FD; font-size:0.95rem;">Lendo e sincronizando as falas com precisão milimétrica...</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -871,9 +959,9 @@ elif st.session_state.current_step == 2:
         progress_bar.progress(85)
         status_slot.markdown("""
         <div class="saas-card" style="text-align:center; padding:45px 20px; border:1px solid #7C3AED; box-shadow:0 0 35px rgba(124,58,237,0.25);">
-            <div style="font-size:3rem; margin-bottom:14px;">🧠⚡</div>
-            <div style="font-size:1.45rem; font-weight:800; color:#FFFFFF; margin-bottom:8px;">Etapa 3/3: GravitiCuts IA Minerando Picos Virais</div>
-            <div style="color:#A78BFA; font-size:0.95rem;">Calculando HotPeaks de retenção, ganchos magnéticos e histórias completas...</div>
+            <div style="font-size:3.2rem; margin-bottom:14px;">🧠⚡</div>
+            <div style="font-size:1.5rem; font-weight:900; color:#FFFFFF; margin-bottom:8px; letter-spacing:-0.5px;">Etapa 3/3: GravitiCuts IA Minerando Picos Virais</div>
+            <div style="color:#C4B5FD; font-size:0.95rem;">Calculando HotPeaks de retenção, ganchos magnéticos e viralidade...</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -901,15 +989,15 @@ elif st.session_state.current_step == 2:
         # Barra de Ações Superior
         col_nav1, col_nav2 = st.columns([1, 4])
         with col_nav1:
-            if st.button("⬅️ Configurar Outro Vídeo", use_container_width=True):
+            if st.button("⬅️ Novo Vídeo", use_container_width=True):
                 st.session_state.current_step = 1
                 st.session_state.is_processing = False
                 st.rerun()
         with col_nav2:
             st.markdown(f"""
-            <div style="background:#131628; border:1px solid #252A47; padding:8px 16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-weight:800; color:#A78BFA; font-size:0.95rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Prontos para Edição</span>
-                <span style="font-size:0.8rem; color:#94A3B8;">Formato: <strong>{st.session_state.cfg_video_style}</strong> | Legendas: <strong>{'Ativadas' if st.session_state.cfg_enable_subtitles else 'Desativadas'}</strong></span>
+            <div style="background:rgba(19, 21, 38, 0.75); border:1px solid rgba(255,255,255,0.08); padding:10px 18px; border-radius:14px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:900; color:#C4B5FD; font-size:0.98rem;">🔥 {len(st.session_state.cuts)} Cortes Virais Prontos para Edição</span>
+                <span style="font-size:0.82rem; color:#94A3B8;">Formato: <strong style="color:#F1F5F9;">{st.session_state.cfg_video_style}</strong> | Legendas: <strong style="color:#F1F5F9;">{'Ativadas' if st.session_state.cfg_enable_subtitles else 'Vídeo Limpo'}</strong></span>
             </div>
             """, unsafe_allow_html=True)
 
@@ -918,16 +1006,16 @@ elif st.session_state.current_step == 2:
             v_info = st.session_state.video_info
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div class="saas-card" style="display:flex; gap:20px; align-items:center;">
-                <img src="{v_info.get('thumbnail', '')}" style="width:150px; border-radius:10px; object-fit:cover;">
+            <div class="saas-card" style="display:flex; gap:22px; align-items:center;">
+                <img src="{v_info.get('thumbnail', '')}" style="width:160px; border-radius:12px; object-fit:cover; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 <div>
-                    <div style="font-weight:800; font-size:1.15rem; color:#FFFFFF; margin-bottom:4px;">{v_info.get('title', '')}</div>
-                    <div style="color:#94A3B8; font-size:0.88rem;">👤 Canal: <strong style="color:#CBD5E1;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#CBD5E1;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
+                    <div style="font-weight:900; font-size:1.2rem; color:#FFFFFF; margin-bottom:6px; letter-spacing:-0.3px;">{v_info.get('title', '')}</div>
+                    <div style="color:#94A3B8; font-size:0.9rem;">👤 Canal: <strong style="color:#E2E8F0;">{v_info.get('channel', 'Desconhecido')}</strong> &nbsp;|&nbsp; ⏱️ Duração: <strong style="color:#E2E8F0;">{format_timestamp(v_info.get('duration', 0))}</strong></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-        # Grid de Cortes Sugeridos (Estilo Feed de Cortes)
+        # Grid de Cortes Sugeridos (Estilo Feed de Cortes Moderno)
         if st.session_state.cuts:
             current_video_id = extract_video_id(st.session_state.cfg_url)
             grid_columns = 3 # 3 colunas padrão
@@ -943,11 +1031,11 @@ elif st.session_state.current_step == 2:
                             # Card Individual do Corte
                             st.markdown(f"""
                             <div class="hotpeak-item">
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                                     <span class="score-chip">🔥 PICO VIRAL {cut['score']}%</span>
                                     <span class="time-chip">⏱️ {format_timestamp(cut['start_time'])} - {format_timestamp(cut['end_time'])} ({cut['duration']}s)</span>
                                 </div>
-                                <div style="font-weight:800; font-size:1.02rem; color:#FFFFFF; line-height:1.35; margin-bottom:8px;">
+                                <div style="font-weight:900; font-size:1.05rem; color:#FFFFFF; line-height:1.35; margin-bottom:10px; letter-spacing:-0.2px;">
                                     #{cut_idx+1} {cut['title']}
                                 </div>
                             </div>
@@ -1048,15 +1136,15 @@ elif st.session_state.current_step == 2:
                                     except Exception as e:
                                         st.error(f"Erro ao gerar vídeo: {str(e)}")
 
-                            # Exibição do vídeo vertical pronto e download
+                            # Exibição do vídeo pronto e botão de download
                             if f"ready_video_{cut_idx}" in st.session_state:
                                 video_file_path = st.session_state[f"ready_video_{cut_idx}"]
                                 if os.path.exists(video_file_path):
-                                    st.markdown("##### 📱 Short 9:16 Finalizado:")
+                                    st.markdown("##### 📱 Corte Finalizado:")
                                     st.video(video_file_path)
                                     with open(video_file_path, "rb") as file_data:
                                         st.download_button(
-                                            label=f"⬇️ Baixar Short #{cut_idx+1} (.mp4)",
+                                            label=f"⬇️ Baixar Corte #{cut_idx+1} (.mp4)",
                                             data=file_data,
                                             file_name=os.path.basename(video_file_path),
                                             mime="video/mp4",
