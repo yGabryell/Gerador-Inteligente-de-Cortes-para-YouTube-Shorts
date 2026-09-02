@@ -534,7 +534,7 @@ st.markdown("""
     /* OTIMIZAÇÕES RESPONSIVAS ESPECÍFICAS PARA SMARTPHONES / CELULARES */
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 1.5rem !important;
+            padding-top: 4.2rem !important;
             padding-bottom: 2rem !important;
             padding-left: 0.75rem !important;
             padding-right: 0.75rem !important;
@@ -728,11 +728,8 @@ st.markdown(render_stepper(st.session_state.current_step), unsafe_allow_html=Tru
 if st.session_state.current_step == 1:
     st.markdown("""
     <div class="saas-card" style="border: 1px solid rgba(139, 92, 246, 0.35); background: linear-gradient(135deg, rgba(25, 20, 50, 0.75) 0%, rgba(13, 15, 28, 0.85) 100%);">
-        <div class="saas-card-header">
+        <div class="saas-card-header" style="margin-bottom:0px;">
             <span>🔗</span> Insira o Link do Vídeo do YouTube
-        </div>
-        <div style="color:#C4B5FD; font-size:0.88rem; margin-bottom:12px;">
-            Cole a URL de qualquer vídeo longo, podcast, live ou gameplay do YouTube para minerar cortes virais.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -744,14 +741,7 @@ if st.session_state.current_step == 1:
         label_visibility="collapsed"
     )
     
-    st.markdown("""
-    <div style="margin-top: 4px; margin-bottom: 24px;">
-        <span class="sample-pill">📁 Mineração Automática com IA</span>
-        <span class="sample-pill">🎯 Detecção de Ganchos Magnéticos</span>
-        <span class="sample-pill">⚡ Reenquadramento 9:16 Inteligente</span>
-        <span class="sample-pill">💬 Legendas Estilizadas</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # Botão de Avanço da Etapa 1 para a Etapa 2
     btn_load_video = st.button("🚀 Carregar Vídeo & Escolher Formato ➔", type="primary", use_container_width=True)
