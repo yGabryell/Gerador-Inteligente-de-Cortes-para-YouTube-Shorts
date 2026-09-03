@@ -27,6 +27,7 @@ BANNER = """
   - Abra o link acima no navegador do seu celular.
   - Envie para seus amigos no WhatsApp para eles testarem!
   - Todos os downloads do YouTube funcionarão 100% sem erro 403.
+  - Se a tela abrir dizendo 'Error 1033', basta aguardar 5s e dar F5.
   - Para encerrar o servidor, basta fechar esta janela do terminal.
 ======================================================================
 """
@@ -47,31 +48,47 @@ def copy_to_clipboard(text: str):
     except Exception:
         pass
 
+def is_streamlit_running() -> bool:
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8501", timeout=1) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
 def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(base_dir)
 
     cloudflared_path = ensure_cloudflared()
 
-    print("🚀 1/2 Iniciando Streamlit local...")
-    streamlit_cmd = [
-        sys.executable,
-        "-m", "streamlit", "run", "app.py",
-        "--server.headless", "true",
-        "--server.port", "8501"
-    ]
-    st_proc = subprocess.Popen(
-        streamlit_cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    st_proc = None
+    if not is_streamlit_running():
+        print("🚀 1/3 Iniciando Streamlit local...")
+        streamlit_cmd = [
+            sys.executable,
+            "-m", "streamlit", "run", "app.py",
+            "--server.headless", "true",
+            "--server.address", "127.0.0.1",
+            "--server.port", "8501"
+        ]
+        st_proc = subprocess.Popen(
+            streamlit_cmd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        print("⏳ Aguardando Streamlit inicializar...")
+        for _ in range(20):
+            if is_streamlit_running():
+                break
+            time.sleep(0.5)
+    else:
+        print("✅ Streamlit local já está em execução na porta 8501.")
 
-    print("🌐 2/2 Abrindo túnel público seguro com a Cloudflare...")
+    print("🌐 2/3 Abrindo túnel público seguro com a Cloudflare...")
     cf_cmd = [
         cloudflared_path,
         "tunnel",
-        "--url", "http://localhost:8501"
+        "--url", "http://127.0.0.1:8501"
     ]
     cf_proc = subprocess.Popen(
         cf_cmd,
@@ -95,10 +112,13 @@ def main():
 
     if not public_url:
         print("⚠️ Não foi possível capturar o link automaticamente em 30 segundos.")
-        print("Verifique se o Cloudflare conseguiu se conectar à internet.")
-        st_proc.terminate()
+        if st_proc:
+            st_proc.terminate()
         cf_proc.terminate()
         return
+
+    print("⏳ 3/3 Propagando rota global da Cloudflare (aguarde 5 segundos)...")
+    time.sleep(6)
 
     # Copia o link para a área de transferência do Windows
     copy_to_clipboard(public_url)
@@ -114,15 +134,15 @@ def main():
         pass
 
     try:
-        # Mantém ambos os processos vivos
         while True:
             time.sleep(1)
-            if st_proc.poll() is not None or cf_proc.poll() is not None:
+            if (st_proc and st_proc.poll() is not None) or cf_proc.poll() is not None:
                 break
     except KeyboardInterrupt:
         print("\n🛑 Encerrando servidor e túnel...")
     finally:
-        st_proc.terminate()
+        if st_proc:
+            st_proc.terminate()
         cf_proc.terminate()
         print("✅ Servidor finalizado com sucesso.")
 
