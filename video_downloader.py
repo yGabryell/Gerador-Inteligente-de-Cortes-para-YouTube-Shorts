@@ -94,8 +94,8 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
             f.write(os.getenv("YOUTUBE_COOKIES"))
 
     ydl_opts = {
-        # Formato com fallback progressivo seguro
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        # Formato flexível com suporte a vídeo separado ou combinado (18, 22, mp4)
+        'format': 'bestvideo*+bestaudio/best[ext=mp4]/18/22/b/best',
         'outtmpl': out_template,
         'merge_output_format': 'mp4',
         'ffmpeg_location': ffmpeg_path,
@@ -111,10 +111,10 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Accept-Language': 'en-US,en;q=0.9',
         },
-        # Clientes móveis alternativos que contornam o bloqueio 403 em servidores Cloud
+        # Clientes móveis que contornam 403 e oferecem formatos diretos
         'extractor_args': {
             'youtube': {
-                'player_client': ['android_creator', 'ios', 'android', 'web_creator']
+                'player_client': ['android', 'ios', 'web_creator']
             }
         }
     }
@@ -133,22 +133,20 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
             if os.path.exists(filename):
                 return filename
     except Exception as e:
-        # Fallback usando cliente iOS e formato único compatível
+        # Fallback usando formato direto 18/22 via cliente Android
         fallback_opts = {
-            'format': 'best',
+            'format': '18/22/b/best',
             'outtmpl': out_template,
             'ffmpeg_location': ffmpeg_path,
             'quiet': False,
             'no_warnings': True,
             'nocheckcertificate': True,
             'geo_bypass': True,
-            'retries': 5,
-            'http_headers': {
-                'User-Agent': 'com.google.ios.youtube/19.10.1 (iPhone14,3; U; CPU iOS 17_4 like Mac OS X; en_US)'
-            },
+            'retries': 10,
+            'fragment_retries': 10,
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['ios']
+                    'player_client': ['android']
                 }
             }
         }
