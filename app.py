@@ -57,6 +57,21 @@ with st.sidebar:
         help="Sua chave de API do Google Gemini Studio"
     )
 
+    st.markdown("---")
+    st.caption("🍪 ANTI-BLOQUEIO CLOUD")
+    with st.expander("Cookies do YouTube (Opcional)", expanded=False):
+        st.caption("Se o servidor do Streamlit Cloud sofrer bloqueio 403 do YouTube, envie seu arquivo `cookies.txt` aqui:")
+        uploaded_cookies = st.file_uploader("Enviar cookies.txt", type=["txt"], key="sidebar_cookies_upload")
+        if uploaded_cookies is not None:
+            try:
+                with open("cookies.txt", "wb") as f:
+                    f.write(uploaded_cookies.getbuffer())
+                st.success("✅ cookies.txt ativado!")
+            except Exception as e:
+                st.error(f"Erro ao salvar: {e}")
+        elif os.path.exists("cookies.txt"):
+            st.info("🍪 cookies.txt ativo.")
+
 # Configurações Dinâmicas de Cores por Tema (CSS Variables)
 if st.session_state.dark_mode:
     theme_vars = """

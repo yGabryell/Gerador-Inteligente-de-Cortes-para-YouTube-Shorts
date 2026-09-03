@@ -44,12 +44,24 @@ def get_video_info(url: str) -> Dict[str, Any]:
         'ffmpeg_location': ffmpeg_path,
         'nocheckcertificate': True,
         'geo_bypass': True,
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+        },
         'extractor_args': {
             'youtube': {
-                'player_client': ['android', 'mweb']
+                'player_client': ['android_creator', 'ios', 'android', 'web_creator']
             }
         }
     }
+    
+    if os.path.exists("cookies.txt"):
+        ydl_opts['cookiefile'] = "cookies.txt"
+    elif os.getenv("YOUTUBE_COOKIES"):
+        cookie_path = "cookies.txt"
+        with open(cookie_path, "w", encoding="utf-8") as f:
+            f.write(os.getenv("YOUTUBE_COOKIES"))
+        ydl_opts['cookiefile'] = cookie_path
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
@@ -66,17 +78,24 @@ def get_video_info(url: str) -> Dict[str, Any]:
 
 def download_video(url: str, output_dir: str = "downloads", video_id: Optional[str] = None) -> str:
     """
-    Baixa o vídeo completo em formato MP4 para permitir cortes rápidos.
-    Utiliza múltiplos canais de extração (Android + MWeb) para garantir download contínuo no Streamlit Cloud.
-    Retorna o caminho do arquivo baixado.
+    Baixa o vídeo completo contornando bloqueios 403 em ambientes de Cloud (Streamlit Cloud).
     """
     os.makedirs(output_dir, exist_ok=True)
     
     ffmpeg_path = get_ffmpeg_executable()
     out_template = os.path.join(output_dir, f"{video_id or '%(id)s'}.%(ext)s")
     
+    cookie_file = None
+    if os.path.exists("cookies.txt"):
+        cookie_file = "cookies.txt"
+    elif os.getenv("YOUTUBE_COOKIES"):
+        cookie_file = "cookies.txt"
+        with open(cookie_file, "w", encoding="utf-8") as f:
+            f.write(os.getenv("YOUTUBE_COOKIES"))
+
     ydl_opts = {
-        'format': 'best/bestvideo+bestaudio',
+        # Formato com fallback progressivo seguro
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'outtmpl': out_template,
         'merge_output_format': 'mp4',
         'ffmpeg_location': ffmpeg_path,
@@ -87,12 +106,21 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
         'geo_bypass': True,
         'retries': 10,
         'fragment_retries': 10,
+        # Cabeçalhos para simular requisição legítima
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+        },
+        # Clientes móveis alternativos que contornam o bloqueio 403 em servidores Cloud
         'extractor_args': {
             'youtube': {
-                'player_client': ['android', 'mweb']
+                'player_client': ['android_creator', 'ios', 'android', 'web_creator']
             }
         }
     }
+    
+    if cookie_file:
+        ydl_opts['cookiefile'] = cookie_file
     
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -105,23 +133,28 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
             if os.path.exists(filename):
                 return filename
     except Exception as e:
-        # Fallback de emergência com stream direto progressivo
+        # Fallback usando cliente iOS e formato único compatível
         fallback_opts = {
-            'format': '18/22/best',
+            'format': 'best',
             'outtmpl': out_template,
             'ffmpeg_location': ffmpeg_path,
             'quiet': False,
             'no_warnings': True,
             'nocheckcertificate': True,
             'geo_bypass': True,
-            'retries': 10,
-            'fragment_retries': 10,
+            'retries': 5,
+            'http_headers': {
+                'User-Agent': 'com.google.ios.youtube/19.10.1 (iPhone14,3; U; CPU iOS 17_4 like Mac OS X; en_US)'
+            },
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['android']
+                    'player_client': ['ios']
                 }
             }
         }
+        if cookie_file:
+            fallback_opts['cookiefile'] = cookie_file
+            
         with yt_dlp.YoutubeDL(fallback_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info)
