@@ -48,52 +48,57 @@ with st.sidebar:
         st.rerun()
     
     st.markdown("---")
-    st.caption("⚙️ CONFIGURAÇÕES DE API")
+    st.caption("⚡ STATUS DO SISTEMA")
+    
     env_api_key = os.getenv("GEMINI_API_KEY", "")
-    api_key_input = st.text_input(
-        "Chave Gemini API",
-        value=env_api_key,
-        type="password",
-        help="Sua chave de API do Google Gemini Studio"
-    )
+    if "custom_gemini_key" not in st.session_state:
+        st.session_state.custom_gemini_key = env_api_key
+    if "is_admin_unlocked" not in st.session_state:
+        st.session_state.is_admin_unlocked = False
 
-    st.markdown("---")
-    st.caption("🍪 ANTI-BLOQUEIO CLOUD")
-    with st.expander("Cookies do YouTube (Anti-403)", expanded=False):
-        st.caption("Cole os cookies do YouTube ou envie o arquivo para liberar downloads no Streamlit Cloud:")
-        tab_c1, tab_c2 = st.tabs(["📋 Colar", "📁 Upload"])
-        with tab_c1:
-            raw_cookie_paste = st.text_area(
-                "Conteúdo dos cookies",
-                height=90,
-                placeholder="Cole o JSON do Cookie-Editor ou texto Netscape...",
-                label_visibility="collapsed"
-            )
-            if st.button("💾 Ativar Cookies Colados", use_container_width=True):
-                if raw_cookie_paste.strip():
-                    from video_downloader import convert_and_save_cookies
-                    if convert_and_save_cookies(raw_cookie_paste):
-                        st.success("✅ Cookies convertidos e ativos!")
-                        st.rerun()
-                    else:
-                        st.error("❌ Formato de cookie inválido.")
+    active_key = st.session_state.custom_gemini_key or env_api_key
+    if active_key:
+        st.markdown("""
+        <div style="display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:10px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); color:#10B981; font-size:0.82rem; font-weight:700;">
+            <span>🟢</span> IA Gemini Conectada
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:10px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#EF4444; font-size:0.82rem; font-weight:700;">
+            <span>🔴</span> Chave de API Ausente
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Painel Administrativo Protegido
+    with st.expander("🔐 Área do Administrador", expanded=False):
+        if not st.session_state.is_admin_unlocked:
+            admin_pwd = st.text_input("Senha Admin", type="password", key="input_admin_pwd", placeholder="Digite a senha de admin...")
+            if st.button("🔓 Acessar Painel", use_container_width=True):
+                expected_pwd = os.getenv("ADMIN_PASSWORD", "admin123")
+                if admin_pwd == expected_pwd:
+                    st.session_state.is_admin_unlocked = True
+                    st.success("Acesso concedido!")
+                    st.rerun()
                 else:
-                    st.warning("⚠️ Cole os cookies no campo acima.")
-        with tab_c2:
-            uploaded_cookies = st.file_uploader("Enviar cookies.txt ou .json", type=["txt", "json"], key="sidebar_cookies_upload")
-            if uploaded_cookies is not None:
-                try:
-                    content = uploaded_cookies.getvalue().decode("utf-8", errors="ignore")
-                    from video_downloader import convert_and_save_cookies
-                    if convert_and_save_cookies(content):
-                        st.success("✅ Arquivo de cookies ativado!")
-                        st.rerun()
-                    else:
-                        st.error("❌ Não foi possível processar o arquivo.")
-                except Exception as e:
-                    st.error(f"Erro ao ler arquivo: {e}")
-        if os.path.exists("cookies.txt"):
-            st.caption("🟢 **Status:** Cookies ativos no sistema.")
+                    st.error("Senha incorreta.")
+        else:
+            st.caption("Painel Administrativo Ativo")
+            new_key = st.text_input(
+                "Chave Gemini API",
+                value=st.session_state.custom_gemini_key,
+                type="password",
+                help="Sua chave de API do Google Gemini"
+            )
+            if new_key != st.session_state.custom_gemini_key:
+                st.session_state.custom_gemini_key = new_key
+                st.success("Chave atualizada com sucesso!")
+            
+            if st.button("🔒 Bloquear Painel", use_container_width=True):
+                st.session_state.is_admin_unlocked = False
+                st.rerun()
+
+    api_key_input = st.session_state.custom_gemini_key or env_api_key
 
 # Configurações Dinâmicas de Cores por Tema (CSS Variables)
 if st.session_state.dark_mode:
