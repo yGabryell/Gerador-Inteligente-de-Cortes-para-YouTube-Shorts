@@ -80,6 +80,14 @@ def get_video_info(url: str) -> Dict[str, Any]:
     Obtém metadados do vídeo do YouTube rapidamente sem fazer download.
     """
     ffmpeg_path = get_ffmpeg_executable()
+    cookie_file = None
+    if os.path.exists("cookies.txt"):
+        cookie_file = "cookies.txt"
+    elif os.getenv("YOUTUBE_COOKIES"):
+        cookie_file = "cookies.txt"
+        with open(cookie_file, "w", encoding="utf-8") as f:
+            f.write(os.getenv("YOUTUBE_COOKIES"))
+
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
@@ -93,18 +101,13 @@ def get_video_info(url: str) -> Dict[str, Any]:
         },
         'extractor_args': {
             'youtube': {
-                'player_client': ['android_creator', 'ios', 'android', 'web_creator']
+                'player_client': ['web', 'mweb', 'web_creator', 'android'] if cookie_file else ['android', 'ios', 'web_creator']
             }
         }
     }
     
-    if os.path.exists("cookies.txt"):
-        ydl_opts['cookiefile'] = "cookies.txt"
-    elif os.getenv("YOUTUBE_COOKIES"):
-        cookie_path = "cookies.txt"
-        with open(cookie_path, "w", encoding="utf-8") as f:
-            f.write(os.getenv("YOUTUBE_COOKIES"))
-        ydl_opts['cookiefile'] = cookie_path
+    if cookie_file:
+        ydl_opts['cookiefile'] = cookie_file
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
@@ -154,10 +157,10 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Accept-Language': 'en-US,en;q=0.9',
         },
-        # Clientes móveis que contornam 403 e oferecem formatos diretos
+        # Clientes adaptados à presença de cookies ou download anônimo
         'extractor_args': {
             'youtube': {
-                'player_client': ['android', 'ios', 'web_creator']
+                'player_client': ['web', 'mweb', 'web_creator', 'android'] if cookie_file else ['android', 'ios', 'web_creator']
             }
         }
     }
