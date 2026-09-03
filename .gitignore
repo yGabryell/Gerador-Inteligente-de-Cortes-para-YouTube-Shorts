@@ -1,6 +1,7 @@
 # Variáveis de Ambiente e Chaves de API (Segurança)
 .env
 cookies.txt
+cloudflared.exe
 
 # Diretórios de Mídia e Saída
 downloads/
