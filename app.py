@@ -284,41 +284,100 @@ st.markdown(f"""
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
     }}
     
-    /* Stepper Bar 3 Etapas */
-    .stepper-container {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 22px;
-        flex-wrap: nowrap;
+    /* Stepper Moderno 3 Etapas Responsivo */
+    .stepper-wrapper {{
+        width: 100%;
+        max-width: 460px;
+        margin: 0 auto 20px auto;
+        padding: 0 8px;
     }}
-    .step-item {{
+    .stepper-track {{
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 7px 16px;
-        border-radius: 25px;
-        font-weight: 700;
-        font-size: 0.82rem;
-        white-space: nowrap;
+        justify-content: space-between;
+        position: relative;
+        margin-bottom: 10px;
+    }}
+    .step-node {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        z-index: 2;
+        min-width: 55px;
+    }}
+    .step-num {{
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
         transition: all 0.3s ease;
     }}
-    .step-active {{
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.35) 0%, rgba(236, 72, 153, 0.25) 100%) !important;
-        border: 1.5px solid #8B5CF6 !important;
+    .step-label {{
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        transition: all 0.3s ease;
+    }}
+    .node-active .step-num {{
+        background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%) !important;
         color: #FFFFFF !important;
-        box-shadow: 0 4px 18px rgba(139, 92, 246, 0.3);
+        box-shadow: 0 0 16px rgba(139, 92, 246, 0.45);
+        border: 2px solid #FFFFFF !important;
     }}
-    .step-inactive {{
-        background: var(--stepper-inactive-bg) !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-        color: var(--stepper-inactive-text) !important;
+    .node-active .step-label {{
+        color: #8B5CF6 !important;
     }}
-    .step-done {{
+    .node-done .step-num {{
+        background: #10B981 !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+    }}
+    .node-done .step-label {{
         color: #10B981 !important;
-        border: 1px solid rgba(16, 185, 129, 0.4) !important;
-        background: rgba(16, 185, 129, 0.12) !important;
+    }}
+    .node-inactive .step-num {{
+        background: var(--stepper-inactive-bg) !important;
+        color: var(--stepper-inactive-text) !important;
+        border: 1.5px solid rgba(148, 163, 184, 0.3) !important;
+    }}
+    .step-line {{
+        flex: 1;
+        height: 3px;
+        border-radius: 2px;
+        margin: 0 6px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }}
+    .line-active {{
+        background: linear-gradient(90deg, #10B981, #8B5CF6) !important;
+    }}
+    .line-inactive {{
+        background: rgba(148, 163, 184, 0.25) !important;
+    }}
+    .step-title-wrap {{
+        display: flex;
+        justify-content: center;
+    }}
+    .step-current-title {{
+        text-align: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-main);
+        background: var(--secondary-btn-bg);
+        border: 1px solid var(--secondary-btn-border);
+        border-radius: 20px;
+        padding: 4px 14px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }}
     
     /* Cards Modernos */
@@ -782,14 +841,21 @@ st.markdown(f"""
             font-size: 1rem !important;
             border-radius: 8px !important;
         }}
-        .stepper-container {{
-            gap: 4px !important;
+        .stepper-wrapper {{
             margin-bottom: 14px !important;
+            padding: 0 4px !important;
         }}
-        .step-item {{
-            padding: 5px 8px !important;
-            font-size: 0.68rem !important;
-            border-radius: 16px !important;
+        .step-num {{
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 0.8rem !important;
+        }}
+        .step-label {{
+            font-size: 0.65rem !important;
+        }}
+        .step-current-title {{
+            font-size: 0.72rem !important;
+            padding: 3px 10px !important;
         }}
         .saas-card {{
             padding: 14px 14px !important;
@@ -898,30 +964,47 @@ if "cfg_max_sec" not in st.session_state:
 if "cfg_custom_prompt" not in st.session_state:
     st.session_state.cfg_custom_prompt = ""
 
-# Stepper Dinâmico em 3 Etapas
+# Stepper Dinâmico em 3 Etapas Responsivo
 def render_stepper(step):
-    s1_class = "step-active" if step == 1 else "step-done"
-    s1_icon = "1️⃣" if step == 1 else "✅"
-    s1_text = "1. Inserir Link" if step == 1 else "1. Link OK"
-    
-    s2_class = "step-active" if step == 2 else ("step-done" if step > 2 else "step-inactive")
-    s2_icon = "2️⃣" if step <= 2 else "✅"
-    s2_text = "2. Formato & Estilo"
-    
-    s3_class = "step-active" if step == 3 else "step-inactive"
-    s3_icon = "3️⃣" if step == 3 else "✨"
-    s3_text = "3. Cortes & Exportação"
-    
-    sep1 = "#8B5CF6" if step > 1 else "rgba(139, 92, 246, 0.2)"
-    sep2 = "#8B5CF6" if step > 2 else "rgba(139, 92, 246, 0.2)"
-    
+    num1 = "✓" if step > 1 else "1"
+    node1_class = "node-done" if step > 1 else ("node-active" if step == 1 else "node-inactive")
+    line1_class = "line-active" if step > 1 else "line-inactive"
+
+    num2 = "✓" if step > 2 else "2"
+    node2_class = "node-done" if step > 2 else ("node-active" if step == 2 else "node-inactive")
+    line2_class = "line-active" if step > 2 else "line-inactive"
+
+    num3 = "3"
+    node3_class = "node-active" if step == 3 else "node-inactive"
+
+    titles = {
+        1: "Etapa 1: Inserir Link do Vídeo",
+        2: "Etapa 2: Formato, Proporção & Legendas",
+        3: "Etapa 3: Revisão dos Cortes & Exportação"
+    }
+    current_title = titles.get(step, "Etapa 1")
+
     return f"""
-    <div class="stepper-container">
-        <div class="step-item {s1_class}"><span>{s1_icon}</span> {s1_text}</div>
-        <div style="color:{sep1}; font-weight:900;">──</div>
-        <div class="step-item {s2_class}"><span>{s2_icon}</span> {s2_text}</div>
-        <div style="color:{sep2}; font-weight:900;">──</div>
-        <div class="step-item {s3_class}"><span>{s3_icon}</span> {s3_text}</div>
+    <div class="stepper-wrapper">
+        <div class="stepper-track">
+            <div class="step-node {node1_class}">
+                <div class="step-num">{num1}</div>
+                <span class="step-label">Link</span>
+            </div>
+            <div class="step-line {line1_class}"></div>
+            <div class="step-node {node2_class}">
+                <div class="step-num">{num2}</div>
+                <span class="step-label">Formato</span>
+            </div>
+            <div class="step-line {line2_class}"></div>
+            <div class="step-node {node3_class}">
+                <div class="step-num">{num3}</div>
+                <span class="step-label">Exportar</span>
+            </div>
+        </div>
+        <div class="step-title-wrap">
+            <div class="step-current-title">{current_title}</div>
+        </div>
     </div>
     """
 
@@ -932,10 +1015,8 @@ st.markdown(render_stepper(st.session_state.current_step), unsafe_allow_html=Tru
 # ==============================================================================
 if st.session_state.current_step == 1:
     st.markdown("""
-    <div class="saas-card">
-        <div class="saas-card-header" style="margin-bottom:0px;">
-            <span>🔗</span> Insira o Link do Vídeo do YouTube
-        </div>
+    <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-heading); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+        <span>🔗</span> Insira o Link do Vídeo do YouTube:
     </div>
     """, unsafe_allow_html=True)
 
