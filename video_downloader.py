@@ -32,6 +32,49 @@ def sanitize_filename(name: str) -> str:
     """Remove caracteres inválidos para nomes de arquivos no Windows"""
     return re.sub(r'[\\/*?:"<>|]', "", name).strip()
 
+def convert_and_save_cookies(raw_data: str, target_path: str = "cookies.txt") -> bool:
+    """
+    Salva cookies para uso no yt-dlp.
+    Suporta formato Netscape (texto tabular clássico) ou formato JSON (Cookie-Editor / EditThisCookie).
+    """
+    import json
+    if not raw_data or not raw_data.strip():
+        return False
+        
+    clean = raw_data.strip()
+    
+    # Se for formato JSON (ex: exportado por Cookie-Editor como JSON)
+    if clean.startswith("[") or clean.startswith("{"):
+        try:
+            parsed = json.loads(clean)
+            if isinstance(parsed, dict):
+                parsed = [parsed]
+            if isinstance(parsed, list):
+                lines = ["# Netscape HTTP Cookie File"]
+                for c in parsed:
+                    domain = c.get("domain", ".youtube.com")
+                    flag = "TRUE" if domain.startswith(".") else "FALSE"
+                    path = c.get("path", "/")
+                    secure = "TRUE" if c.get("secure", False) else "FALSE"
+                    exp = str(int(c.get("expirationDate", 2147483647)))
+                    name = c.get("name", "")
+                    val = c.get("value", "")
+                    if name:
+                        lines.append(f"{domain}\t{flag}\t{path}\t{secure}\t{exp}\t{name}\t{val}")
+                with open(target_path, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines) + "\n")
+                return True
+        except Exception:
+            pass
+
+    # Formato Netscape padrão
+    with open(target_path, "w", encoding="utf-8") as f:
+        if not clean.startswith("#"):
+            f.write("# Netscape HTTP Cookie File\n" + clean + "\n")
+        else:
+            f.write(clean + "\n")
+    return True
+
 def get_video_info(url: str) -> Dict[str, Any]:
     """
     Obtém metadados do vídeo do YouTube rapidamente sem fazer download.

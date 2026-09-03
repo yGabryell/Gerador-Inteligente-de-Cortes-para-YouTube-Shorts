@@ -59,18 +59,41 @@ with st.sidebar:
 
     st.markdown("---")
     st.caption("🍪 ANTI-BLOQUEIO CLOUD")
-    with st.expander("Cookies do YouTube (Opcional)", expanded=False):
-        st.caption("Se o servidor do Streamlit Cloud sofrer bloqueio 403 do YouTube, envie seu arquivo `cookies.txt` aqui:")
-        uploaded_cookies = st.file_uploader("Enviar cookies.txt", type=["txt"], key="sidebar_cookies_upload")
-        if uploaded_cookies is not None:
-            try:
-                with open("cookies.txt", "wb") as f:
-                    f.write(uploaded_cookies.getbuffer())
-                st.success("✅ cookies.txt ativado!")
-            except Exception as e:
-                st.error(f"Erro ao salvar: {e}")
-        elif os.path.exists("cookies.txt"):
-            st.info("🍪 cookies.txt ativo.")
+    with st.expander("Cookies do YouTube (Anti-403)", expanded=False):
+        st.caption("Cole os cookies do YouTube ou envie o arquivo para liberar downloads no Streamlit Cloud:")
+        tab_c1, tab_c2 = st.tabs(["📋 Colar", "📁 Upload"])
+        with tab_c1:
+            raw_cookie_paste = st.text_area(
+                "Conteúdo dos cookies",
+                height=90,
+                placeholder="Cole o JSON do Cookie-Editor ou texto Netscape...",
+                label_visibility="collapsed"
+            )
+            if st.button("💾 Ativar Cookies Colados", use_container_width=True):
+                if raw_cookie_paste.strip():
+                    from video_downloader import convert_and_save_cookies
+                    if convert_and_save_cookies(raw_cookie_paste):
+                        st.success("✅ Cookies convertidos e ativos!")
+                        st.rerun()
+                    else:
+                        st.error("❌ Formato de cookie inválido.")
+                else:
+                    st.warning("⚠️ Cole os cookies no campo acima.")
+        with tab_c2:
+            uploaded_cookies = st.file_uploader("Enviar cookies.txt ou .json", type=["txt", "json"], key="sidebar_cookies_upload")
+            if uploaded_cookies is not None:
+                try:
+                    content = uploaded_cookies.getvalue().decode("utf-8", errors="ignore")
+                    from video_downloader import convert_and_save_cookies
+                    if convert_and_save_cookies(content):
+                        st.success("✅ Arquivo de cookies ativado!")
+                        st.rerun()
+                    else:
+                        st.error("❌ Não foi possível processar o arquivo.")
+                except Exception as e:
+                    st.error(f"Erro ao ler arquivo: {e}")
+        if os.path.exists("cookies.txt"):
+            st.caption("🟢 **Status:** Cookies ativos no sistema.")
 
 # Configurações Dinâmicas de Cores por Tema (CSS Variables)
 if st.session_state.dark_mode:
