@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+import json
 from typing import Dict, Any, Optional
 import yt_dlp
 import imageio_ffmpeg
@@ -37,7 +38,6 @@ def convert_and_save_cookies(raw_data: str, target_path: str = "cookies.txt") ->
     Salva cookies para uso no yt-dlp.
     Suporta formato Netscape (texto tabular clássico) ou formato JSON (Cookie-Editor / EditThisCookie).
     """
-    import json
     if not raw_data or not raw_data.strip():
         return False
         
@@ -78,16 +78,9 @@ def convert_and_save_cookies(raw_data: str, target_path: str = "cookies.txt") ->
 def get_video_info(url: str) -> Dict[str, Any]:
     """
     Obtém metadados do vídeo do YouTube rapidamente sem fazer download.
+    Usa o cliente Android puro que sempre disponibiliza informações sem ser bloqueado.
     """
     ffmpeg_path = get_ffmpeg_executable()
-    cookie_file = None
-    if os.path.exists("cookies.txt"):
-        cookie_file = "cookies.txt"
-    elif os.getenv("YOUTUBE_COOKIES"):
-        cookie_file = "cookies.txt"
-        with open(cookie_file, "w", encoding="utf-8") as f:
-            f.write(os.getenv("YOUTUBE_COOKIES"))
-
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
@@ -95,19 +88,12 @@ def get_video_info(url: str) -> Dict[str, Any]:
         'ffmpeg_location': ffmpeg_path,
         'nocheckcertificate': True,
         'geo_bypass': True,
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Accept-Language': 'en-US,en;q=0.9',
-        },
         'extractor_args': {
             'youtube': {
-                'player_client': ['web', 'mweb', 'web_creator', 'android'] if cookie_file else ['android', 'ios', 'web_creator']
+                'player_client': ['android']
             }
         }
     }
-    
-    if cookie_file:
-        ydl_opts['cookiefile'] = cookie_file
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
@@ -125,23 +111,17 @@ def get_video_info(url: str) -> Dict[str, Any]:
 def download_video(url: str, output_dir: str = "downloads", video_id: Optional[str] = None) -> str:
     """
     Baixa o vídeo completo contornando bloqueios 403 em ambientes de Cloud (Streamlit Cloud).
+    Estratégia 1: Cliente Android puro (livre de SABR e restrições de IP em datacenter).
+    Estratégia 2: Fallback Web com cookies se disponíveis.
     """
     os.makedirs(output_dir, exist_ok=True)
     
     ffmpeg_path = get_ffmpeg_executable()
     out_template = os.path.join(output_dir, f"{video_id or '%(id)s'}.%(ext)s")
     
-    cookie_file = None
-    if os.path.exists("cookies.txt"):
-        cookie_file = "cookies.txt"
-    elif os.getenv("YOUTUBE_COOKIES"):
-        cookie_file = "cookies.txt"
-        with open(cookie_file, "w", encoding="utf-8") as f:
-            f.write(os.getenv("YOUTUBE_COOKIES"))
-
-    ydl_opts = {
-        # Formato flexível com suporte a vídeo separado ou combinado (18, 22, mp4)
-        'format': 'bestvideo*+bestaudio/best[ext=mp4]/18/22/b/best',
+    # 1. Tentativa Principal: Android nativo (NÃO passar cookies para o yt-dlp não descartar o cliente)
+    android_opts = {
+        'format': '18/best[ext=mp4]/best',
         'outtmpl': out_template,
         'merge_output_format': 'mp4',
         'ffmpeg_location': ffmpeg_path,
@@ -152,24 +132,15 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
         'geo_bypass': True,
         'retries': 10,
         'fragment_retries': 10,
-        # Cabeçalhos para simular requisição legítima
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Accept-Language': 'en-US,en;q=0.9',
-        },
-        # Clientes adaptados à presença de cookies ou download anônimo
         'extractor_args': {
             'youtube': {
-                'player_client': ['web', 'mweb', 'web_creator', 'android'] if cookie_file else ['android', 'ios', 'web_creator']
+                'player_client': ['android']
             }
         }
     }
     
-    if cookie_file:
-        ydl_opts['cookiefile'] = cookie_file
-    
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(android_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info)
             base, _ = os.path.splitext(filename)
@@ -179,27 +150,23 @@ def download_video(url: str, output_dir: str = "downloads", video_id: Optional[s
             if os.path.exists(filename):
                 return filename
     except Exception as e:
-        # Fallback usando formato direto 18/22 via cliente Android
-        fallback_opts = {
-            'format': '18/22/b/best',
+        # 2. Fallback: Cliente Web/Mweb com cookies se disponíveis
+        cookie_file = "cookies.txt" if os.path.exists("cookies.txt") else None
+        web_opts = {
+            'format': 'bestvideo*+bestaudio/best[ext=mp4]/best',
             'outtmpl': out_template,
+            'merge_output_format': 'mp4',
             'ffmpeg_location': ffmpeg_path,
             'quiet': False,
             'no_warnings': True,
             'nocheckcertificate': True,
             'geo_bypass': True,
-            'retries': 10,
-            'fragment_retries': 10,
-            'extractor_args': {
-                'youtube': {
-                    'player_client': ['android']
-                }
-            }
+            'retries': 5
         }
         if cookie_file:
-            fallback_opts['cookiefile'] = cookie_file
+            web_opts['cookiefile'] = cookie_file
             
-        with yt_dlp.YoutubeDL(fallback_opts) as ydl:
+        with yt_dlp.YoutubeDL(web_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             filename = ydl.prepare_filename(info)
             base, _ = os.path.splitext(filename)
